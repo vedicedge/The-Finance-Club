@@ -1,0 +1,136 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   Doomsday — design tokens
+   Colours come from the reference images (docs/design-refs): near-black shadow with a green
+   cast, verdigris and toxic-green glow, torchlight amber, mask steel, lit-tapestry bone.
+   Type matches the Section E site: Cormorant Garamond (display), Pinyon Script (flourish),
+   Inter (UI and every number). The site is dark by design; there is no light theme.
+   ========================================================================== */
+
+@theme {
+  --color-abyss: #050807;
+  --color-vault: #0b1513;
+  --color-vault-2: #11201c;
+  --color-line: rgb(163 177 173 / 0.16);
+  --color-line-strong: rgb(163 177 173 / 0.34);
+  --color-verdigris: #2f7d66;
+  --color-verdigris-deep: #1f5a49;
+  --color-toxic: #62d6a8;
+  --color-torch: #e9b04e;
+  --color-torch-deep: #b97a2a;
+  --color-steel: #a3b1ad;
+  --color-bone: #ece6d8;
+  --color-ember: #e5574a;
+
+  --font-display: var(--font-cormorant), 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
+  --font-script: var(--font-pinyon), 'Pinyon Script', 'Snell Roundhand', cursive;
+  --font-sans: var(--font-inter), 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  color-scheme: dark;
+  --gutter: clamp(16px, 4vw, 48px);
+}
+
+html {
+  background: var(--color-abyss);
+  color: var(--color-bone);
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  min-height: 100dvh;
+  font-family: var(--font-sans);
+  font-feature-settings: 'cv11', 'ss01';
+  background:
+    radial-gradient(120% 70% at 50% -10%, rgb(233 176 78 / 0.08), transparent 60%),
+    radial-gradient(90% 50% at 50% 110%, rgb(47 125 102 / 0.22), transparent 70%),
+    var(--color-abyss);
+}
+
+/* In the components layer so Tailwind utilities (e.g. text-torch) can override them. */
+@layer components {
+  /* Every number lines up in columns and doesn't jitter while it changes. */
+  .num {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  /* Small tracked caps, after the "SYNOPSIS / RELEASE" lines on the reference posters. */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--color-steel);
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 0.92;
+  }
+}
+
+/* Film grain over everything, like the reference posters. Pure CSS, no image request. */
+.grain::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* The single overhead light source from the first reference. */
+.light-beam {
+  position: absolute;
+  inset: -10% 0 auto 0;
+  height: 120%;
+  pointer-events: none;
+  background: conic-gradient(from 180deg at 50% 0%, transparent 168deg, rgb(233 176 78 / 0.16) 180deg, transparent 192deg);
+  filter: blur(18px);
+  animation: beam-breathe 9s ease-in-out infinite;
+}
+
+@keyframes beam-breathe {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-torch);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 100;
+  background: var(--color-torch);
+  color: var(--color-abyss);
+  padding: 10px 14px;
+  font-weight: 600;
+}
+.skip-link:focus {
+  top: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

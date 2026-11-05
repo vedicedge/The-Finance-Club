@@ -1,2 +1,132 @@
-# The-Finance-Club
-Intraevent
+# Doomsday — The Finance Club
+
+The in-house website for **Doomsday**, the finance club's 3-hour event on 25 November 2026.
+Professor Kalyug has announced a doomsday attack on Mahanagar; hero agencies race to fund, build
+and save the city.
+
+- **Spec (source of truth):** [`docs/event-spec.md`](docs/event-spec.md) — event secrets redacted, see below
+- **Choices where the spec is open:** [`docs/decisions.md`](docs/decisions.md)
+- **Look and feel:** [`docs/design-refs/README.md`](docs/design-refs/README.md)
+
+Stack: Next.js 16 (App Router) + TypeScript + Tailwind 4, Supabase (Postgres, Auth, Realtime,
+Row Level Security), deployed on Vercel. The event name lives in one place: `lib/config.ts`.
+
+## Build status
+
+| Milestone | Due | Status |
+|---|---|---|
+| 1. Foundation — project, schema, seed data, roles | 8 Nov | **Done** |
+| 2. Public site + registration | 11 Nov | Next |
+| 3. Prelim quiz | 15 Nov | |
+| 4. Auction + ledger | 18 Nov | |
+| 5. Rounds 2–3, leaderboard, reveal | 21 Nov | |
+| 6. Dry run | 23 Nov | |
+
+## How the security works
+
+Browsers never query the database. Phones, projectors and organiser consoles talk to the Next.js
+server, which checks the agency session or the organiser's role, then uses the Supabase secret
+(service-role) key. Row Level Security is on for every table with no policies, and every grant to
+the browser roles is revoked, so the public key can read nothing. Secret tables (answer keys,
+envelope multipliers, X-Ray log, unrevealed news, Insider Tips, PIN hashes, sessions) are only
+ever read inside server code. Scoring and money rules are enforced in the database as well as the
+server; the ledger is append-only (fixes are voids or new entries).
+
+### Event secrets and this public repository
+
+This repository is **public**, so the quiz questions and answers, the Team-Ups and the Breaking
+News cards are **not** committed. They live in `supabase/private/seed_secrets.sql`, which is
+git-ignored. Keep that file somewhere private (the club drive). If the repository is made
+private, they can become a normal migration.
+
+## Setting up (one time)
+
+### 1. Supabase project
+
+1. Create a project at [supabase.com](https://supabase.com). Choose region **Mumbai (ap-south-1)**:
+   every quiz answer goes phone → Vercel → Supabase, and that delay counts against the agency.
+2. Apply the migrations in `supabase/migrations/` (in filename order). Either:
+   ```bash
+   npx supabase login
+   ```
+   ```bash
+   npx supabase link --project-ref YOUR-PROJECT-REF
+   ```
+   ```bash
+   npx supabase db push
+   ```
+   or paste each file into **SQL Editor** and run them in order.
+3. **Load the secret seed:** paste `supabase/private/seed_secrets.sql` into the SQL Editor and run it.
+4. **Authentication → Sign In / Providers → Email:** turn **off** "Allow new users to sign up"
+   (crew are added by the admin).
+5. **Authentication → URL Configuration:** set Site URL to the Vercel URL, and add
+   `https://YOUR-DOMAIN/auth/confirm` to Redirect URLs.
+6. **Email sending (recommended):** Supabase's built-in email sender allows only a few emails per
+   hour. Set up custom SMTP under **Authentication → Emails → SMTP Settings** (for example the
+   club's Gmail with an app password). Until then, give crew passwords on the Crew page.
+7. *(Optional, lets a sign-in link work on a different device from the one that asked for it.)*
+   In **Authentication → Emails → Magic Link**, change the link to
+   `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/admin`.
+
+### 2. Vercel
+
+1. Import this repository in Vercel (framework: Next.js).
+2. **Settings → Environment Variables:** add the four variables from `.env.example`.
+3. **Settings → Functions → Function Region:** Mumbai (`bom1`), next to the database.
+4. Deploy.
+
+### 3. First admin
+
+1. Supabase → **Authentication → Users → Add user**: your email and a password, "Auto confirm".
+2. Make sure that email is in `BOOTSTRAP_ADMIN_EMAILS` on Vercel.
+3. Sign in at `/admin/login`. You become admin on first sign-in. Add the rest of the crew on
+   **Crew & roles** (`/admin/users`).
+
+## Developing locally
+
+```bash
+npm install
+```
+```bash
+cp .env.example .env.local
+```
+```bash
+npm run dev
+```
+
+### Tests
+
+```bash
+npm test
+```
+Unit tests: quiz scoring (the spec's worked examples 900 / 1,400 / 500 / 0), Tower Score (68.33),
+Hero Score (51), money steps, PIN hashing, session tokens and role access.
+
+```bash
+npm run test:db
+```
+Database tests: starts a throwaway local Postgres (needs the Postgres server binaries, e.g.
+`apt install postgresql`), applies every migration and the secret seed if present, and checks the
+security grants, append-only ledger, voids, founder rules, derived views (fund left, Power Level,
+Tower Score, Hero Score, envelope holders) and that the SQL scoring functions match the
+TypeScript ones for every tenth of a second.
+
+## Project layout
+
+```
+app/                  pages and route handlers (App Router)
+  admin/              organiser command centre (login, systems check, crew & roles)
+  auth/confirm/       where organiser sign-in links land
+components/           shared UI (Mahanagar skyline, admin shell)
+lib/
+  config.ts           event name and round names (change the name here)
+  scoring/            quiz, tower and hero maths (pure, unit-tested)
+  auth/               roles, organiser auth, agency PINs and session tokens
+  db/server.ts        service-role client (server-only)
+supabase/
+  migrations/         schema, integrity rules, views, scoring functions, security, public seed
+  private/            git-ignored event secrets (seed_secrets.sql)
+scripts/db/           local Postgres harness for the database tests
+tests/                unit/ and db/ tests
+docs/                 spec, decisions, design references
+```
