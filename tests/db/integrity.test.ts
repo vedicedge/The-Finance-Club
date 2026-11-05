@@ -9,15 +9,15 @@ describe.skipIf(!hasDb)('agencies and founders', () => {
   it('rejects an agency with 2 founders', () => {
     expect(sqlError(`insert into agencies (id, name) values ('A01', 'Short');
       insert into founders (agency_id, name, section, phone, email, is_captain) values
-        ('A01', 'One', 'E', '9100000001', 'one@x.in', true), ('A01', 'Two', 'E', '9100000002', 'two@x.in', false);
+        ('A01', 'One', 'E', '9100000001', 'one@imi.edu', true), ('A01', 'Two', 'E', '9100000002', 'two@imi.edu', false);
       set constraints all immediate;`)).toMatch(/exactly 3 founders/);
   });
 
   it('rejects an agency with no captain', () => {
     expect(sqlError(`insert into agencies (id, name) values ('A01', 'Leaderless');
       insert into founders (agency_id, name, section, phone, email, is_captain) values
-        ('A01', 'One', 'E', '9100000001', 'one@x.in', false), ('A01', 'Two', 'E', '9100000002', 'two@x.in', false),
-        ('A01', 'Three', 'E', '9100000003', 'three@x.in', false);
+        ('A01', 'One', 'E', '9100000001', 'one@imi.edu', false), ('A01', 'Two', 'E', '9100000002', 'two@imi.edu', false),
+        ('A01', 'Three', 'E', '9100000003', 'three@imi.edu', false);
       set constraints all immediate;`)).toMatch(/exactly 1 captain/);
   });
 
@@ -27,6 +27,37 @@ describe.skipIf(!hasDb)('agencies and founders', () => {
       insert into founders (agency_id, name, section, phone, email, is_captain)
         select 'A02', name, section, '9199999999', email, true from founders where agency_id = 'A01' limit 1;`))
       .toMatch(/founders_email_key/);
+  });
+
+  it('accepts only @imi.edu founder emails (any capitalisation)', () => {
+    expect(sqlError(`insert into agencies (id, name) values ('A01', 'Outsiders');
+      insert into founders (agency_id, name, section, phone, email, is_captain) values
+        ('A01', 'One', 'E', '9100000001', 'one@gmail.com', true);`)).toMatch(/must be @imi.edu addresses/);
+    expect(sqlError(`insert into agencies (id, name) values ('A01', 'Sneaky');
+      insert into founders (agency_id, name, section, phone, email, is_captain) values
+        ('A01', 'One', 'E', '9100000001', 'one@imi.edu.fake.com', true);`)).toMatch(/must be @imi.edu addresses/);
+    expect(sql(`insert into agencies (id, name) values ('A01', 'Shouty');
+      insert into founders (agency_id, name, section, phone, email, is_captain) values
+        ('A01', 'One', 'E', '9100000001', 'One@IMI.EDU', true),
+        ('A01', 'Two', 'E', '9100000002', 'two@imi.edu', false),
+        ('A01', 'Three', 'E', '9100000003', 'three@imi.edu', false);
+      set constraints all immediate; select count(*) from founders;`)).toEqual(['3']);
+  });
+
+  it('the email-domain check turns off when the setting is cleared', () => {
+    expect(sql(`update event_state set settings = jsonb_set(settings, '{registration,email_domain}', 'null');
+      insert into agencies (id, name) values ('A01', 'Guests');
+      insert into founders (agency_id, name, section, phone, email, is_captain) values
+        ('A01', 'One', 'E', '9100000001', 'one@gmail.com', true),
+        ('A01', 'Two', 'E', '9100000002', 'two@gmail.com', false),
+        ('A01', 'Three', 'E', '9100000003', 'three@gmail.com', false);
+      set constraints all immediate; select count(*) from founders;`)).toEqual(['3']);
+  });
+
+  it('there is no Fan Club status any more: eliminated agencies are simply eliminated', () => {
+    expect(sqlError(`${agency('A01')} update agencies set status = 'fan_club';`)).toMatch(/agencies_status_check/);
+    expect(sql(`${agency('A01')} update agencies set status = 'eliminated', eliminated_in = 'prelim';
+      select status || ':' || eliminated_in from agencies;`)).toEqual(['eliminated:prelim']);
   });
 
   it('rejects malformed agency IDs and duplicate agency names', () => {
@@ -95,7 +126,7 @@ describe.skipIf(!hasDb)('the Fund Ledger is append-only', () => {
     expect(sql(`set local doomsday.allow_reset = 'on';
       truncate agencies, founders, ledger_entries, ledger_voids, sales, insider_tips, force_fields,
                envelope_moves, answers, agency_auth, agency_sessions, prelim_tiebreaks, poster_duels,
-               tower_results, xray_log, reveals, predictions, event_state, missions cascade;
+               tower_results, xray_log, reveals, event_state, missions cascade;
       select count(*) from ledger_entries;`)).toEqual(['0']);
   });
 });

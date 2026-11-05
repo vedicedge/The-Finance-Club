@@ -34,7 +34,7 @@ let phone = 9_000_000_000;
 export function agency(id: string, name = `Agency ${id}`): string {
   const f = () => {
     phone += 1;
-    return `('${id}', 'Founder ${phone}', 'E', '${phone}', 'f${phone}@example.in'`;
+    return `('${id}', 'Founder ${phone}', 'E', '${phone}', 'f${phone}@imi.edu'`;
   };
   return `insert into agencies (id, name) values ('${id}', '${name}');
 insert into founders (agency_id, name, section, phone, email, is_captain) values

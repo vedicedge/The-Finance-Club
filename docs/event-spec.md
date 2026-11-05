@@ -8,6 +8,17 @@
 > Team-Ups and the Breaking News cards) are redacted below and kept in the git-ignored
 > `supabase/private/` folder. Everything else is verbatim.
 
+## Amendments (agreed with the organisers on 5 Nov 2026)
+
+These override the text below wherever they conflict.
+
+| # | Change | Effect on the website |
+|---|---|---|
+| A1 | **No Fan Club.** Agencies knocked out in the prelim, Round 1 or Round 2 are simply eliminated. There is no "Predict the final top 3" form and no Biggest Fan lucky draw. | Status is "In the game" or "Eliminated in round X". No `/predict` page, no `predictions` table, no Biggest Fan award. |
+| A2 | **Round 2A poster duels are voted on Instagram stories** (not feed-post likes). The duel winner is rewarded; Round 2B (the tower game) decides who is eliminated. | The social-media lead types each duel's story-vote counts at the cutoff. The ₹5 Cr poster bonus rule is unchanged (winner or bye, credited only if it also makes the top 8). |
+| A3 | **IMI students only: every founder registers with an @imi.edu email.** | The register form reminds teams to use their IMI email ID; any other email is rejected (also enforced by the database). |
+| A4 | **PINs are shown on screen at registration only.** The admin emails them personally if needed. | No automatic email. PINs are stored scrambled, so a lost PIN is reset from the admin agencies page, which shows the new PIN once. |
+
 Doomsday is the finance club's 3-hour intra-college event on **Nov 25, 2026**. 50+ agencies of
 3 founders start with a virtual ₹50 crore, and one surviving hero agency wins Mahanagar. This
 doc is the single source for how the event runs, what participants and organisers each do, and

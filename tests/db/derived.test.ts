@@ -87,10 +87,10 @@ describe.skipIf(!hasDb)('Round 2', () => {
         from v_tower_scores;`)).toEqual(['90.00|40.00|75.00|68.33']);
   });
 
-  it('poster duel winner: more likes wins, a tie goes to the rock-paper-scissors winner, a bye wins', () => {
+  it('poster duel winner: more story votes wins, a tie goes to the rock-paper-scissors winner, a bye wins', () => {
     expect(sql(`${agency('A01')} ${agency('A02')} ${agency('A03')} ${agency('A04')} ${agency('A05')}
-      insert into poster_duels (agency_a, agency_b, likes_a, likes_b) values ('A01', 'A02', 40, 52);
-      insert into poster_duels (agency_a, agency_b, likes_a, likes_b, tiebreak_winner) values ('A03', 'A04', 30, 30, 'A03');
+      insert into poster_duels (agency_a, agency_b, votes_a, votes_b) values ('A01', 'A02', 40, 52);
+      insert into poster_duels (agency_a, agency_b, votes_a, votes_b, tiebreak_winner) values ('A03', 'A04', 30, 30, 'A03');
       insert into poster_duels (agency_a, agency_b) values ('A05', null);
       select winner from poster_duels order by id;`)).toEqual(['A02', 'A03', 'A05']);
   });
