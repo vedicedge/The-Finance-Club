@@ -39,7 +39,11 @@ founder emails only, A4 PINs shown on screen only.
 - **Rounding t.** t = received_at − opened_at (both database time), rounded to 0.1 s half-up,
   then compared with T. So 10.04 s → 10.0 s (in time), 10.05 s → 10.1 s (0 points).
 - **"New agency logins close when Q1 opens."** An agency that never logged in before Q1 opens is
-  locked out of the quiz; one that did can log back in on any phone, and the newest phone takes over.
+  locked out of the quiz; one that did can log back in on any phone. During the prelim phase only,
+  signing in on a new phone signs the agency's other phones out (one phone per agency for the
+  quiz); before that, all three founders can be signed in on their own phones.
+- **Registration signs the phone in.** After registering, that phone is signed in to My Agency
+  straight away; the ID and PIN are shown once on the confirmation screen.
 - **Sudden death "on stage".** The projector shows the question to the tied agencies; the quiz host
   records the finishing order. It is not played on phones.
 - **Jugaad Kit category.** A Jugaad Kit sale records the category slot it fills, so the

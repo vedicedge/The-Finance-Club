@@ -1,0 +1,96 @@
+/**
+ * Registration input checks (spec: Agency rules; amendment A3: @imi.edu emails only).
+ * Pure functions, used by the server action and the unit tests. The database enforces the
+ * same rules again (exactly 3 founders, 1 captain, unique email/phone, email domain).
+ */
+
+export type FounderInput = { name: string; section: string; phone: string; email: string; isCaptain: boolean };
+export type RegistrationInput = { agencyName: string; founders: FounderInput[] };
+export type RegistrationResult =
+  | { ok: true; value: RegistrationInput }
+  | { ok: false; errors: Record<string, string> };
+
+export const FOUNDER_SLOTS = [0, 1, 2] as const;
+
+const collapse = (s: string) => s.trim().replace(/\s+/g, ' ');
+
+/** Accepts "98765 43210", "+91 98765-43210", "098765 43210" → "9876543210"; null if not an Indian mobile. */
+export function normalizePhone(raw: string): string | null {
+  let digits = raw.replace(/[\s\-().]/g, '');
+  if (digits.startsWith('+91')) digits = digits.slice(3);
+  else if (digits.length === 12 && digits.startsWith('91')) digits = digits.slice(2);
+  else if (digits.length === 11 && digits.startsWith('0')) digits = digits.slice(1);
+  return /^[6-9][0-9]{9}$/.test(digits) ? digits : null;
+}
+
+export function normalizeEmail(raw: string): string {
+  return raw.trim().toLowerCase();
+}
+
+export function emailMatchesDomain(email: string, domain: string | null): boolean {
+  if (!domain) return true;
+  return email.endsWith(`@${domain.toLowerCase()}`);
+}
+
+/** "a7", "A07", "07", " 7 " → "A07"; null if it can't be an agency ID. */
+export function normalizeAgencyId(raw: string): string | null {
+  const m = /^a?0*([0-9]{1,3})$/i.exec(raw.trim());
+  if (!m) return null;
+  const n = Number(m[1]);
+  if (n < 1) return null;
+  return `A${String(n).padStart(2, '0')}`;
+}
+
+const AGENCY_NAME = /^[\p{L}\p{N}][\p{L}\p{N} '&.\-!]*$/u;
+const PERSON_NAME = /^[\p{L}][\p{L} .'\-]*$/u;
+const SECTION = /^[\p{L}\p{N}][\p{L}\p{N} .\-/]*$/u;
+const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+/**
+ * Validates the register form. Field names: agency_name and f{0,1,2}_{name,section,phone,email}.
+ * Founder 1 (index 0) is the captain.
+ */
+export function validateRegistration(form: Record<string, string>, emailDomain: string | null): RegistrationResult {
+  const errors: Record<string, string> = {};
+  const agencyName = collapse(form.agency_name ?? '');
+  if (agencyName.length < 2 || agencyName.length > 40) errors.agency_name = 'Agency name must be 2–40 characters.';
+  else if (!AGENCY_NAME.test(agencyName)) errors.agency_name = 'Use letters, numbers, spaces and & \' . - ! only.';
+
+  const founders: FounderInput[] = FOUNDER_SLOTS.map((i) => {
+    const name = collapse(form[`f${i}_name`] ?? '');
+    const section = collapse(form[`f${i}_section`] ?? '');
+    const phoneRaw = form[`f${i}_phone`] ?? '';
+    const email = normalizeEmail(form[`f${i}_email`] ?? '');
+
+    if (name.length < 2 || name.length > 60 || !PERSON_NAME.test(name)) errors[`f${i}_name`] = 'Enter the full name (letters only).';
+    if (section.length < 1 || section.length > 20 || !SECTION.test(section)) errors[`f${i}_section`] = 'Enter the section, e.g. E.';
+    const phone = normalizePhone(phoneRaw);
+    if (!phone) errors[`f${i}_phone`] = 'Enter a 10-digit Indian mobile number.';
+    if (!EMAIL.test(email)) errors[`f${i}_email`] = 'Enter a valid email address.';
+    else if (!emailMatchesDomain(email, emailDomain)) errors[`f${i}_email`] = `Use the IMI email ID ending in @${emailDomain}.`;
+
+    return { name, section, phone: phone ?? '', email, isCaptain: i === 0 };
+  });
+
+  // The same person cannot be two founders.
+  FOUNDER_SLOTS.forEach((i) => {
+    FOUNDER_SLOTS.forEach((j) => {
+      if (j <= i) return;
+      if (founders[i].email && founders[i].email === founders[j].email) errors[`f${j}_email`] = 'Each founder needs their own email.';
+      if (founders[i].phone && founders[i].phone === founders[j].phone) errors[`f${j}_phone`] = 'Each founder needs their own phone number.';
+    });
+  });
+
+  return Object.keys(errors).length ? { ok: false, errors } : { ok: true, value: { agencyName, founders } };
+}
+
+/** Maps a database error from register_agency to a message for the form. */
+export function registrationErrorMessage(message: string): { field?: string; text: string } {
+  if (message.includes('registration_closed')) return { text: 'Registration is closed.' };
+  if (message.includes('registration_full')) return { text: 'All agency slots are taken.' };
+  if (message.includes('agencies_name_key')) return { field: 'agency_name', text: 'Another agency already has this name.' };
+  if (message.includes('founders_email_key')) return { text: 'One of these emails is already registered with another agency.' };
+  if (message.includes('founders_phone_key')) return { text: 'One of these phone numbers is already registered with another agency.' };
+  if (message.includes('must be @')) return { text: 'Every founder must use an IMI email ID.' };
+  return { text: 'The registration could not be saved. Please try again.' };
+}
