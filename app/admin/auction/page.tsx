@@ -21,6 +21,7 @@ import {
   revealTeamUps,
   setNewsDraw,
   setStep,
+  showNewsRecap,
   showLot,
   shuffleLots,
   startFunds,
@@ -50,6 +51,7 @@ export default async function AuctionConsole({
   const sellable = step === 'marquee' || step === 'secret' || step === 'last_call';
   const drawn = r1.news.filter((n) => n.draw_order !== null).sort((a, b) => a.draw_order! - b.draw_order!);
   const tipsSold = r1.agencies.some((a) => a.tipNews);
+  const allNewsOut = drawn.length > 0 && drawn.every((n) => n.revealed_at) && r1.teamUps.every((t) => t.revealed_at);
   const now = Date.parse(r1.now);
   const tipsOpen = step === 'tips' && r1.tipsClosesAt !== null && Date.parse(r1.tipsClosesAt) > now;
   // Newest first; "new" for 20 seconds so the console flags each purchase as it lands.
@@ -352,6 +354,29 @@ export default async function AuctionConsole({
               <form action={revealTeamUps}>
                 <button disabled={step !== 'news' || r1.teamUps.every((t) => t.revealed_at)} className="btn btn-ghost">Reveal the 3 Team-Ups</button>
               </form>
+            </div>
+          )}
+          {r1.phase === 'round1' && drawn.length > 0 && (
+            <div className={`rounded-sm border px-4 py-3 ${r1.screen === 'news_recap' ? 'border-toxic bg-toxic/10' : 'border-line'}`}>
+              {r1.screen === 'news_recap' ? (
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-sm text-toxic">The projector shows every headline and Team-Up, with who holds each card.</p>
+                  <form action={showNewsRecap.bind(null, false)}>
+                    <button className="btn btn-ghost">Back to the normal view</button>
+                  </form>
+                </div>
+              ) : (
+                <>
+                  <form action={showNewsRecap.bind(null, true)}>
+                    <button disabled={!allNewsOut} className="btn btn-primary w-full">Show all news &amp; Team-Ups on the projector</button>
+                  </form>
+                  <p className="mt-2 text-xs text-steel">
+                    {allNewsOut
+                      ? 'One screen with all 6 headlines and the Team-Ups, and who holds each card, so every agency can check its Power Level.'
+                      : 'Available once all 6 headlines and the Team-Ups are revealed (Breaking News step). Locking Round 1 reveals any left.'}
+                  </p>
+                </>
+              )}
             </div>
           )}
         </div>

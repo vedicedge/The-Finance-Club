@@ -27,7 +27,8 @@ async function act<T>(area: Area, action: string, payload: Record<string, unknow
 
 export async function setStep(step: string) {
   if (!isR1Step(step)) back({ error: 'Unknown step.' });
-  await act('auction', 'r1.step', { step }, () => serviceDb().from('event_state').update({ step }).eq('id', true), () => `Step: ${step}.`);
+  // Changing step also ends the news recap, so the projector follows the step again.
+  await act('auction', 'r1.step', { step }, () => serviceDb().from('event_state').update({ step, r1_screen: null }).eq('id', true), () => `Step: ${step}.`);
 }
 
 export async function shuffleLots() {
@@ -52,6 +53,12 @@ export async function advanceLot() {
 
 export async function revealNextNews() {
   await act('auction', 'r1.reveal_news', {}, () => serviceDb().rpc('r1_reveal_next_news'), (id) => `Breaking News ${id} is live.`);
+}
+
+/** Puts every revealed headline and Team-Up on the auction projector at once (or back to normal). */
+export async function showNewsRecap(on: boolean) {
+  await act('auction', on ? 'r1.news_recap_on' : 'r1.news_recap_off', {}, () => serviceDb().rpc('r1_show_news_recap', { p_on: on }),
+    () => (on ? 'The projector now shows all Breaking News and Team-Ups.' : 'The projector is back to the normal view.'));
 }
 
 export async function revealTeamUps() {

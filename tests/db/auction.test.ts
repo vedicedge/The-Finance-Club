@@ -121,6 +121,28 @@ describe.skipIf(!hasDb || !hasSecrets)('self-service Insider Tips (1-minute wind
   });
 });
 
+describe.skipIf(!hasDb || !hasSecrets)('Breaking News recap on the projector', () => {
+  const drawn = `select r1_set_news_draw(array['N1','N2','N3','N4','N5','N6']);`;
+
+  it('only once every drawn headline and every Team-Up is revealed', () => {
+    expect(sqlError(`${setup('news')} select r1_show_news_recap(true);`)).toMatch(/news_not_drawn/);
+    expect(sqlError(`${setup('news')} ${drawn} select r1_reveal_next_news(); select r1_show_news_recap(true);`)).toMatch(/news_not_all_revealed/);
+    expect(sqlError(`${setup('news')} ${drawn} select r1_reveal_next_news() from generate_series(1, 6);
+      select r1_show_news_recap(true);`)).toMatch(/news_not_all_revealed/);
+    expect(sql(`${setup('news')} ${drawn} select r1_reveal_next_news() from generate_series(1, 6); select r1_reveal_team_ups();
+      select r1_show_news_recap(true); select r1_screen from event_state;
+      select r1_show_news_recap(false); select coalesce(r1_screen, 'normal') from event_state;`).slice(-2)).toEqual(['news_recap', 'normal']);
+  });
+
+  it('works after the lock, and the reset turns it off', () => {
+    expect(sql(`${setup('news')} ${drawn} update event_state set round1_locked_at = now();
+      update breaking_news set revealed_at = now() where draw_order is not null; update team_ups set revealed_at = now();
+      select r1_show_news_recap(true);
+      select admin_reset_event(true, '${KEEPER}');
+      select coalesce(r1_screen, 'off') || '|' || coalesce(tips_closes_at::text, 'none') from event_state;`).slice(-1)).toEqual(['off|none']);
+  });
+});
+
 describe.skipIf(!hasDb)('closing Round 1', () => {
   // A01 holds all four, A02 misses one with money, A03 misses one without ₹8 Cr, A04 misses two.
   const auction = `

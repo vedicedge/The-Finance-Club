@@ -36,6 +36,8 @@ export type Round1 = {
   tipsClosesAt: string | null;
   /** Server time when this was loaded, for countdowns. */
   now: string;
+  /** What the auction projector shows instead of the step's view: the Breaking News recap. */
+  screen: 'news_recap' | null;
   cards: Card[];
   sold: Set<string>;
   agencies: R1Agency[]; // every agency that reached Round 1 (active, or eliminated in round 1 or later)
@@ -51,7 +53,7 @@ export type Round1 = {
 export async function loadRound1(): Promise<Round1> {
   const db = serviceDb();
   const [st, cards, held, agencies, funds, power, tips, news, teamUps, starts, sales] = await Promise.all([
-    db.from('event_state').select('phase, step, current_card_id, prelim_frozen_at, round1_locked_at, tips_closes_at, settings').single(),
+    db.from('event_state').select('phase, step, current_card_id, prelim_frozen_at, round1_locked_at, tips_closes_at, r1_screen, settings').single(),
     db.from('gear_cards').select('id, category, gear_name, power, min_bid, phase, lot_order').order('id'),
     db.from('v_held_gear').select('agency_id, category, card_id, gear_name, power, price, phase, sale_id'),
     db.from('agencies').select('id, name, status, eliminated_in').order('id'),
@@ -97,6 +99,7 @@ export async function loadRound1(): Promise<Round1> {
     fundsStarted: (starts.count ?? 0) > 0,
     tipsClosesAt: (st.data?.tips_closes_at as string | null) ?? null,
     now: new Date().toISOString(),
+    screen: st.data?.r1_screen === 'news_recap' ? 'news_recap' : null,
     cards: (cards.data ?? []).map((c) => ({ ...c, min_bid: Number(c.min_bid) })) as Card[],
     sold: new Set((held.data ?? []).map((h) => h.card_id as string)),
     agencies: inRound1.map((a) => {

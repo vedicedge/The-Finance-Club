@@ -19,7 +19,7 @@ export const CHECKLIST: ChecklistSection[] = [
       {
         items: [
           'Merge the latest pull request on GitHub and wait until Vercel shows the new deployment as **Ready**.',
-          'In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (14 files; the last is `20261107001400_self_service_tips.sql`).',
+          'In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (15 files; the last is `20261107001500_news_recap.sql`).',
           'If the secret seed has never been run, run `supabase/private/seed_secrets.sql` once.',
           'Command centre → Seed data: every row says **OK**.',
           'Every crew member with a website job signs in once at `/admin/login`; an admin gives each their role in Crew & roles (quiz host, 2 ledger keepers, auctioneer, 2 scorers, social-media lead, anchor, 2 floaters).',
@@ -71,7 +71,7 @@ export const CHECKLIST: ChecklistSection[] = [
           'Marquee and Secret Identity Bids: record sales; the projector moves to the next lot. Try sales the site must refuse: below the minimum, above the fund left, not a ₹0.5 Cr step, a second card in the same category.',
           'Undo the last entry, and void a sale with a reason: the card returns to the auction and the money to the fund.',
           'Last Call, then Breaking News: reveal the headlines one at a time, then the Team-Ups.',
-          '**Apply Jugaad Kits & eliminations**, then **Lock Round 1**. Testers check gear, Power Level and fund left on My Agency, as at the real ledger check.',
+          '**Apply Jugaad Kits & eliminations**, then **Lock Round 1**. Press **Show all news & Team-Ups on the projector**: every headline and Team-Up, with who holds each card. Testers check gear, Power Level and fund left on My Agency, as at the real ledger check; then **Back to the normal view**.',
         ],
       },
       {

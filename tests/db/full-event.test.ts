@@ -92,7 +92,8 @@ const round1 = `
   select r1_reveal_team_ups();
   update event_state set step = 'ledger_check';
   select r1_apply_jugaad('${K}');
-  select r1_lock();`;
+  select r1_lock();
+  select r1_show_news_recap(true);`;
 
 /** Round 2: duels (side A wins), towers with distinct scores, publish the top 8. */
 const round2 = `
@@ -185,7 +186,7 @@ describe.skipIf(!hasDb || !hasSecrets)('the whole evening: dry run, reset, real 
         + (select count(*) from envelope_moves) + (select count(*) from envelope_contents) + (select count(*) from reveals)
         + (select count(*) from force_fields) + (select count(*) from xray_log);
       select 'chk reset event', phase, coalesce(step, '-'), prelim_published_at is null and prelim_frozen_at is null
-        and round1_locked_at is null and round2_published_at is null from event_state;
+        and round1_locked_at is null and round2_published_at is null and r1_screen is null and tips_closes_at is null from event_state;
       select 'chk reset catalogue', (select count(*) from questions where order_no is not null or status <> 'pending'),
         (select count(*) from breaking_news where draw_order is not null or revealed_at is not null),
         (select count(*) from team_ups where revealed_at is not null), (select count(*) from gear_cards where lot_order is not null),

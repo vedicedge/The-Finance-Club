@@ -118,6 +118,12 @@ My Agency in a 1-minute window.
   same card. The console lists each purchase as it lands (marked NEW for 20 s) with the card,
   for the record. An organiser can still record a tip for an agency during the Tips step, as a
   fallback (e.g. a dead phone).
+- **News recap** (requested 7 Nov 2026): the Breaking News panel of the Power Bazaar console has
+  *Show all news & Team-Ups on the projector*: one screen with all 6 headlines (card hit, who
+  holds it, the change) and the 3 Team-Ups (who holds both cards), so every agency can check its
+  Power Level. The database allows it only once every drawn headline and the Team-Ups are
+  revealed (locking Round 1 reveals any left); *Back to the normal view*, changing step or the
+  reset turns it off.
 - **Next round**: once a round is finished (top 16 frozen, Round 1 locked, Round 2 published,
   Mission 4 decided), its console and the command centre show *Start <next round> →* to admins.
   It moves only forward, one round at a time; the command centre's phase switcher remains for
