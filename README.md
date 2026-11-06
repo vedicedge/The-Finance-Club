@@ -20,7 +20,7 @@ Row Level Security), deployed on Vercel. The event name lives in one place: `lib
 | 3. Prelim quiz | 15 Nov | **Done** |
 | 4. Auction + ledger | 18 Nov | **Done** |
 | 5. Rounds 2–3, leaderboard, reveal | 21 Nov | **Done** |
-| 6. Dry run | 23 Nov | Next — **Dry run mode** is ready (command centre) |
+| 6. Dry run | 23 Nov | Next — **Dry run mode**, the [dry-run checklist](docs/dry-run-checklist.md) and printable backup sheets are ready |
 
 ## How the security works
 
@@ -109,7 +109,10 @@ Database tests: starts a throwaway local Postgres (needs the Postgres server bin
 `apt install postgresql`), applies every migration and the secret seed if present, and checks the
 security grants, append-only ledger, voids, founder rules, derived views (fund left, Power Level,
 Tower Score, Hero Score, envelope holders) and that the SQL scoring functions match the
-TypeScript ones for every tenth of a second.
+TypeScript ones for every tenth of a second. One test plays the whole evening through the
+database functions the consoles call: a dry run with test agencies, the reset that keeps
+registrations, then the real event with 18 agencies from the prelim to the last envelope.
+Tests that need the secret seed skip when it is not present.
 
 ## Project layout
 
@@ -121,9 +124,10 @@ app/                  pages and route handlers (App Router)
   api/quiz/           phone quiz state + answer endpoints; api/screen/ for the projector
   admin/              command centre: systems check, phase + alert, agencies & check-in,
                       quiz host console + CSV, Power Bazaar console, Fund Ledger,
-                      Round 2 and Round 3 consoles, settings (+ reset), crew & roles
+                      Round 2 and Round 3 consoles, settings (+ reset), crew & roles,
+                      print/ (A4 backup sheets and the dry-run checklist)
   auth/confirm/       where organiser sign-in links land
-components/           shared UI (skyline, threat bar, countdown, dossier, admin shell)
+components/           shared UI (skyline, threat bar, countdown, dossier, admin shell, print sheets)
 lib/
   config.ts           event name and round names (change the name here)
   scoring/            quiz, tower and hero maths (pure, unit-tested)
@@ -136,6 +140,7 @@ lib/
   round2/, round3/    Round 2 ranking (top 8) and loaders; Round 3 loader
   zero-hour*.ts       Hero Score ranking and the reveal loader
   leaderboard.ts      public leaderboard (public facts only)
+  print/              backup-sheet loaders (no secrets) and the dry-run checklist
   event-state.ts      live phase, alert and settings for every page
   auth/               roles, organiser auth, agency PINs and session tokens
   db/server.ts        service-role client (server-only)
@@ -144,5 +149,5 @@ supabase/
   private/            git-ignored event secrets (seed_secrets.sql)
 scripts/db/           local Postgres harness for the database tests
 tests/                unit/ and db/ tests
-docs/                 spec, decisions, design references
+docs/                 spec, decisions, dry-run checklist, design references
 ```

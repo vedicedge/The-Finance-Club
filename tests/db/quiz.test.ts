@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { agency, hasDb, sql, sqlError } from './helpers';
+import { agency, hasDb, hasSecrets, sql, sqlError } from './helpers';
 
 // These tests need the secret seed (questions + keys), which scripts/db/local-db.sh loads when present.
 const setup = `
@@ -14,7 +14,7 @@ const openedAgo = (q: string, s: number) =>
   `do $$ begin perform quiz_open_question('${q}'); end $$;
    update questions set opened_at = clock_timestamp() - interval '${s} seconds' where id = '${q}';`;
 
-describe.skipIf(!hasDb)('prelim quiz engine', () => {
+describe.skipIf(!hasDb || !hasSecrets)('prelim quiz engine', () => {
   it('shuffles the 15 live questions into slots 1–15, once', () => {
     expect(sql(`${setup}
       select count(*), min(order_no), max(order_no), count(distinct order_no) from questions where order_no is not null;

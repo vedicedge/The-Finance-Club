@@ -275,3 +275,133 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ==========================================================================
+   Printable backup sheets (/admin/print): black on white A4, whatever the site theme.
+   On screen each sheet is a white A4 card; in print the page margins come from @page, so a
+   long table that runs onto a second page keeps its margins and repeats its header row.
+   ========================================================================== */
+
+.grain:has(.paper)::after {
+  display: none;
+}
+.paper {
+  min-height: 100dvh;
+  padding-bottom: 32px;
+  background: #c9cecc;
+  color: #111;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 1.35;
+}
+.paper h1 {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.paper h2 {
+  margin-top: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.paper p,
+.paper li {
+  margin-top: 4px;
+}
+.paper ul,
+.paper ol {
+  padding-left: 18px;
+}
+.paper ul {
+  list-style: disc;
+}
+.paper ol {
+  list-style: decimal;
+}
+.paper table {
+  width: 100%;
+  margin-top: 6px;
+  border-collapse: collapse;
+}
+.paper thead {
+  display: table-header-group; /* repeat the header row on every printed page */
+}
+.paper tr {
+  break-inside: avoid;
+}
+.paper th,
+.paper td {
+  border: 1px solid #888;
+  padding: 4px 5px;
+  text-align: left;
+  vertical-align: top;
+}
+.paper th {
+  background: #eee;
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.paper td.blank,
+.paper tr.blank td {
+  height: 24px;
+}
+.paper .sheet {
+  width: 210mm;
+  max-width: 100%;
+  margin: 20px auto 0;
+  padding: 12mm;
+  overflow-x: auto;
+  background: #fff;
+  box-shadow: 0 1px 6px rgb(0 0 0 / 0.25);
+  break-after: page;
+}
+.paper .sheet:last-child {
+  break-after: auto;
+}
+.paper .avoid-break {
+  break-inside: avoid;
+}
+.paper .muted {
+  color: #555;
+}
+.paper .box::before {
+  content: '☐ ';
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+  html,
+  body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+  .paper {
+    min-height: 0;
+    padding: 0;
+    background: #fff;
+  }
+  .paper .sheet {
+    width: auto;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    box-shadow: none;
+  }
+  .paper th {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .grain::after,
+  .skip-link,
+  .no-print {
+    display: none !important;
+  }
+}

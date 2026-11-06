@@ -100,7 +100,7 @@ founder emails only, A4 PINs shown on screen only.
   Breaking News → Ledger check. Tips sell only in the Insider Tips step; sales are recorded only
   in Marquee (the 8 Marquee lots), Secret Identity Bids (the other 52) or Last Call (any unsold
   card). Every other ledger check is exactly the spec's table, enforced in the database.
-- **Lot order**: the 8 Marquee lots run in card order (H01, H02, S01 …); the 52 secret cards run
+- **Lot order**: the 8 Marquee lots run in card-ID order (G01, G02, H01, H02, K01 …); the 52 secret cards run
   one category at a time, categories and cards shuffled once before the first sale. Recording a
   sale of the lot on the projector moves the projector to the next lot.
 - **Breaking News draw**: entered in the console (6 cards in their sealed order) or drawn at
@@ -167,6 +167,18 @@ founder emails only, A4 PINs shown on screen only.
 - **After the rehearsal**: Settings → Danger zone → reset with "keep registrations" deletes the
   test agencies and puts every real agency back to "registered". Then End dry run mode.
 - Test agencies use placeholder contact details that can never clash with a real founder.
+
+## Printable backups (requested 6 Nov 2026)
+
+- **Command centre → Print & backups** (every crew role): black-on-white A4 sheets for check-in,
+  the Power Bazaar lot tally and fund tracker, a backup Fund Ledger, Round 2 duels and tower
+  scores, Round 3 deal/missions/transfers/fines and Zero Hour Hero Scores, plus the dry-run
+  checklist (`docs/dry-run-checklist.md`, generated from `lib/print/checklist.ts`).
+- Each sheet prefills what is already on the site (agencies, cards, sales, results) and leaves
+  the rest blank. Nothing secret is printed: no answer keys, multipliers, X-Ray targets, Insider
+  Tip cards or unrevealed Breaking News and Team-Ups; those tables are never read for printing.
+- Paper is a fallback only: every line written while the site is down is entered on the site
+  afterwards, so the Fund Ledger stays the one record.
 
 ## Secrets and the public repository
 
