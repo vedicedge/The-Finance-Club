@@ -33,6 +33,7 @@ export type PhoneState =
       published: boolean;
       frozen: boolean;
       rank: number | null;
+      dry_run?: boolean;
     };
 
 /** Seconds left on a question, using the server's clock (offset = server time − phone time). */

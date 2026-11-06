@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 import { requireOrganiser } from '@/lib/auth/organiser';
 import { AREAS, canAccess, type Area } from '@/lib/auth/roles';
 import { PHASES, PHASE_INFO, isPhase } from '@/lib/phases';
-import { setAlert, setPhase } from './actions';
+import { setAlert, setDryRun, setPhase } from './actions';
+import { parseSettings } from '@/lib/settings';
 import { serviceDb } from '@/lib/db/server';
 import { AdminShell } from '@/components/admin/AdminShell';
 
@@ -31,9 +32,9 @@ export default async function CommandCentre({ searchParams }: { searchParams: Pr
 
   const db = serviceDb();
   const [state, counts, agencyRows, crew] = await Promise.all([
-    db.from('event_state').select('phase, step, alert').maybeSingle(),
+    db.from('event_state').select('phase, step, alert, settings').maybeSingle(),
     Promise.all(EXPECTED.map((e) => count(e.table))),
-    db.from('agencies').select('status'),
+    db.from('agencies').select('status, is_test'),
     count('organisers'),
   ]);
   const statuses = (agencyRows.data ?? []).map((r) => r.status as string);
@@ -41,6 +42,8 @@ export default async function CommandCentre({ searchParams }: { searchParams: Pr
   const byStatus = (s: string) => statuses.filter((x) => x === s).length;
   const phase = isPhase(state.data?.phase) ? state.data.phase : 'registration';
   const isAdmin = canAccess(organiser.roles, 'settings');
+  const dryRun = parseSettings(state.data?.settings).dryRun.enabled;
+  const testCount = (agencyRows.data ?? []).filter((r) => r.is_test).length;
   const connected = !state.error;
   const allSeeded = EXPECTED.every((e, i) => counts[i] === e.expected);
   const secretsMissing = EXPECTED.some((e, i) => e.secret && counts[i] === 0);
@@ -81,6 +84,29 @@ export default async function CommandCentre({ searchParams }: { searchParams: Pr
           </dd>
         </div>
       </dl>
+
+      {isAdmin && connected && (
+        <section
+          className={`mt-10 flex flex-wrap items-center justify-between gap-4 rounded-sm border px-5 py-5 ${dryRun ? 'border-torch bg-torch/10' : 'border-line bg-vault'}`}
+        >
+          <div className="max-w-2xl">
+            <h2 className="eyebrow">Dry run mode · {dryRun ? <span className="text-torch">ON</span> : 'off'}</h2>
+            <p className="mt-2 text-sm text-bone/85">
+              For rehearsals with your team. While it is on, anyone can join on the register page by typing just their name:
+              a one-person test agency, no IMI email, checked in straight away, ready for the rounds. Real registrations keep
+              every rule and are never touched. Every page shows a DRY RUN banner.
+            </p>
+            {testCount > 0 && (
+              <p className="num mt-2 text-sm text-steel">
+                {testCount} test agenc{testCount === 1 ? 'y' : 'ies'} exist. Settings → Danger zone → reset (keep registrations) deletes them.
+              </p>
+            )}
+          </div>
+          <form action={setDryRun.bind(null, !dryRun)}>
+            <button className={`btn ${dryRun ? 'btn-ghost' : 'btn-primary'}`}>{dryRun ? 'End dry run mode' : 'Start dry run mode'}</button>
+          </form>
+        </section>
+      )}
 
       {isAdmin && connected && (
         <section className="mt-10 grid gap-4 lg:grid-cols-2">

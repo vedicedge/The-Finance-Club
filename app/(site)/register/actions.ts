@@ -59,3 +59,37 @@ export async function registerAgency(_prev: RegisterState, formData: FormData): 
   await startAgencySession(data, { single: false });
   return { kind: 'done', agencyId: data, agencyName: checked.value.agencyName, pin, captain: checked.value.founders[0].name };
 }
+
+export type QuickState =
+  | { kind: 'idle' }
+  | { kind: 'error'; message: string; name: string }
+  | { kind: 'done'; agencyId: string; agencyName: string; pin: string; captain: string };
+
+const NAME = /^[\p{L}\p{N}][\p{L}\p{N} '&.\-!]*$/u;
+
+/** Dry run only: a one-person test agency from just a name, signed in and checked in at once. */
+export async function registerTestAgency(_prev: QuickState, formData: FormData): Promise<QuickState> {
+  const name = String(formData.get('name') ?? '').trim().replace(/\s+/g, ' ');
+  if (String(formData.get('website') ?? '') !== '') return { kind: 'error', message: 'Signal interference. Try again.', name };
+  if (name.length < 2 || name.length > 40 || !NAME.test(name)) {
+    return { kind: 'error', message: 'Type your name: 2–40 letters or numbers.', name };
+  }
+  const pin = generatePin();
+  const { data, error } = await serviceDb().rpc('register_test_agency', { p_name: name, p_pin_hash: await hashPin(pin) });
+  if (error || typeof data !== 'string') {
+    const m = `${error?.message ?? ''} ${error?.hint ?? ''}`;
+    return {
+      kind: 'error',
+      name,
+      message: m.includes('agencies_name_key')
+        ? 'Someone already joined with that name. Add a surname or an initial.'
+        : m.includes('dry_run_started')
+          ? 'The dry run has started; new test agencies cannot join.'
+          : m.includes('dry_run_off')
+            ? 'Dry run mode is off.'
+            : 'Could not join. Try again.',
+    };
+  }
+  await startAgencySession(data, { single: false });
+  return { kind: 'done', agencyId: data, agencyName: name, pin, captain: name };
+}

@@ -3,12 +3,16 @@ import { EVENT } from '@/lib/config';
 import { AREAS, areasFor, ROLE_LABELS } from '@/lib/auth/roles';
 import type { Organiser } from '@/lib/auth/organiser';
 import { signOut } from '@/app/admin/login/actions';
+import { getEventState } from '@/lib/event-state';
+import { DryRunStrip } from '@/components/site/DryRunStrip';
 
 /** Header and navigation for organiser pages. Shows only the areas the organiser's roles allow. */
-export function AdminShell({ organiser, children }: { organiser: Organiser; children: React.ReactNode }) {
+export async function AdminShell({ organiser, children }: { organiser: Organiser; children: React.ReactNode }) {
   const areas = areasFor(organiser.roles).filter((a) => a !== 'screens');
+  const { settings } = await getEventState();
   return (
     <div className="min-h-dvh">
+      {settings.dryRun.enabled && <DryRunStrip />}
       <header className="border-b border-line bg-vault/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-[var(--gutter)] py-4">
           <Link href="/admin" className="display text-2xl text-bone">
@@ -40,3 +44,4 @@ export function AdminShell({ organiser, children }: { organiser: Organiser; chil
     </div>
   );
 }
+

@@ -154,6 +154,20 @@ founder emails only, A4 PINs shown on screen only.
   back to Registration, keeping registrations (agencies back to "registered") or deleting them.
   Settings, crew and the audit log stay.
 
+## Dry run mode (requested 6 Nov 2026)
+
+- **Command centre → Start dry run mode** (admin). While it is on, every page shows a DRY RUN
+  strip, and the register page asks only for a name: that creates a one-person **test agency**
+  (no IMI email, no section or phone), signs that phone in and checks the agency in, ready for the
+  rounds. Test agencies can join until the prelim starts, whatever the real deadline, flag or cap.
+- **Real registrations are untouched**: they still need exactly 3 founders and @imi.edu emails,
+  don't count test agencies against the cap of 60, don't appear on the dry run's boards, and are
+  never eliminated by it. The full form stays reachable at `/register?full=1` while registration
+  is open.
+- **After the rehearsal**: Settings → Danger zone → reset with "keep registrations" deletes the
+  test agencies and puts every real agency back to "registered". Then End dry run mode.
+- Test agencies use placeholder contact details that can never clash with a real founder.
+
 ## Secrets and the public repository
 
 The repository `vedicedge/The-Finance-Club` is public. The spec's Appendix A (questions and

@@ -43,7 +43,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
         </p>
         <label className="flex items-start gap-3 text-sm">
           <input type="radio" name="mode" value="keep" defaultChecked className="mt-1 accent-ember" />
-          <span>Keep registrations (agencies, founders and PINs stay; everyone goes back to &ldquo;registered&rdquo;)</span>
+          <span>Keep real registrations (agencies, founders and PINs stay; everyone goes back to &ldquo;registered&rdquo;). Dry-run test agencies are deleted.</span>
         </label>
         <label className="flex items-start gap-3 text-sm">
           <input type="radio" name="mode" value="all" className="mt-1 accent-ember" />

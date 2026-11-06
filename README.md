@@ -20,7 +20,7 @@ Row Level Security), deployed on Vercel. The event name lives in one place: `lib
 | 3. Prelim quiz | 15 Nov | **Done** |
 | 4. Auction + ledger | 18 Nov | **Done** |
 | 5. Rounds 2–3, leaderboard, reveal | 21 Nov | **Done** |
-| 6. Dry run | 23 Nov | Next |
+| 6. Dry run | 23 Nov | Next — **Dry run mode** is ready (command centre) |
 
 ## How the security works
 

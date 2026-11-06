@@ -23,6 +23,12 @@ describe('settings', () => {
     expect(parseSettings({ registration: {} }).registration.emailDomain).toBe('imi.edu');
   });
 
+  it('dry run mode is off unless switched on', () => {
+    expect(parseSettings({}).dryRun.enabled).toBe(false);
+    expect(parseSettings({ dry_run: { enabled: true } }).dryRun.enabled).toBe(true);
+    expect(serializeSettings(parseSettings({ dry_run: { enabled: true } })).dry_run).toEqual({ enabled: true });
+  });
+
   it('reads datetime-local input as India time', () => {
     expect(istLocalToIso('2026-11-25T17:30')).toBe('2026-11-25T17:30:00+05:30');
     expect(isoToIstLocal('2026-11-25T17:30:00+05:30')).toBe('2026-11-25T17:30');
