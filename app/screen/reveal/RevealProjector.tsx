@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState, useTransition } from 'react';
 import { EVENT, ROUNDS } from '@/lib/config';
 import { formatCrore } from '@/lib/money';
 import { Stage } from '@/components/screen/Stage';
+import { BoardColumns, BoardHeader } from '@/components/screen/BoardColumns';
 import type { RevealSlot } from '@/lib/zero-hour-server';
 import type { HeroRow } from '@/lib/zero-hour';
 import { nextReveal } from './actions';
@@ -141,16 +142,27 @@ function Final({ rows }: { rows: HeroRow[] }) {
         {runner && <p className="mt-[2cqh] text-[1.8cqw] text-steel">Runner-up: <span className="text-bone">{runner.agencyId} {runner.name}</span> · {fmt(runner.hero)}</p>}
         {coin.length > 0 && <p className="mt-[1.5cqh] text-[1.8cqw] text-ember">Still level after the tie-breaks: {coin.map((c) => c.agencyId).join(' and ')} — coin toss on stage.</p>}
       </div>
-      <ol className="mx-auto mt-auto grid w-full max-w-[70cqw] grid-flow-col grid-cols-2 grid-rows-4 gap-x-[4cqw]">
-        {rows.map((r) => (
+      <BoardColumns
+        className="mt-auto !max-w-[70cqw] mx-auto"
+        perColumn={4}
+        rows={rows}
+        header={
+          <BoardHeader className="!text-[0.95cqw]">
+            <span className="w-[3cqw]">#</span>
+            <span className="w-[4.4cqw]">ID</span>
+            <span className="flex-1">Agency</span>
+            <span className="w-[8cqw] text-right">Hero Score</span>
+          </BoardHeader>
+        }
+        renderRow={(r) => (
           <li key={r.agencyId} className="flex items-center gap-[1.2cqw] border-b border-line py-[1cqh] text-[1.7cqw]">
             <span className="num w-[3cqw] text-steel">{r.rank}</span>
             <span className="num w-[4.4cqw] font-semibold text-torch">{r.agencyId}</span>
             <span className="min-w-0 flex-1 truncate">{r.name}</span>
-            <span className="num font-semibold">{fmt(r.hero)}</span>
+            <span className="num w-[8cqw] text-right font-semibold">{fmt(r.hero)}</span>
           </li>
-        ))}
-      </ol>
+        )}
+      />
     </div>
   );
 }

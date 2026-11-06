@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { EVENT, ROUNDS } from '@/lib/config';
 import { formatCrore } from '@/lib/money';
 import { Stage } from '@/components/screen/Stage';
+import { BoardColumns, BoardHeader } from '@/components/screen/BoardColumns';
 
 type S = {
   phase: string;
@@ -187,27 +188,30 @@ function NewsView({ s }: { s: S }) {
 
 function BoardView({ s }: { s: S }) {
   const rows = s.board.slice(0, 16);
-  const cols = [rows.slice(0, 8), rows.slice(8, 16)];
+  const withFund = rows.some((r) => r.fund !== null);
   return (
     <div className="flex h-full flex-col px-[5cqw] pt-[10cqh] pb-[4cqh]">
-      <div className="flex items-end justify-between">
-        <h1 className="display text-[5cqw]">{s.locked ? 'Power Levels are final' : 'Ledger check'}</h1>
-        <p className="text-[1.4cqw] font-semibold tracking-[0.3em] text-steel uppercase">Power Level{rows.some((r) => r.fund !== null) ? ' · fund left' : ''}</p>
-      </div>
-      <div className="mt-[3cqh] grid flex-1 grid-cols-2 gap-x-[4cqw]">
-        {cols.map((col, ci) => (
-          <ol key={ci}>
-            {col.map((r) => (
-              <li key={r.id} className="flex items-center gap-[1.4cqw] border-b border-line py-[1.25cqh] text-[2cqw]">
-                <span className="num w-[5cqw] font-semibold text-torch">{r.id}</span>
-                <span className="min-w-0 flex-1 truncate">{r.name}</span>
-                <span className="num w-[5cqw] text-right font-semibold">{r.power}</span>
-                {r.fund !== null && <span className="num w-[9cqw] text-right text-steel">{formatCrore(r.fund)}</span>}
-              </li>
-            ))}
-          </ol>
-        ))}
-      </div>
+      <h1 className="display text-center text-[5cqw]">{s.locked ? 'Power Levels are final' : 'Ledger check'}</h1>
+      <BoardColumns
+        className="mt-[4cqh]"
+        rows={rows}
+        header={
+          <BoardHeader>
+            <span className="w-[5cqw]">ID</span>
+            <span className="flex-1">Agency</span>
+            <span className="w-[8cqw] text-right">Power</span>
+            {withFund && <span className="w-[10cqw] text-right">Fund left</span>}
+          </BoardHeader>
+        }
+        renderRow={(r) => (
+          <li key={r.id} className="flex items-center gap-[1.4cqw] border-b border-line py-[1.25cqh] text-[2cqw]">
+            <span className="num w-[5cqw] font-semibold text-torch">{r.id}</span>
+            <span className="min-w-0 flex-1 truncate">{r.name}</span>
+            <span className="num w-[8cqw] text-right font-semibold">{r.power}</span>
+            {withFund && <span className="num w-[10cqw] text-right text-steel">{r.fund !== null ? formatCrore(r.fund) : ''}</span>}
+          </li>
+        )}
+      />
     </div>
   );
 }
