@@ -50,3 +50,6 @@ next-env.d.ts
 /supabase/.temp/
 /supabase/.branches/
 /.local-db/
+scripts/db/safeupdate/*.o
+scripts/db/safeupdate/*.so
+scripts/db/safeupdate/*.bc

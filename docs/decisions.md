@@ -84,6 +84,9 @@ founder emails only, A4 PINs shown on screen only.
 - **Late answers.** An answer that reaches the server after T is recorded with 0 points (spec:
   "if t > T the answer scores 0") and the phone says so.
 - **Reveal waits for the timer**, so no agency's answering time can be cut short.
+- **A skipped reveal can't block the quiz.** If the host moves on without revealing a question,
+  its row in the live 15 (and the Publish panel) offers *Reveal*, and the next question opens only
+  once every finished question is revealed or voided.
 - **Void after reveal** is allowed (a disputed question) until the board is published.
 - **The order** of the live 15 is shuffled once by the host and can be re-shuffled only until
   question 1 opens.

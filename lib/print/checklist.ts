@@ -19,7 +19,7 @@ export const CHECKLIST: ChecklistSection[] = [
       {
         items: [
           'Merge the latest pull request on GitHub and wait until Vercel shows the new deployment as **Ready**.',
-          'In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (12 files; the last is `20261106001200_dry_run.sql`).',
+          'In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (13 files; the last is `20261106001300_where_clauses.sql`).',
           'If the secret seed has never been run, run `supabase/private/seed_secrets.sql` once.',
           'Command centre → Seed data: every row says **OK**.',
           'Every crew member with a website job signs in once at `/admin/login`; an admin gives each their role in Crew & roles (quiz host, 2 ledger keepers, auctioneer, 2 scorers, social-media lead, anchor, 2 floaters).',

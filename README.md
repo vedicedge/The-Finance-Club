@@ -112,7 +112,10 @@ Tower Score, Hero Score, envelope holders) and that the SQL scoring functions ma
 TypeScript ones for every tenth of a second. One test plays the whole evening through the
 database functions the consoles call: a dry run with test agencies, the reset that keeps
 registrations, then the real event with 18 agencies from the prelim to the last envelope.
-Tests that need the secret seed skip when it is not present.
+Tests that need the secret seed skip when it is not present. If the Postgres server headers are
+installed (`apt install postgresql-server-dev-16`), the test database also loads a stand-in for
+Supabase's `safeupdate` guard (`scripts/db/safeupdate`), which refuses an UPDATE or DELETE without
+a WHERE clause the way Supabase's API does; `npm test` also checks the migrations for that.
 
 ## Project layout
 
