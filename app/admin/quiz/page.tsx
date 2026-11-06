@@ -75,6 +75,14 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
   const frozen = Boolean(st?.prelim_frozen_at);
   const projector = st?.step === 'board' ? 'board' : st?.step === 'lobby' ? 'lobby' : 'question';
   const allRevealed = slots.every((s) => s.active?.revealed_at);
+  // Played slots whose timer has ended but whose answer was never revealed (e.g. the host moved on).
+  // They hold up both the next question and publishing until revealed (or voided).
+  const toReveal = slots
+    .map((s) => s.active)
+    .filter(
+      (q): q is QuestionRow =>
+        q !== null && q.opened_at !== null && !q.revealed_at && now >= Date.parse(q.opened_at) + q.timer_s * 1000,
+    );
 
   return (
     <AdminShell organiser={organiser}>
@@ -168,6 +176,20 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
               <button className="btn btn-primary w-full">Shuffle the live 15</button>
               <p className="mt-2 text-xs text-steel">Fixes one random order of the 15 live questions, the same for everyone.</p>
             </form>
+          ) : toReveal.length > 0 ? (
+            <div className="space-y-2">
+              {toReveal.map((q) => (
+                <form key={q.id} action={revealQuestion.bind(null, q.id)}>
+                  <button className="btn btn-primary w-full !min-h-14">
+                    Reveal answer · question {q.order_no} · {q.id}
+                  </button>
+                </form>
+              ))}
+              <p className="text-xs text-steel">
+                {next ? `Reveal first, then open question ${next.order_no}.` : 'Reveal it, then publish the final board.'} Phones show
+                right/wrong and points for a question only once it is revealed.
+              </p>
+            </div>
           ) : next ? (
             <form action={openQuestion.bind(null, next.id)}>
               <button disabled={running || phase !== 'prelim'} className="btn btn-primary w-full !min-h-14">
@@ -257,9 +279,14 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
                   <td className="py-2 text-right">
                     {q?.status === 'pending' && shuffled && (
                       <form action={openQuestion.bind(null, q.id)}>
-                        <button disabled={running || phase !== 'prelim'} className={`${small} btn-ghost`}>
+                        <button disabled={running || phase !== 'prelim' || toReveal.length > 0} className={`${small} btn-ghost`}>
                           Open
                         </button>
+                      </form>
+                    )}
+                    {q && toReveal.includes(q) && (
+                      <form action={revealQuestion.bind(null, q.id)}>
+                        <button className={`${small} btn-primary`}>Reveal</button>
                       </form>
                     )}
                   </td>
@@ -344,12 +371,27 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
           <div className="panel space-y-3 px-5 py-5">
             <h2 className="eyebrow">Publish &amp; freeze</h2>
             {!published ? (
-              <form action={publishBoard}>
-                <button disabled={!allRevealed} className="btn btn-primary w-full">
-                  Publish the final board
-                </button>
-                {!allRevealed && <p className="mt-2 text-xs text-steel">Unlocks when all 15 slots are revealed.</p>}
-              </form>
+              <>
+                <form action={publishBoard}>
+                  <button disabled={!allRevealed} className="btn btn-primary w-full">
+                    Publish the final board
+                  </button>
+                  {!allRevealed && <p className="mt-2 text-xs text-steel">Unlocks when all 15 slots are revealed.</p>}
+                </form>
+                {toReveal.length > 0 && (
+                  <div className="space-y-2 rounded-sm border border-torch/40 bg-torch/10 px-3 py-3 text-sm">
+                    <p className="text-torch">Not revealed yet:</p>
+                    {toReveal.map((q) => (
+                      <form key={q.id} action={revealQuestion.bind(null, q.id)} className="flex items-center justify-between gap-3">
+                        <span className="num">
+                          Question {q.order_no} · {q.id}
+                        </span>
+                        <button className={`${small} btn-primary`}>Reveal</button>
+                      </form>
+                    ))}
+                  </div>
+                )}
+              </>
             ) : frozen ? (
               <p className="text-sm text-toxic">Top 16 frozen. Phones now show “Qualified” or “Eliminated”.</p>
             ) : (
