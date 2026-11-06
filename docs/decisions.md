@@ -23,7 +23,8 @@ Decisions 6, 7 and 9 (puzzle content, slingshot props, poster posting time) do n
 
 Recorded at the top of `docs/event-spec.md`: A1 no Fan Club (no predictions, no Biggest Fan),
 A2 Round 2A duels voted on Instagram stories (`poster_duels.votes_a/votes_b`), A3 @imi.edu
-founder emails only, A4 PINs shown on screen only.
+founder emails only, A4 PINs shown on screen only, A5 (7 Nov) Insider Tips bought by agencies on
+My Agency in a 1-minute window.
 
 ## Website defaults (also settings)
 
@@ -109,9 +110,18 @@ founder emails only, A4 PINs shown on screen only.
 - **Breaking News draw**: entered in the console (6 cards in their sealed order) or drawn at
   random there; it cannot change once a tip has been sold. Headlines are revealed one at a time
   on the projector in the Breaking News step; locking Round 1 reveals any left, and the Team-Ups.
-- **Insider Tips**: the site picks one of the 6 drawn cards at random (setting); the ledger keeper
-  sees which, to hand over the matching sealed envelope; the agency sees it on its own My Agency
-  page ("eyes only"). Several agencies can draw the same card.
+- **Insider Tips** (amendment A5): the ledger keeper or auctioneer opens a 60-second window from the
+  console (it needs the starting funds credited and the Breaking News draw entered). The projector
+  counts down; each agency in the game buys one tip for ₹2 Cr on its My Agency page, with a
+  confirm step; the window is timed by the database. The site picks one of the 6 drawn cards at
+  random and shows it only on that agency's page ("eyes only"); several agencies can draw the
+  same card. The console lists each purchase as it lands (marked NEW for 20 s) with the card,
+  for the record. An organiser can still record a tip for an agency during the Tips step, as a
+  fallback (e.g. a dead phone).
+- **Next round**: once a round is finished (top 16 frozen, Round 1 locked, Round 2 published,
+  Mission 4 decided), its console and the command centre show *Start <next round> →* to admins.
+  It moves only forward, one round at a time; the command centre's phase switcher remains for
+  anything else.
 - **Close Round 1** is two buttons: *Apply Jugaad Kits & eliminations* (missing one category and
   ₹8 Cr in the fund → the next free Jugaad Kit row; missing two or more, or short of ₹8 Cr →
   eliminated in Round 1), then *Lock Round 1*, which refuses while anyone in the game still

@@ -51,6 +51,11 @@ export async function GET() {
       board: active
         .map((a) => ({ id: a.id, name: a.name, power: a.power.total, cards: a.power.cards, fund: showFunds ? a.fund : null }))
         .sort((a, b) => b.power - a.power || a.id.localeCompare(b.id)),
+      // The Insider Tips window: when it closes and how many tips were bought (never who or which card).
+      tips:
+        step === 'tips'
+          ? { closesAt: r1.tipsClosesAt, now: r1.now, sold: r1.agencies.filter((a) => a.tipNews).length }
+          : null,
       locked: r1.locked,
     },
     { headers },

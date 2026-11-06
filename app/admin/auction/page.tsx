@@ -3,15 +3,18 @@ import Link from 'next/link';
 import { requireOrganiser } from '@/lib/auth/organiser';
 import { canAccess } from '@/lib/auth/roles';
 import { formatCrore } from '@/lib/money';
-import { CATEGORIES, R1_STEPS, isR1Step } from '@/lib/round1/steps';
+import { CATEGORIES, R1_STEPS, TIPS_WINDOW_SECONDS, isR1Step } from '@/lib/round1/steps';
 import { lotPool, needing } from '@/lib/round1/lots';
 import { loadRound1 } from '@/lib/round1/server';
 import { AdminShell } from '@/components/admin/AdminShell';
 import { AutoRefresh } from '@/components/admin/AutoRefresh';
+import { WindowClock } from '@/components/site/WindowClock';
+import { NextPhase } from '@/components/admin/NextPhase';
 import {
   advanceLot,
   applyJugaad,
   buyTip,
+  openTipsWindow,
   lockRound1,
   recordSale,
   revealNextNews,
@@ -28,6 +31,7 @@ export const metadata: Metadata = { title: 'Power Bazaar console' };
 
 const small = 'btn !min-h-0 !px-3 !py-1.5 !text-xs';
 const select = 'field !mt-1';
+const istTime = new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit', second: '2-digit' });
 
 export default async function AuctionConsole({
   searchParams,
@@ -46,12 +50,19 @@ export default async function AuctionConsole({
   const sellable = step === 'marquee' || step === 'secret' || step === 'last_call';
   const drawn = r1.news.filter((n) => n.draw_order !== null).sort((a, b) => a.draw_order! - b.draw_order!);
   const tipsSold = r1.agencies.some((a) => a.tipNews);
+  const now = Date.parse(r1.now);
+  const tipsOpen = step === 'tips' && r1.tipsClosesAt !== null && Date.parse(r1.tipsClosesAt) > now;
+  // Newest first; "new" for 20 seconds so the console flags each purchase as it lands.
+  const tipBuyers = r1.agencies
+    .filter((a) => a.tipNews)
+    .sort((a, b) => (b.tipAt ?? '').localeCompare(a.tipAt ?? ''));
+  const isNew = (at: string | null) => at !== null && now - Date.parse(at) < 20_000;
   const lotsShuffled = r1.cards.some((c) => c.lot_order !== null);
   const pendingClose = active.filter((a) => a.missing.length > 0);
 
   return (
     <AdminShell organiser={organiser}>
-      <AutoRefresh ms={4000} />
+      <AutoRefresh ms={tipsOpen ? 2000 : 4000} />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">Round 1 · 50 min</p>
@@ -65,9 +76,12 @@ export default async function AuctionConsole({
 
       {sp.error && <p role="alert" className="mt-6 rounded-sm border border-ember/40 bg-ember/10 px-4 py-3 text-sm text-ember">Rejected: {sp.error}</p>}
       {sp.ok && <p role="status" className="mt-6 rounded-sm border border-toxic/40 bg-toxic/10 px-4 py-3 text-sm text-toxic">{sp.ok}</p>}
-      {r1.phase !== 'round1' && (
+      <NextPhase organiser={organiser} to="round1" />
+      <NextPhase organiser={organiser} to="round2" />
+      {r1.phase !== 'round1' && !r1.locked && (
         <p className="mt-6 rounded-sm border border-torch/40 bg-torch/10 px-4 py-3 text-sm text-torch">
-          The event is not in Round 1 yet. Freeze the top 16 in the quiz console, then an admin switches the phase to Round 1.
+          The event is not in Round 1 yet. Freeze the top 16 in the quiz console, then an admin starts Round 1 (button above, or
+          the command centre).
           You can already enter the Breaking News draw below.
         </p>
       )}
@@ -88,6 +102,54 @@ export default async function AuctionConsole({
             </form>
           ))}
         </nav>
+      )}
+
+      {r1.phase === 'round1' && !r1.locked && step === 'tips' && (
+        <section className={`mt-6 rounded-sm border px-5 py-4 ${tipsOpen ? 'border-torch bg-torch/10' : 'border-line bg-vault'}`}>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 className="eyebrow">Insider Tips · ₹2 Cr · bought by agencies on My Agency</h2>
+              {tipsOpen ? (
+                <p className="mt-1 text-bone">
+                  Window open · <WindowClock closesAt={r1.tipsClosesAt!} serverNow={r1.now} refreshOnClose className="text-2xl font-semibold text-torch" /> left
+                  · <span className="num">{tipBuyers.length}</span> bought
+                </p>
+              ) : (
+                <p className="mt-1 text-sm text-steel">
+                  {r1.tipsClosesAt ? 'The window has closed. ' : ''}Opening it shows a {TIPS_WINDOW_SECONDS}-second countdown on the projector and a
+                  Buy button on every agency’s My Agency page. The site picks one of the 6 drawn cards at random.
+                </p>
+              )}
+            </div>
+            {!tipsOpen && (
+              <form action={openTipsWindow}>
+                <button disabled={!r1.fundsStarted || drawn.length === 0} className="btn btn-primary">
+                  {r1.tipsClosesAt ? 'Reopen' : 'Open'} the {TIPS_WINDOW_SECONDS}-second window
+                </button>
+              </form>
+            )}
+          </div>
+          {(!r1.fundsStarted || drawn.length === 0) && !tipsOpen && (
+            <p className="mt-2 text-xs text-ember">
+              {!r1.fundsStarted ? 'Credit the starting funds first. ' : ''}
+              {drawn.length === 0 ? 'Enter the Breaking News draw first (below).' : ''}
+            </p>
+          )}
+          {tipBuyers.length > 0 && (
+            <ul className="mt-3 flex flex-wrap gap-2 text-sm">
+              {tipBuyers.map((a) => (
+                <li
+                  key={a.id}
+                  className={`rounded-sm border px-2.5 py-1 ${isNew(a.tipAt) ? 'border-toxic bg-toxic/15 text-toxic' : 'border-line text-bone'}`}
+                >
+                  {isNew(a.tipAt) && <span className="mr-1.5 text-[0.65rem] font-bold tracking-[0.15em]">NEW</span>}
+                  <span className="num font-semibold">{a.id}</span> {a.name}
+                  {a.tipAt && <span className="num ml-1.5 text-xs text-steel">{istTime.format(new Date(a.tipAt))}</span>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       )}
 
       {r1.phase === 'round1' && canMoney && !r1.fundsStarted && (
@@ -217,7 +279,10 @@ export default async function AuctionConsole({
       <section className="mt-6 grid gap-4 lg:grid-cols-2">
         {canMoney && r1.phase === 'round1' && !r1.locked && (
           <form action={buyTip} className="panel space-y-3 px-5 py-5">
-            <h2 className="eyebrow">Insider Tips · ₹2 Cr</h2>
+            <h2 className="eyebrow">Insider Tips · record for an agency</h2>
+            <p className="text-xs text-steel">
+              Fallback only, e.g. an agency whose phone died: agencies normally buy on My Agency during the window.
+            </p>
             <select name="agency" className={select} required>
               <option value="">Agency…</option>
               {active.filter((a) => !a.tipNews).map((a) => (
@@ -234,8 +299,11 @@ export default async function AuctionConsole({
             {step !== 'tips' && <p className="text-xs text-steel">Tips sell only in the Insider Tips step.</p>}
             {tipsSold && (
               <ul className="text-sm text-steel">
-                {r1.agencies.filter((a) => a.tipNews).map((a) => (
-                  <li key={a.id}><span className="num text-bone">{a.id}</span> → envelope {a.tipNews}</li>
+                {tipBuyers.map((a) => (
+                  <li key={a.id}>
+                    <span className="num text-bone">{a.id}</span> → card {a.tipNews}
+                    <span className="ml-1.5 text-xs">{a.tipSelf ? '(on My Agency)' : '(recorded by organiser)'}</span>
+                  </li>
                 ))}
               </ul>
             )}

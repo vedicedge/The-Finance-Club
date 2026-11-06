@@ -3,6 +3,7 @@ import { hasRole, requireOrganiser } from '@/lib/auth/organiser';
 import { formatBuildTime } from '@/lib/round2/tower-board';
 import { bestPoster, loadRound2 } from '@/lib/round2/server';
 import { AdminShell } from '@/components/admin/AdminShell';
+import { NextPhase } from '@/components/admin/NextPhase';
 import { drawPairings, publishRound2, saveCutoff, saveTower, saveVotes } from './actions';
 
 export const metadata: Metadata = { title: 'Operation: Skyline console' };
@@ -28,9 +29,12 @@ export default async function Round2Console({ searchParams }: { searchParams: Pr
       <h1 className="display mt-3 text-5xl">Operation: Skyline</h1>
       {sp.error && <p role="alert" className="mt-6 rounded-sm border border-ember/40 bg-ember/10 px-4 py-3 text-sm text-ember">Rejected: {sp.error}</p>}
       {sp.ok && <p role="status" className="mt-6 rounded-sm border border-toxic/40 bg-toxic/10 px-4 py-3 text-sm text-toxic">{sp.ok}</p>}
+      <NextPhase organiser={organiser} to="round2" />
+      <NextPhase organiser={organiser} to="round3" />
       {r2.phase !== 'round2' && !r2.published && (
         <p className="mt-6 rounded-sm border border-torch/40 bg-torch/10 px-4 py-3 text-sm text-torch">
-          The event is not in Round 2. Lock Round 1, then an admin switches the phase to Round 2.
+          The event is not in Round 2. Lock Round 1 on the Power Bazaar console, then an admin starts Round 2 (the button
+          appears here, or use the command centre).
         </p>
       )}
       {r2.published && (

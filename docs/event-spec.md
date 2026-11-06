@@ -18,6 +18,7 @@ These override the text below wherever they conflict.
 | A2 | **Round 2A poster duels are voted on Instagram stories** (not feed-post likes). The duel winner is rewarded; Round 2B (the tower game) decides who is eliminated. | The social-media lead types each duel's story-vote counts at the cutoff. The ₹5 Cr poster bonus rule is unchanged (winner or bye, credited only if it also makes the top 8). |
 | A3 | **IMI students only: every founder registers with an @imi.edu email.** | The register form reminds teams to use their IMI email ID; any other email is rejected (also enforced by the database). |
 | A4 | **PINs are shown on screen at registration only.** The admin emails them personally if needed. | No automatic email. PINs are stored scrambled, so a lost PIN is reset from the admin agencies page, which shows the new PIN once. |
+| A5 | **Insider Tips are bought by agencies themselves** (7 Nov 2026). The ledger keeper opens a 1-minute window shown on the projector; during it each agency in the game may buy one tip (₹2 Cr) on its My Agency page, and the site picks the card at random. | Self-service tips with a database-timed window; the console lists each purchase as it happens. Price, one-per-agency and the random card are unchanged. |
 
 Doomsday is the finance club's 3-hour intra-college event on **Nov 25, 2026**. 50+ agencies of
 3 founders start with a virtual ₹50 crore, and one surviving hero agency wins Mahanagar. This

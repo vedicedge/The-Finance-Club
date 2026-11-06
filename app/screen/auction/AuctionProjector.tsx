@@ -5,6 +5,7 @@ import { EVENT, ROUNDS } from '@/lib/config';
 import { formatCrore } from '@/lib/money';
 import { Stage } from '@/components/screen/Stage';
 import { BoardColumns, BoardHeader } from '@/components/screen/BoardColumns';
+import { WindowClock } from '@/components/site/WindowClock';
 
 type S = {
   phase: string;
@@ -18,6 +19,7 @@ type S = {
   news: { id: string; headline: string; affects: string; delta: number }[];
   teamUps: { name: string; bonus: number }[];
   board: { id: string; name: string; power: number; cards: number; fund: number | null }[];
+  tips: null | { closesAt: string | null; now: string; sold: number };
   locked: boolean;
 };
 
@@ -66,10 +68,7 @@ export function AuctionProjector({ stateUrl = '/api/screen/auction' }: { stateUr
       ) : step === 'ledger_check' || step === 'locked' ? (
         <BoardView s={s} />
       ) : step === 'tips' ? (
-        <Center title="Insider Tips">
-          <p className="mt-[3cqh] text-[2.4cqw] text-bone">₹2 Cr buys one sealed tip.</p>
-          <p className="mt-[1cqh] text-[1.8cqw] text-steel">It privately reveals one Breaking News card that will really be played. One per agency.</p>
-        </Center>
+        <TipsView s={s} />
       ) : (
         <Center title={ROUNDS.round1}>
           <ul className="mt-[4cqh] space-y-[1.2cqh] text-[2cqw] text-bone">
@@ -82,6 +81,35 @@ export function AuctionProjector({ stateUrl = '/api/screen/auction' }: { stateUr
       )}
       {error && s && <p className="absolute right-[2cqw] bottom-[1.5cqh] text-[1.2cqw] font-semibold tracking-[0.2em] text-ember uppercase">{error}</p>}
     </Stage>
+  );
+}
+
+function TipsView({ s }: { s: S }) {
+  const t = s.tips;
+  const open = t?.closesAt ? Date.parse(t.closesAt) > Date.parse(t.now) : false;
+  return (
+    <Center title="Insider Tips">
+      {open && t?.closesAt ? (
+        <>
+          <WindowClock closesAt={t.closesAt} serverNow={t.now} className="mt-[1cqh] block text-[13cqw] leading-none font-semibold text-torch" />
+          <p className="mt-[3cqh] text-[2.4cqw] text-bone">Buy now on your My Agency page · ₹2 Cr · one per agency</p>
+          <p className="mt-[1cqh] text-[1.8cqw] text-steel">
+            See one Breaking News headline before it is announced. <span className="num text-bone">{t.sold}</span> bought so far.
+          </p>
+        </>
+      ) : (
+        <>
+          <p className="mt-[3cqh] text-[2.4cqw] text-bone">
+            {t?.closesAt ? 'The window has closed.' : '₹2 Cr buys one tip, on your My Agency page.'}
+          </p>
+          <p className="mt-[1cqh] text-[1.8cqw] text-steel">
+            {t?.closesAt
+              ? `${t.sold} tip${t.sold === 1 ? '' : 's'} bought.`
+              : 'It privately reveals one Breaking News card that will really be played. One per agency.'}
+          </p>
+        </>
+      )}
+    </Center>
   );
 }
 

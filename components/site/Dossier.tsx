@@ -4,6 +4,7 @@ import type { AgencySession } from '@/lib/auth/agency';
 import type { DossierData } from '@/lib/agency-view';
 import { formatCrore } from '@/lib/money';
 import { REASON_LABEL, ledgerTime } from '@/lib/ledger';
+import { BuyTip } from '@/components/site/BuyTip';
 
 export type DossierFounder = { name: string; section: string; is_captain: boolean };
 
@@ -151,6 +152,10 @@ export function Dossier({
           </section>
         ) : (
           <Sealed eyebrow={`Round 1 · ${ROUNDS.round1}`} title="Fund left and ledger" unlocks="your ₹50 Cr arrives at Power Bazaar" />
+        )}
+
+        {data?.tipsWindow && !data.tip && agency.status === 'active' && (
+          <BuyTip closesAt={data.tipsWindow.closesAt} serverNow={data.tipsWindow.serverNow} fund={data.fund} />
         )}
 
         {data?.tip && (

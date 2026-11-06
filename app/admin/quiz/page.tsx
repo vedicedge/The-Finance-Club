@@ -9,6 +9,7 @@ import { OPTION_LETTERS } from '@/lib/quiz/types';
 import { loadAnswerCounts, loadAnswerKeys, loadBoard, loadQuestions, type QuestionRow } from '@/lib/quiz/server';
 import { AdminShell } from '@/components/admin/AdminShell';
 import { AutoRefresh } from '@/components/admin/AutoRefresh';
+import { NextPhase } from '@/components/admin/NextPhase';
 import {
   applySpare,
   freezeTop16,
@@ -107,6 +108,7 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
           Signal interference: {error}
         </p>
       )}
+      <NextPhase organiser={organiser} to="round1" />
       {phase !== 'prelim' && (
         <p className="mt-6 rounded-sm border border-torch/40 bg-torch/10 px-4 py-3 text-sm text-torch">
           The event is in <strong>{PHASE_INFO[phase].label}</strong>. Questions can only be opened in the Prelim phase; an

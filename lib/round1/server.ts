@@ -16,6 +16,9 @@ export type R1Agency = {
   held: Partial<Record<Category, Holding>>;
   missing: Category[];
   tipNews: string | null;
+  /** When the tip was bought, and whether the agency bought it itself on My Agency. */
+  tipAt: string | null;
+  tipSelf: boolean;
 };
 export type News = { id: string; headline: string; affects_gear: string; delta: number; draw_order: number | null; revealed_at: string | null };
 export type TeamUp = { id: number; name: string; gear_a: string; gear_b: string; bonus: number; revealed_at: string | null };
@@ -29,6 +32,10 @@ export type Round1 = {
   locked: boolean;
   settings: EventSettings;
   fundsStarted: boolean;
+  /** End of the self-service Insider Tips window (database time), if one was opened. */
+  tipsClosesAt: string | null;
+  /** Server time when this was loaded, for countdowns. */
+  now: string;
   cards: Card[];
   sold: Set<string>;
   agencies: R1Agency[]; // every agency that reached Round 1 (active, or eliminated in round 1 or later)
@@ -44,13 +51,13 @@ export type Round1 = {
 export async function loadRound1(): Promise<Round1> {
   const db = serviceDb();
   const [st, cards, held, agencies, funds, power, tips, news, teamUps, starts, sales] = await Promise.all([
-    db.from('event_state').select('phase, step, current_card_id, prelim_frozen_at, round1_locked_at, settings').single(),
+    db.from('event_state').select('phase, step, current_card_id, prelim_frozen_at, round1_locked_at, tips_closes_at, settings').single(),
     db.from('gear_cards').select('id, category, gear_name, power, min_bid, phase, lot_order').order('id'),
     db.from('v_held_gear').select('agency_id, category, card_id, gear_name, power, price, phase, sale_id'),
     db.from('agencies').select('id, name, status, eliminated_in').order('id'),
     db.from('v_fund_left').select('agency_id, fund_left'),
     db.from('v_power_level').select('agency_id, cards, gear_power, team_up_bonus, news_delta, power_level'),
-    db.from('insider_tips').select('agency_id, news_id').is('voided_at', null),
+    db.from('insider_tips').select('agency_id, news_id, created_at, created_by').is('voided_at', null),
     db.from('breaking_news').select('id, headline, affects_gear, delta, draw_order, revealed_at').order('id'),
     db.from('team_ups').select('id, name, gear_a, gear_b, bonus, revealed_at').order('id'),
     db.from('v_ledger').select('id', { count: 'exact', head: true }).eq('reason', 'start_fund').eq('voided', false),
@@ -66,6 +73,7 @@ export async function loadRound1(): Promise<Round1> {
   const fundOf = new Map((funds.data ?? []).map((f) => [f.agency_id as string, Number(f.fund_left)]));
   const powerOf = new Map((power.data ?? []).map((p) => [p.agency_id as string, p]));
   const tipOf = new Map((tips.data ?? []).map((t) => [t.agency_id as string, t.news_id as string]));
+  const tipRow = new Map((tips.data ?? []).map((t) => [t.agency_id as string, t as { created_at: string; created_by: string | null }]));
   const heldOf = new Map<string, Partial<Record<Category, Holding>>>();
   for (const h of held.data ?? []) {
     const m = heldOf.get(h.agency_id) ?? {};
@@ -87,6 +95,8 @@ export async function loadRound1(): Promise<Round1> {
     locked: Boolean(st.data?.round1_locked_at),
     settings: parseSettings(st.data?.settings),
     fundsStarted: (starts.count ?? 0) > 0,
+    tipsClosesAt: (st.data?.tips_closes_at as string | null) ?? null,
+    now: new Date().toISOString(),
     cards: (cards.data ?? []).map((c) => ({ ...c, min_bid: Number(c.min_bid) })) as Card[],
     sold: new Set((held.data ?? []).map((h) => h.card_id as string)),
     agencies: inRound1.map((a) => {
@@ -104,6 +114,8 @@ export async function loadRound1(): Promise<Round1> {
         held: h,
         missing: CATEGORIES.filter((c) => !h[c]),
         tipNews: tipOf.get(a.id) ?? null,
+        tipAt: tipRow.get(a.id)?.created_at ?? null,
+        tipSelf: tipRow.has(a.id) && tipRow.get(a.id)?.created_by === null,
       };
     }),
     news: (news.data ?? []) as News[],

@@ -6,6 +6,7 @@ import { setAlert, setDryRun, setPhase } from './actions';
 import { parseSettings } from '@/lib/settings';
 import { serviceDb } from '@/lib/db/server';
 import { AdminShell } from '@/components/admin/AdminShell';
+import { NextPhase } from '@/components/admin/NextPhase';
 
 export const metadata: Metadata = { title: 'Command centre' };
 
@@ -26,9 +27,9 @@ async function count(table: string): Promise<number | null> {
   return error ? null : (n ?? 0);
 }
 
-export default async function CommandCentre({ searchParams }: { searchParams: Promise<{ denied?: string }> }) {
+export default async function CommandCentre({ searchParams }: { searchParams: Promise<{ denied?: string; error?: string }> }) {
   const organiser = await requireOrganiser('dashboard');
-  const { denied } = await searchParams;
+  const { denied, error } = await searchParams;
 
   const db = serviceDb();
   const [state, counts, agencyRows, crew] = await Promise.all([
@@ -56,7 +57,16 @@ export default async function CommandCentre({ searchParams }: { searchParams: Pr
         </p>
       )}
 
-      <p className="eyebrow">Systems check</p>
+      {error && (
+        <p role="alert" className="mb-8 rounded-sm border border-ember/40 bg-ember/10 px-4 py-3 text-sm text-ember">
+          {error}
+        </p>
+      )}
+      {(['round1', 'round2', 'round3', 'zero_hour'] as const).map((to) => (
+        <NextPhase key={to} organiser={organiser} to={to} />
+      ))}
+
+      <p className="eyebrow mt-8">Systems check</p>
       <h1 className="display mt-3 text-5xl">
         {connected && allSeeded ? 'All systems armed.' : 'Systems coming online.'}
       </h1>
