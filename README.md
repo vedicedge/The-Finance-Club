@@ -19,8 +19,8 @@ Row Level Security), deployed on Vercel. The event name lives in one place: `lib
 | 2. Public site + registration | 11 Nov | **Done** |
 | 3. Prelim quiz | 15 Nov | **Done** |
 | 4. Auction + ledger | 18 Nov | **Done** |
-| 5. Rounds 2–3, leaderboard, reveal | 21 Nov | Next |
-| 6. Dry run | 23 Nov | |
+| 5. Rounds 2–3, leaderboard, reveal | 21 Nov | **Done** |
+| 6. Dry run | 23 Nov | Next |
 
 ## How the security works
 
@@ -117,11 +117,11 @@ TypeScript ones for every tenth of a second.
 app/                  pages and route handlers (App Router)
   (site)/             public site: landing, rounds, rules, schedule, register, login, My Agency
   play/               phone quiz screen
-  screen/quiz/        prelim projector (16:9); screen/auction/ for Power Bazaar
+  screen/              projectors (16:9): quiz/, auction/, board/, reveal/
   api/quiz/           phone quiz state + answer endpoints; api/screen/ for the projector
   admin/              command centre: systems check, phase + alert, agencies & check-in,
                       quiz host console + CSV, Power Bazaar console, Fund Ledger,
-                      settings, crew & roles
+                      Round 2 and Round 3 consoles, settings (+ reset), crew & roles
   auth/confirm/       where organiser sign-in links land
 components/           shared UI (skyline, threat bar, countdown, dossier, admin shell)
 lib/
@@ -133,6 +133,9 @@ lib/
   round1/             Power Bazaar steps, lot order, Round 1 loader
   ledger.ts           running balance and ledger labels
   agency-view.ts      what an agency sees about itself on My Agency
+  round2/, round3/    Round 2 ranking (top 8) and loaders; Round 3 loader
+  zero-hour*.ts       Hero Score ranking and the reveal loader
+  leaderboard.ts      public leaderboard (public facts only)
   event-state.ts      live phase, alert and settings for every page
   auth/               roles, organiser auth, agency PINs and session tokens
   db/server.ts        service-role client (server-only)

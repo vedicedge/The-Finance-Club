@@ -121,6 +121,39 @@ founder emails only, A4 PINs shown on screen only.
 - **Funds on the projector** stay hidden until Round 1 locks (open decision 4), unless the
   setting shows them.
 
+## Rounds 2–3, leaderboard and Zero Hour (Milestone 5)
+
+- **Round 2 roles.** The social-media lead draws the duel pairings (random; one bye for an odd
+  number; redraw allowed until votes are in) and types the story-vote counts at the cutoff; a tie
+  needs the rock-paper-scissors winner. Scorers enter tower measurements (build time as m:ss, or
+  DNF = 10:00 and Speed 0) and publish. A tie at 8th place is settled by the announced method and
+  entered as an order; publishing refuses until it is.
+- **Publishing Round 2** keeps the top 8, eliminates the rest in Round 2, and credits +₹5 Cr to
+  each duel winner or bye that made the top 8. Best Launch Poster (most story votes) is shown as
+  recognition only.
+- **Multiplier map**: entered on the Round 3 console by an admin only, checked against the spec's
+  distribution, and never sent to any screen until that envelope is opened.
+- **The deal** records which finalist holds which envelope; it can be redone until the first
+  Force Field, winner or choice.
+- **Mission cycle**: Force Field → Play → Results → Winner's choice → Chai Pe Charcha, moved by
+  ledger keepers or scorers. Force Fields only in their window; swaps refuse a protected target;
+  transfers only in a Chai Pe Charcha window (missions 1–3). Mission 4's choice is made at the
+  start of Zero Hour and must be made before the first envelope opens.
+- **Undo a choice** before the reveal: a swap is voided (envelopes go back), cash is voided. An
+  X-Ray cannot be un-seen, so its secret log row stays.
+- **Fines** always apply (a fund can go below zero), as before.
+- **Zero Hour**: the anchor clicks *Next envelope* (or presses →) on the reveal screen; envelopes
+  open in ascending Power Level, ties by agency ID. After the eighth, the final ranking applies
+  open decision 3 (higher fund left, then higher Power Level); if still level for 1st or 2nd, the
+  screen calls a coin toss on stage.
+- **Public leaderboard** shows only public facts: prelim board (after publishing), Power Levels and
+  status (funds hidden until Round 1 locks unless the setting shows them), Tower Scores and the
+  top 8 (after publishing), the mission log (swap targets yes, X-Ray targets never) and Hero Scores
+  as envelopes open. It is cached at the edge for 4 seconds.
+- **Reset** (Settings → Danger zone, admin, type RESET): clears all game data and puts the event
+  back to Registration, keeping registrations (agencies back to "registered") or deleting them.
+  Settings, crew and the audit log stay.
+
 ## Secrets and the public repository
 
 The repository `vedicedge/The-Finance-Club` is public. The spec's Appendix A (questions and

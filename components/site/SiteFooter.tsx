@@ -14,6 +14,7 @@ export function SiteFooter() {
           <Link href="/rounds" className="hover:text-torch">Rounds</Link>
           <Link href="/rules" className="hover:text-torch">Rules &amp; FAQ</Link>
           <Link href="/schedule" className="hover:text-torch">Schedule</Link>
+          <Link href="/leaderboard" className="hover:text-torch">Leaderboard</Link>
           <Link href="/login" className="hover:text-torch">Agency login</Link>
           <Link href="/admin/login" className="hover:text-torch">Crew</Link>
         </nav>

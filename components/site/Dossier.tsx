@@ -209,8 +209,93 @@ export function Dossier({
           <Sealed eyebrow="Gear" title="Cards, Team-Ups and Power Level" unlocks="your first card is signed" />
         )}
 
-        <Sealed eyebrow={`Round 2 · ${ROUNDS.round2}`} title="Poster duel and Tower Score" unlocks="Round 2 results are published" />
-        <Sealed eyebrow={`Round 3 · ${ROUNDS.round3}`} title="Mission File and Force Fields" unlocks="the envelopes are dealt" />
+        {data?.round2.duel || data?.round2.tower ? (
+          <section className="panel px-5 py-5">
+            <p className="eyebrow">Round 2 · {ROUNDS.round2}</p>
+            {data.round2.duel && (
+              <p className="mt-2 text-bone">
+                Poster duel:{' '}
+                {data.round2.duel.opponent ? (
+                  <>vs <span className="num text-torch">{data.round2.duel.opponent}</span> {data.round2.duel.opponentName}</>
+                ) : (
+                  'a bye (counts as a win)'
+                )}
+                {data.round2.published && data.round2.duel.mine !== null && (
+                  <span className="num block text-sm text-steel">
+                    Story votes {data.round2.duel.mine}
+                    {data.round2.duel.opponent ? ` – ${data.round2.duel.theirs}` : ''} · {data.round2.duel.won ? 'won' : 'lost'}
+                  </span>
+                )}
+              </p>
+            )}
+            {data.round2.tower ? (
+              <>
+                <p className="num mt-4 text-4xl font-semibold text-torch">{data.round2.tower.score.toFixed(2)}</p>
+                <p className="num mt-1 text-sm text-steel">
+                  Accuracy {data.round2.tower.a.toFixed(1)} · Speed {data.round2.tower.s.toFixed(1)} · Destruction {data.round2.tower.d.toFixed(1)} · rank #{data.round2.tower.rank}
+                </p>
+                <p className={`stamp mt-4 ${data.round2.tower.qualified ? 'text-toxic' : 'text-ember'}`}>
+                  {data.round2.tower.qualified ? 'Top 8 · into the Vault' : 'Eliminated · Round 2'}
+                </p>
+                {data.round2.bonus && <p className="mt-3 text-sm text-toxic">+₹5 Cr poster bonus credited.</p>}
+              </>
+            ) : (
+              <p className="mt-3 text-sm text-steel">Tower Score and the top 8 appear once Round 2 results are published.</p>
+            )}
+          </section>
+        ) : (
+          <Sealed eyebrow={`Round 2 · ${ROUNDS.round2}`} title="Poster duel and Tower Score" unlocks="Round 2 results are published" />
+        )}
+
+        {data?.round3.envelope ? (
+          <section className="panel px-5 py-5">
+            <p className="eyebrow">Round 3 · {ROUNDS.round3}</p>
+            <p className="mt-2 flex items-baseline gap-3">
+              <span className="num text-5xl font-semibold text-torch">{data.round3.envelope}</span>
+              <span className="text-sm text-steel">your Mission File · keep it sealed</span>
+            </p>
+            {data.round3.currentMission && (
+              <p className="mt-2 text-sm">
+                Mission {data.round3.currentMission}:{' '}
+                {data.round3.forceFields.includes(data.round3.currentMission) ? (
+                  <span className="text-toxic">Force Field up</span>
+                ) : (
+                  <span className="text-steel">no Force Field</span>
+                )}
+              </p>
+            )}
+            {data.round3.swaps.length > 0 && (
+              <ul className="mt-3 space-y-1 text-sm text-steel">
+                {data.round3.swaps.map((sw, i) => (
+                  <li key={i}>Mission {sw.mission}: swapped {sw.gave} for {sw.got} with <span className="num text-bone">{sw.with}</span></li>
+                ))}
+              </ul>
+            )}
+            <div className="mt-4 grid grid-cols-3 gap-px overflow-hidden rounded-sm border border-line bg-line text-center">
+              <div className="bg-vault-2 px-2 py-3">
+                <p className="eyebrow !text-[0.6rem]">Power</p>
+                <p className="num mt-1 text-xl text-bone">{data.power.total}</p>
+              </div>
+              <div className="bg-vault-2 px-2 py-3">
+                <p className="eyebrow !text-[0.6rem]">Outcome</p>
+                <p className="num mt-1 text-xl text-bone">{data.hero ? `×${data.hero.multiplier}` : '██'}</p>
+              </div>
+              <div className="bg-vault-2 px-2 py-3">
+                <p className="eyebrow !text-[0.6rem]">Fund ÷ 2</p>
+                <p className="num mt-1 text-xl text-bone">{(data.fund / 2).toFixed(2).replace(/\.?0+$/, '')}</p>
+              </div>
+            </div>
+            {data.hero ? (
+              <p className="mt-4 text-bone">
+                {data.hero.outcome} · Hero Score <span className="num text-2xl font-semibold text-torch">{Number.isInteger(data.hero.hero) ? data.hero.hero : data.hero.hero.toFixed(2)}</span>
+              </p>
+            ) : (
+              <p className="mt-3 text-xs text-steel">The Battle Outcome stays classified until your envelope opens at Zero Hour.</p>
+            )}
+          </section>
+        ) : (
+          <Sealed eyebrow={`Round 3 · ${ROUNDS.round3}`} title="Mission File and Force Fields" unlocks="the envelopes are dealt" />
+        )}
       </div>
 
       <div className="mt-10">{signOut}</div>
