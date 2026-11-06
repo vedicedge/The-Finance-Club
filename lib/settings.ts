@@ -24,7 +24,7 @@ export type EventSettings = {
     maxAgencies: number;
   };
   event: { startsAt: string; venue: string };
-  prelim: { requiresCheckin: boolean };
+  prelim: { requiresCheckin: boolean; leadInSeconds: number };
   round1: { showFundPublicly: boolean; insiderTipAssignment: 'random' | 'manual' };
   round2: { cutoffTiebreak: string };
   zeroHour: { heroTiebreak: HeroTiebreak[]; revealOrderTiebreak: 'agency_id' };
@@ -43,7 +43,7 @@ export const DEFAULT_SETTINGS: EventSettings = {
     maxAgencies: 60,
   },
   event: { startsAt: '2026-11-25T17:30:00+05:30', venue: 'Auditorium' },
-  prelim: { requiresCheckin: true },
+  prelim: { requiresCheckin: true, leadInSeconds: 3 },
   round1: { showFundPublicly: false, insiderTipAssignment: 'random' },
   round2: { cutoffTiebreak: 'Rock-paper-scissors' },
   zeroHour: { heroTiebreak: ['fund_left', 'power_level', 'coin_toss'], revealOrderTiebreak: 'agency_id' },
@@ -87,7 +87,10 @@ export function parseSettings(raw: unknown): EventSettings {
       maxAgencies: int(reg.max_agencies, d.registration.maxAgencies, 1, 999),
     },
     event: { startsAt: isoTime(ev.starts_at, d.event.startsAt), venue: str(ev.venue, d.event.venue) },
-    prelim: { requiresCheckin: bool(pre.requires_checkin, d.prelim.requiresCheckin) },
+    prelim: {
+      requiresCheckin: bool(pre.requires_checkin, d.prelim.requiresCheckin),
+      leadInSeconds: int(pre.lead_in_seconds, d.prelim.leadInSeconds, 0, 10),
+    },
     round1: {
       showFundPublicly: bool(r1.show_fund_publicly, d.round1.showFundPublicly),
       insiderTipAssignment: r1.insider_tip_assignment === 'manual' ? 'manual' : 'random',
@@ -118,7 +121,7 @@ export function serializeSettings(s: EventSettings): Json {
       max_agencies: s.registration.maxAgencies,
     },
     event: { starts_at: s.event.startsAt, venue: s.event.venue },
-    prelim: { requires_checkin: s.prelim.requiresCheckin },
+    prelim: { requires_checkin: s.prelim.requiresCheckin, lead_in_seconds: s.prelim.leadInSeconds },
     round1: { show_fund_publicly: s.round1.showFundPublicly, insider_tip_assignment: s.round1.insiderTipAssignment },
     round2: { cutoff_tiebreak: s.round2.cutoffTiebreak },
     zero_hour: { hero_tiebreak: s.zeroHour.heroTiebreak, reveal_order_tiebreak: s.zeroHour.revealOrderTiebreak },

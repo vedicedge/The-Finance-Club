@@ -30,6 +30,7 @@ founder emails only, A4 PINs shown on screen only.
 | Topic | Default | Setting |
 |---|---|---|
 | Must an agency be checked in to play the prelim? | Yes | `prelim.requires_checkin` |
+| Read-in before each question's clock starts | 3 seconds | `prelim.lead_in_seconds` (0–10) |
 | Insider Tip: which drawn news card it reveals | Site picks one of the 6 drawn cards at random; shown only on that agency's My Agency page | `round1.insider_tip_assignment` (`random` / `manual`) |
 | Reveal order when Power Levels tie | Agency ID order | `zero_hour.reveal_order_tiebreak` |
 | PIN brute-force protection | 5 wrong PINs → 60 s lock for that agency ID | `security.pin_max_attempts`, `.pin_lock_seconds` |
@@ -64,6 +65,32 @@ founder emails only, A4 PINs shown on screen only.
 - **/schedule** page added (asked for in the brief; not in the spec's page list).
 - **PIN delivery** (amendment A4): shown once on the registration confirmation; never emailed by
   the site. A lost PIN is reset by an organiser, and the new PIN is shown once to pass on.
+
+## Prelim quiz (Milestone 3)
+
+- **Read-in.** When the host opens a question, the projector and every phone show it with a
+  3-2-1 countdown; answers are accepted, and t is measured, only from the end of the countdown
+  (`opened_at`, database time). Phones on crowded Wi-Fi receive the question up to a second
+  apart, so starting the clock on the host's click would penalise slow connections. The formula,
+  T and W are unchanged.
+- **Live updates by polling, not Realtime.** Phones poll every second while a question is live
+  (two when idle) and the projector every second. The read-in makes a one-second polling delay
+  irrelevant to scoring, polling survives Wi-Fi drops without reconnect logic, and it keeps the
+  Supabase client library off cheap phones. Realtime can still be added later if wanted.
+- **Correctness stays in the database.** The answer is marked and scored inside the database
+  when it is locked; the phone is told only "locked" (or "late"). Right/wrong, points and the
+  correct option reach a phone only after the host reveals the question, and the phone's running
+  total counts revealed questions only (otherwise a jump in the total would give the answer away).
+- **Late answers.** An answer that reaches the server after T is recorded with 0 points (spec:
+  "if t > T the answer scores 0") and the phone says so.
+- **Reveal waits for the timer**, so no agency's answering time can be cut short.
+- **Void after reveal** is allowed (a disputed question) until the board is published.
+- **The order** of the live 15 is shuffled once by the host and can be re-shuffled only until
+  question 1 opens.
+- **Sudden death** is shown on the projector from the host console; the host records the
+  finishing order of the tied agencies. Phones show "Tie-break on stage".
+- **Freezing the top 16** marks them "In the game" and everyone else "Eliminated · Prelim". The
+  ₹50 Cr starting fund is credited when Round 1 starts (Milestone 4).
 
 ## Secrets and the public repository
 

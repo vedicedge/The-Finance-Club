@@ -12,4 +12,4 @@ stop() {
   else "$PGBIN/pg_ctl" -D "$DATA" -m fast stop >/dev/null 2>&1 || true; fi
 }
 trap stop EXIT
-DOOMSDAY_TEST_DB_URL="$URL" npx vitest run tests/db "$@"
+DOOMSDAY_TEST_DB_URL="$URL" npx vitest run tests/db --no-file-parallelism "$@"
