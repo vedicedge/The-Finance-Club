@@ -13,6 +13,7 @@ type Row = {
   name: string;
   status: 'registered' | 'checked_in' | 'active' | 'eliminated';
   eliminated_in: string | null;
+  is_test: boolean;
   created_at: string;
   founders: { id: number; name: string; section: string; phone: string; email: string; is_captain: boolean }[];
   agency_auth: { locked_until: string | null; last_login_at: string | null } | null;
@@ -31,7 +32,7 @@ export default async function AgenciesPage({ searchParams }: { searchParams: Pro
   const [{ data, error }, state] = await Promise.all([
     serviceDb()
       .from('agencies')
-      .select('id, name, status, eliminated_in, created_at, founders(id, name, section, phone, email, is_captain), agency_auth(locked_until, last_login_at)')
+      .select('id, name, status, eliminated_in, is_test, created_at, founders(id, name, section, phone, email, is_captain), agency_auth(locked_until, last_login_at)')
       .order('id'),
     getEventState(),
   ]);
@@ -45,7 +46,8 @@ export default async function AgenciesPage({ searchParams }: { searchParams: Pro
       )
     : all;
   const counts = {
-    total: all.length,
+    total: all.filter((a) => !a.is_test).length,
+    test: all.filter((a) => a.is_test).length,
     checkedIn: all.filter((a) => a.status === 'checked_in').length,
   };
   // Same rule as the database's founders lock: editable only while registration is open.
@@ -61,7 +63,7 @@ export default async function AgenciesPage({ searchParams }: { searchParams: Pro
       <p className="eyebrow">Registration desk</p>
       <h1 className="display mt-3 text-5xl">Agencies &amp; check-in</h1>
       <p className="num mt-4 text-steel">
-        {counts.total} registered · {counts.checkedIn} checked in · founders {foundersLocked ? 'locked' : 'editable until registration closes'}
+        {counts.total} registered{counts.test ? ` (+${counts.test} test)` : ''} · {counts.checkedIn} checked in · founders {foundersLocked ? 'locked' : 'editable until registration closes'}
       </p>
 
       <form className="mt-8 flex gap-3" role="search">
@@ -78,7 +80,10 @@ export default async function AgenciesPage({ searchParams }: { searchParams: Pro
               <div className="flex flex-wrap items-center gap-x-5 gap-y-3 px-4 py-3">
                 <span className="num w-14 text-2xl font-semibold text-torch">{a.id}</span>
                 <span className="min-w-40 flex-1">
-                  <span className="block text-bone">{a.name}</span>
+                  <span className="block text-bone">
+                    {a.name}
+                    {a.is_test && <span className="ml-2 rounded-sm bg-torch px-1.5 py-0.5 text-[0.6rem] font-bold tracking-[0.18em] text-abyss uppercase">Test</span>}
+                  </span>
                   <span className="block text-xs text-steel">
                     Captain {captain?.name} · <span className="num">{captain?.phone}</span>
                     {locked && <span className="ml-2 text-ember">PIN locked</span>}

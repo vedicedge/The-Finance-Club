@@ -58,7 +58,7 @@ export async function loadDossier(agencyId: string): Promise<DossierData> {
       .or(`from_agency.eq.${agencyId},to_agency.eq.${agencyId}`).order('id'),
     db.from('force_fields').select('mission').eq('agency_id', agencyId).is('voided_at', null),
     db.from('v_hero_scores').select('outcome_label, multiplier, hero_score').eq('agency_id', agencyId).maybeSingle(),
-    db.from('agencies').select('id, name'),
+    db.from('agencies').select('id, name, is_test'),
   ]);
 
   const rows = (ledger.data ?? []).map((r) => ({ ...r, amount: Number(r.amount) })) as LedgerRow[];
@@ -68,7 +68,12 @@ export async function loadDossier(agencyId: string): Promise<DossierData> {
 
   // Prelim rank: points desc, then correct-answer time asc (same as the board).
   let rank: number | null = null;
-  const all = (scores.data ?? []).map((s) => ({ id: s.agency_id as string, t: s.total_points as number, time: Number(s.correct_time_s) }));
+  // Rank among agencies of the same kind (test agencies in a dry run, real ones otherwise).
+  const isTest = new Map((names.data ?? []).map((a) => [a.id as string, Boolean(a.is_test)]));
+  const mine = isTest.get(agencyId) ?? false;
+  const all = (scores.data ?? [])
+    .filter((s) => (isTest.get(s.agency_id) ?? false) === mine)
+    .map((s) => ({ id: s.agency_id as string, t: s.total_points as number, time: Number(s.correct_time_s) }));
   const me = all.find((s) => s.id === agencyId);
   if (me) rank = 1 + all.filter((s) => s.t > me.t || (s.t === me.t && s.time < me.time)).length;
 

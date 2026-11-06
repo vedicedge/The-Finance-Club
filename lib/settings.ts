@@ -30,6 +30,8 @@ export type EventSettings = {
   zeroHour: { heroTiebreak: HeroTiebreak[]; revealOrderTiebreak: 'agency_id' };
   prizes: { winner: string | null; runnerUp: string | null };
   security: { pinMaxAttempts: number; pinLockSeconds: number };
+  /** Rehearsal mode: name-only test agencies with one member (see docs/decisions.md). */
+  dryRun: { enabled: boolean };
 };
 
 export const DEFAULT_SETTINGS: EventSettings = {
@@ -49,6 +51,7 @@ export const DEFAULT_SETTINGS: EventSettings = {
   zeroHour: { heroTiebreak: ['fund_left', 'power_level', 'coin_toss'], revealOrderTiebreak: 'agency_id' },
   prizes: { winner: null, runnerUp: null },
   security: { pinMaxAttempts: 5, pinLockSeconds: 60 },
+  dryRun: { enabled: false },
 };
 
 type Json = Record<string, unknown>;
@@ -72,6 +75,7 @@ export function parseSettings(raw: unknown): EventSettings {
   const zh = obj(r.zero_hour);
   const pz = obj(r.prizes);
   const sec = obj(r.security);
+  const dry = obj(r.dry_run);
   const tiebreak = Array.isArray(zh.hero_tiebreak)
     ? zh.hero_tiebreak.filter((t): t is HeroTiebreak => t === 'fund_left' || t === 'power_level' || t === 'coin_toss')
     : [];
@@ -105,6 +109,7 @@ export function parseSettings(raw: unknown): EventSettings {
       pinMaxAttempts: int(sec.pin_max_attempts, d.security.pinMaxAttempts, 1, 50),
       pinLockSeconds: int(sec.pin_lock_seconds, d.security.pinLockSeconds, 5, 3600),
     },
+    dryRun: { enabled: bool(dry.enabled, d.dryRun.enabled) },
   };
 }
 
@@ -127,6 +132,7 @@ export function serializeSettings(s: EventSettings): Json {
     zero_hour: { hero_tiebreak: s.zeroHour.heroTiebreak, reveal_order_tiebreak: s.zeroHour.revealOrderTiebreak },
     prizes: { winner: s.prizes.winner, runner_up: s.prizes.runnerUp },
     security: { pin_max_attempts: s.security.pinMaxAttempts, pin_lock_seconds: s.security.pinLockSeconds },
+    dry_run: { enabled: s.dryRun.enabled },
   };
 }
 

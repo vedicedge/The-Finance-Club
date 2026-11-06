@@ -33,7 +33,7 @@ export async function getEventState(): Promise<EventState> {
     const db = serviceDb();
     const [state, agencies] = await Promise.all([
       db.from('event_state').select('phase, step, alert, settings').maybeSingle(),
-      db.from('agencies').select('id', { count: 'exact', head: true }),
+      db.from('agencies').select('id', { count: 'exact', head: true }).eq('is_test', false), // real registrations only
     ]);
     if (state.error || !state.data) return OFFLINE;
     return {
@@ -52,6 +52,8 @@ export async function getEventState(): Promise<EventState> {
 /** Whether new agencies can register right now, and why not. */
 export function registrationStatus(s: EventState): { open: boolean; reason?: 'closed' | 'deadline' | 'full' | 'phase' } {
   const r = s.settings.registration;
+  // Dry run: test agencies can join until the prelim starts, whatever the real deadline or cap.
+  if (s.settings.dryRun.enabled && (s.phase === 'registration' || s.phase === 'checkin')) return { open: true };
   if (s.phase !== 'registration') return { open: false, reason: 'phase' };
   if (!r.open) return { open: false, reason: 'closed' };
   if (Date.now() >= Date.parse(r.closesAt)) return { open: false, reason: 'deadline' };

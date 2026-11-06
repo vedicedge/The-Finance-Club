@@ -5,6 +5,8 @@ import { requireOrganiser } from '@/lib/auth/organiser';
 import { serviceDb } from '@/lib/db/server';
 import { audit } from '@/lib/audit';
 import { isPhase } from '@/lib/phases';
+import { getEventState } from '@/lib/event-state';
+import { serializeSettings } from '@/lib/settings';
 
 /** Moves the event to another phase (admin only). Later milestones add the round-specific checks. */
 export async function setPhase(formData: FormData): Promise<void> {
@@ -32,5 +34,22 @@ export async function setAlert(formData: FormData): Promise<void> {
     .eq('id', true);
   if (error) throw error;
   await audit(me, 'event.alert', { alert });
+  revalidatePath('/', 'layout');
+}
+
+/** Dry run mode on/off (admin): name-only test agencies for rehearsals. */
+export async function setDryRun(enabled: boolean): Promise<void> {
+  const me = await requireOrganiser('settings');
+  const { settings } = await getEventState();
+  const { error } = await serviceDb()
+    .from('event_state')
+    .update({
+      settings: serializeSettings({ ...settings, dryRun: { enabled } }),
+      updated_at: new Date().toISOString(),
+      updated_by: me.userId,
+    })
+    .eq('id', true);
+  if (error) throw error;
+  await audit(me, enabled ? 'event.dry_run_on' : 'event.dry_run_off', {});
   revalidatePath('/', 'layout');
 }

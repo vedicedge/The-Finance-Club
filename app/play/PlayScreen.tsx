@@ -120,7 +120,7 @@ export function PlayScreen({ stateUrl = '/api/quiz/state' }: { stateUrl?: string
 
   const s = state;
   return (
-    <Shell agency={s.agency} points={s.totals.points} done={s.revealed_count} offline={failures >= 2}>
+    <Shell agency={s.agency} points={s.totals.points} done={s.revealed_count} offline={failures >= 2} dryRun={s.dry_run}>
       <Body state={s} offset={offset} pending={pending} onAnswer={answer} />
       {notice && (
         <p role="status" className="mx-4 mb-4 rounded-sm border border-ember/40 bg-ember/10 px-4 py-3 text-sm text-ember">
@@ -310,15 +310,20 @@ function Shell({
   points,
   done,
   offline,
+  dryRun,
 }: {
   children: React.ReactNode;
   agency?: Signed['agency'];
   points?: number;
   done?: number;
   offline?: boolean;
+  dryRun?: boolean;
 }) {
   return (
     <main id="main" className="mx-auto flex min-h-dvh max-w-lg flex-col">
+      {dryRun && (
+        <p className="bg-torch px-4 py-1 text-center text-[0.65rem] font-bold tracking-[0.24em] text-abyss uppercase">Dry run · rehearsal</p>
+      )}
       <header className="flex items-center justify-between gap-3 border-b border-line bg-vault px-4 py-3">
         <span className="min-w-0">
           <span className="num text-lg font-semibold text-torch">{agency?.id ?? '—'}</span>

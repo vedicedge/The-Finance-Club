@@ -51,17 +51,21 @@ export async function loadAnswerCounts(): Promise<Map<string, { total: number; b
 /** The prelim board with both tie-breaks applied. */
 export async function loadBoard(): Promise<Board & { names: Map<string, string> }> {
   const db = serviceDb();
-  const [scores, agencies, tiebreaks] = await Promise.all([
+  const [scores, agencies, tiebreaks, st] = await Promise.all([
     db.from('v_prelim_scores').select('agency_id, total_points, correct_count, correct_time_s'),
-    db.from('agencies').select('id, name'),
+    db.from('agencies').select('id, name, is_test'),
     db.from('prelim_tiebreaks').select('agency_id, tiebreak_rank'),
+    db.from('event_state').select('settings').single(),
   ]);
   if (scores.error) throw scores.error;
   if (agencies.error) throw agencies.error;
   if (tiebreaks.error) throw tiebreaks.error;
+  // A dry run ranks only test agencies; the real event only real ones.
+  const dryRun = Boolean((st.data?.settings as { dry_run?: { enabled?: boolean } } | null)?.dry_run?.enabled);
+  const inPlay = new Set((agencies.data ?? []).filter((a) => Boolean(a.is_test) === dryRun).map((a) => a.id as string));
   const names = new Map((agencies.data ?? []).map((a) => [a.id as string, a.name as string]));
   const tb = new Map((tiebreaks.data ?? []).map((t) => [t.agency_id as string, t.tiebreak_rank as number]));
-  const input: BoardInput[] = (scores.data ?? []).map((s) => ({
+  const input: BoardInput[] = (scores.data ?? []).filter((s) => inPlay.has(s.agency_id)).map((s) => ({
     agencyId: s.agency_id,
     name: names.get(s.agency_id) ?? s.agency_id,
     total: s.total_points,

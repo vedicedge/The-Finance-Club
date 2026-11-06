@@ -5,6 +5,7 @@ import { requireOrganiser } from '@/lib/auth/organiser';
 import { serviceDb } from '@/lib/db/server';
 import { audit } from '@/lib/audit';
 import { DEFAULT_SETTINGS, HERO_TIEBREAK_PRESETS, istLocalToIso, serializeSettings, type EventSettings } from '@/lib/settings';
+import { getEventState } from '@/lib/event-state';
 
 export type SettingsState = { kind: 'idle' } | { kind: 'ok' } | { kind: 'error'; message: string };
 
@@ -51,6 +52,8 @@ export async function saveSettings(_prev: SettingsState, formData: FormData): Pr
     },
     prizes: { winner: text('prize_winner') || null, runnerUp: text('prize_runner_up') || null },
     security: { pinMaxAttempts: pinMax, pinLockSeconds: pinLock },
+    // Dry run is switched on the command centre, not here: keep whatever it is.
+    dryRun: (await getEventState()).settings.dryRun,
   };
 
   const settings = serializeSettings(next);
