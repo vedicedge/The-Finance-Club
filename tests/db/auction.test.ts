@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { agency, hasDb, sql, sqlError } from './helpers';
+import { agency, hasDb, hasSecrets, sql, sqlError } from './helpers';
 
 const KEEPER = '00000000-0000-0000-0000-0000000000a1';
 const OTHER = '00000000-0000-0000-0000-0000000000b2';
@@ -59,7 +59,7 @@ describe.skipIf(!hasDb)('recording a sale (ledger rules)', () => {
   });
 });
 
-describe.skipIf(!hasDb)('Insider Tips', () => {
+describe.skipIf(!hasDb || !hasSecrets)('Insider Tips', () => {
   const drawn = `select r1_set_news_draw(array['N1','N2','N3','N4','N5','N6']);`;
 
   it('costs ₹2 Cr, only in the tips step, one per agency, and links a drawn news card', () => {
@@ -106,7 +106,7 @@ describe.skipIf(!hasDb)('closing Round 1', () => {
     ]);
   });
 
-  it('locks only when everyone left holds four cards, and the lock reveals news and Team-Ups', () => {
+  it.skipIf(!hasSecrets)('locks only when everyone left holds four cards, and the lock reveals news and Team-Ups', () => {
     expect(sqlError(`${setup()} ${auction} select r1_lock();`)).toMatch(/jugaad_pending/);
     const out = sql(`${setup()} ${auction}
       select r1_set_news_draw(array['N1','N2','N3','N4','N5','N6']);

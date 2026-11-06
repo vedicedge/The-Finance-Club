@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { agency, hasDb, sql, sqlError } from './helpers';
+import { agency, hasDb, hasSecrets, sql, sqlError } from './helpers';
 
 const K = '00000000-0000-0000-0000-0000000000a1';
 
@@ -149,7 +149,7 @@ describe.skipIf(!hasDb)('Zero Hour reveal', () => {
 });
 
 describe.skipIf(!hasDb)('reset for the real event', () => {
-  it('clears the event but keeps registrations when asked', () => {
+  it.skipIf(!hasSecrets)('clears the event but keeps registrations when asked', () => {
     expect(sql(`${agencies(3)} update event_state set phase = 'round1', prelim_published_at = now();
       update questions set status = 'closed', opened_at = now(), revealed_at = now(), order_no = 1 where id = 'M1';
       select admin_reset_event(true, '${K}');

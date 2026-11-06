@@ -109,7 +109,10 @@ Database tests: starts a throwaway local Postgres (needs the Postgres server bin
 `apt install postgresql`), applies every migration and the secret seed if present, and checks the
 security grants, append-only ledger, voids, founder rules, derived views (fund left, Power Level,
 Tower Score, Hero Score, envelope holders) and that the SQL scoring functions match the
-TypeScript ones for every tenth of a second.
+TypeScript ones for every tenth of a second. One test plays the whole evening through the
+database functions the consoles call: a dry run with test agencies, the reset that keeps
+registrations, then the real event with 18 agencies from the prelim to the last envelope.
+Tests that need the secret seed skip when it is not present.
 
 ## Project layout
 

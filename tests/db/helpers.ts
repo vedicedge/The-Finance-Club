@@ -15,6 +15,14 @@ function psql(query: string) {
   });
 }
 
+/**
+ * True when the private secret seed (questions, answer keys, Breaking News, Team-Ups) is loaded.
+ * It is git-ignored, so tests that need it skip when it is absent.
+ */
+export const hasSecrets =
+  hasDb &&
+  psql('select (select count(*) from question_keys) > 0 and (select count(*) from breaking_news) > 0;').stdout.trim() === 't';
+
 /** Runs SQL inside BEGIN … ROLLBACK and returns the output lines. Throws on any SQL error. */
 export function sql(body: string): string[] {
   const r = psql(`begin;\n${body}\nrollback;\n`);

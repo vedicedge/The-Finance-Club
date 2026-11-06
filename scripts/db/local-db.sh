@@ -38,7 +38,7 @@ if [ -f "$ROOT/supabase/private/seed_secrets.sql" ]; then
   "${PSQL[@]}" -d doomsday -f "$ROOT/supabase/private/seed_secrets.sql" >/dev/null
   echo "secret seed: loaded" >&2
 else
-  echo "secret seed: not found (supabase/private/seed_secrets.sql) — question tests will be skipped" >&2
+  echo "secret seed: not found (supabase/private/seed_secrets.sql) — tests that need it will be skipped" >&2
 fi
 
 echo "$URL"
