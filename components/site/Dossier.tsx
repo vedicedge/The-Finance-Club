@@ -170,40 +170,66 @@ export function Dossier({
               {data.round1Locked && <span className="text-xs font-semibold tracking-[0.18em] text-toxic uppercase">Final</span>}
             </div>
             <p className="num mt-2 text-5xl font-semibold text-torch">{data.power.total}</p>
-            <ul className="mt-4 divide-y divide-line/60 border-y border-line/60 text-sm">
+            {/* The Power Level as a sum: each card, any Breaking News change, Team-Up bonuses, total. */}
+            <div className="mt-4 grid grid-cols-[4.6rem_1fr_auto] gap-x-3 border-b border-line-strong pb-1.5 text-[0.68rem] font-semibold tracking-[0.18em] text-steel uppercase">
+              <span>Slot</span>
+              <span>Card</span>
+              <span className="text-right">Power</span>
+            </div>
+            <ul className="divide-y divide-line/60 text-sm">
               {(['HQ', 'Suit', 'Gadget', 'Sidekick'] as const).map((cat) => {
                 const g = data.gear.find((x) => x.category === cat);
                 return (
-                  <li key={cat} className="grid grid-cols-[4.6rem_1fr_auto] gap-x-3 py-2">
-                    <span className="text-steel">{cat}</span>
-                    <span className="min-w-0">
-                      {g ? (
-                        <>
-                          <span className="num mr-1.5 text-torch">{g.card_id}</span>
-                          {g.gear_name}
-                          {g.news.map((n) => (
-                            <span key={n.headline} className={`block text-xs ${n.delta > 0 ? 'text-toxic' : 'text-ember'}`}>
-                              {n.headline} ({n.delta > 0 ? '+' : ''}{n.delta})
-                            </span>
-                          ))}
-                        </>
-                      ) : (
-                        <span className="text-steel">— not signed yet</span>
-                      )}
-                    </span>
-                    <span className="num text-right">{g ? `P${g.power}` : ''}</span>
+                  <li key={cat} className="py-2">
+                    <div className="grid grid-cols-[4.6rem_1fr_auto] gap-x-3">
+                      <span className="text-steel">{cat}</span>
+                      <span className="min-w-0">
+                        {g ? (
+                          <>
+                            <span className="num mr-1.5 text-torch">{g.card_id}</span>
+                            {g.gear_name}
+                          </>
+                        ) : (
+                          <span className="text-steel">— not signed yet</span>
+                        )}
+                      </span>
+                      <span className="num text-right font-semibold">{g ? g.power : ''}</span>
+                    </div>
+                    {g?.news.map((n) => (
+                      <div key={n.headline} className="mt-1 grid grid-cols-[4.6rem_1fr_auto] gap-x-3 text-xs">
+                        <span />
+                        <span className={n.delta > 0 ? 'text-toxic' : 'text-ember'}>Breaking News: {n.headline}</span>
+                        <span className={`num text-right font-semibold ${n.delta > 0 ? 'text-toxic' : 'text-ember'}`}>
+                          {n.delta > 0 ? '+' : '−'}
+                          {Math.abs(n.delta)}
+                        </span>
+                      </div>
+                    ))}
                   </li>
                 );
               })}
+              {data.teamUps.map((u) => (
+                <li key={u.name} className="grid grid-cols-[4.6rem_1fr_auto] gap-x-3 py-2">
+                  <span className="text-toxic">Team-Up</span>
+                  <span className="min-w-0 text-toxic">
+                    {u.name}
+                    <span className="block text-xs text-steel">You hold both cards of this pair, so they add a bonus.</span>
+                  </span>
+                  <span className="num text-right font-semibold text-toxic">+{u.bonus}</span>
+                </li>
+              ))}
+              <li className="grid grid-cols-[4.6rem_1fr_auto] gap-x-3 border-t border-line-strong py-2 font-semibold">
+                <span />
+                <span>Power Level</span>
+                <span className="num text-right text-torch">{data.power.total}</span>
+              </li>
             </ul>
-            {data.teamUps.map((u) => (
-              <p key={u.name} className="mt-2 text-sm text-toxic">Team-Up: {u.name} (+{u.bonus})</p>
-            ))}
-            <p className="num mt-3 text-xs text-steel">
-              Gear {data.power.gear}
-              {data.power.teamUp ? ` + Team-Ups ${data.power.teamUp}` : ''}
-              {data.power.news ? ` ${data.power.news > 0 ? '+' : '−'} news ${Math.abs(data.power.news)}` : ''} = {data.power.total}
-            </p>
+            {!data.round1Locked && (
+              <p className="mt-2 text-xs text-steel">
+                Breaking News can still change a card’s Power, and Team-Ups (+3 for holding both cards of a pair) are revealed
+                with it.
+              </p>
+            )}
           </section>
         ) : (
           <Sealed eyebrow="Gear" title="Cards, Team-Ups and Power Level" unlocks="your first card is signed" />

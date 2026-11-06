@@ -5,6 +5,7 @@ import { EVENT, ROUNDS } from '@/lib/config';
 import { SEGMENTS, type QuizSegment } from '@/lib/scoring/quiz';
 import { OPTION_LETTERS, secondsLeft, secondsToStart } from '@/lib/quiz/types';
 import { Stage } from '@/components/screen/Stage';
+import { BoardColumns, BoardHeader } from '@/components/screen/BoardColumns';
 
 type ScreenState = {
   now: string;
@@ -227,34 +228,37 @@ function QuestionView({ s, offset }: { s: ScreenState; offset: number }) {
 
 function BoardView({ s }: { s: ScreenState }) {
   const rows = s.board!.rows.slice(0, 16);
-  const cols = [rows.slice(0, 8), rows.slice(8, 16)];
   return (
     <div className="flex h-full flex-col px-[5cqw] pt-[10cqh] pb-[4cqh]">
-      <div className="flex items-end justify-between">
-        <h1 className="display text-[5cqw]">{s.published ? 'Final board' : 'Live board'}</h1>
-        <p className="text-[1.4cqw] font-semibold tracking-[0.3em] text-steel uppercase">
-          Top 16 → {ROUNDS.round1}
-        </p>
-      </div>
+      <h1 className="display text-center text-[5cqw]">{s.published ? 'Final board' : 'Live board'}</h1>
+      <p className="mt-[0.5cqh] text-center text-[1.4cqw] font-semibold tracking-[0.3em] text-steel uppercase">
+        Top 16 → {ROUNDS.round1}
+      </p>
       {s.board!.suddenDeath.length > 0 && (
-        <p className="mt-[1.5cqh] text-[1.8cqw] text-ember">
+        <p className="mt-[1.5cqh] text-center text-[1.8cqw] text-ember">
           Tie for 16th: {s.board!.suddenDeath.join(', ')} — sudden death on stage.
         </p>
       )}
-      <div className="mt-[3cqh] grid flex-1 grid-cols-2 gap-x-[4cqw]">
-        {cols.map((col, ci) => (
-          <ol key={ci} className="flex flex-col">
-            {col.map((r) => (
-              <li key={r.id} className="flex items-center gap-[1.4cqw] border-b border-line py-[1.25cqh] text-[2cqw]">
-                <span className="num w-[3.4cqw] text-steel">{r.rank}</span>
-                <span className="num w-[5cqw] font-semibold text-torch">{r.id}</span>
-                <span className="min-w-0 flex-1 truncate">{r.name}</span>
-                <span className="num font-semibold">{r.total.toLocaleString('en-IN')}</span>
-              </li>
-            ))}
-          </ol>
-        ))}
-      </div>
+      <BoardColumns
+        className="mt-[3cqh]"
+        rows={rows}
+        header={
+          <BoardHeader>
+            <span className="w-[3.4cqw]">#</span>
+            <span className="w-[5cqw]">ID</span>
+            <span className="flex-1">Agency</span>
+            <span className="w-[9cqw] text-right">Points</span>
+          </BoardHeader>
+        }
+        renderRow={(r) => (
+          <li key={r.id} className="flex items-center gap-[1.4cqw] border-b border-line py-[1.25cqh] text-[2cqw]">
+            <span className="num w-[3.4cqw] text-steel">{r.rank}</span>
+            <span className="num w-[5cqw] font-semibold text-torch">{r.id}</span>
+            <span className="min-w-0 flex-1 truncate">{r.name}</span>
+            <span className="num w-[9cqw] text-right font-semibold">{r.total.toLocaleString('en-IN')}</span>
+          </li>
+        )}
+      />
     </div>
   );
 }
