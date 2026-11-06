@@ -57,6 +57,14 @@ export function SettingsForm({ settings: s, closesLocal, startsLocal, tiebreakKe
 
       <Group title="Prelim">
         <Check name="requires_checkin" label="Agencies must be checked in to play the prelim" checked={s.prelim.requiresCheckin} />
+        <Text
+          name="lead_in_seconds"
+          label="Read-in before each question's clock starts (seconds, 0–10)"
+          type="number"
+          min={0}
+          max={10}
+          value={s.prelim.leadInSeconds}
+        />
       </Group>
 
       <Group title="Round 1 · Power Bazaar">

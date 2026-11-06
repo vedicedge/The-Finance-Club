@@ -44,12 +44,15 @@ export function Dossier({
   startsAt,
   venue,
   signOut,
+  prelimLive = false,
 }: {
   agency: AgencySession;
   founders: DossierFounder[];
   startsAt: string;
   venue: string;
   signOut: React.ReactNode;
+  /** The prelim is running: show the way into the quiz screen. */
+  prelimLive?: boolean;
 }) {
   const stamp = statusStamp(agency);
   const start = startsAt;
@@ -80,6 +83,12 @@ export function Dossier({
           ))}
         </ul>
       </section>
+
+      {prelimLive && (
+        <a href="/play" className="btn btn-primary mt-6 w-full !min-h-16 !text-base">
+          Enter the prelim · {ROUNDS.prelim}
+        </a>
+      )}
 
       {/* ---------------------------------------------------------------- what's next */}
       <section className="mt-6 panel border-l-2 border-l-torch px-5 py-5">

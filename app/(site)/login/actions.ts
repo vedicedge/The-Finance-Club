@@ -60,7 +60,7 @@ export async function loginAgency(_prev: AgencyLoginState, formData: FormData): 
 
   // During the prelim, one phone per agency: a new sign-in signs the other phones out.
   await startAgencySession(agencyId, { single: state.phase === 'prelim' });
-  redirect('/me');
+  redirect(state.phase === 'prelim' ? '/play' : '/me');
 }
 
 export async function logoutAgency() {

@@ -24,6 +24,7 @@ export default async function MyAgencyPage() {
       founders={founders ?? []}
       startsAt={state.settings.event.startsAt}
       venue={state.settings.event.venue}
+      prelimLive={state.phase === 'prelim' && (agency.status === 'registered' || agency.status === 'checked_in')}
       signOut={
         <form action={logoutAgency}>
           <button className="btn btn-ghost w-full sm:w-auto">Sign out of this phone</button>

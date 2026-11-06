@@ -69,6 +69,12 @@ body {
     color: var(--color-steel);
   }
 
+  /* Lining figures in the serif: "₹85 = $1" must read clearly in finance questions. */
+  .display,
+  .font-display {
+    font-variant-numeric: lining-nums;
+  }
+
   .display {
     font-family: var(--font-display);
     font-weight: 600;
