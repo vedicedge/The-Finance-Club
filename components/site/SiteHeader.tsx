@@ -5,6 +5,7 @@ const LINKS = [
   { href: '/rounds', label: 'Rounds' },
   { href: '/rules', label: 'Rules' },
   { href: '/schedule', label: 'Schedule' },
+  { href: '/leaderboard', label: 'Leaderboard' },
 ];
 
 /** Public header. Phones get a no-JavaScript dropdown so nothing overflows the screen. */

@@ -68,3 +68,8 @@ export async function requireOrganiser(area: Area): Promise<Organiser> {
   if (!canAccess(organiser.roles, area)) redirect(`/admin?denied=${area}`);
   return organiser;
 }
+
+/** Admin, or any of the given roles. For actions narrower than an area (e.g. only scorers publish). */
+export function hasRole(organiser: Organiser, ...roles: Role[]): boolean {
+  return organiser.roles.includes('admin') || roles.some((r) => organiser.roles.includes(r));
+}

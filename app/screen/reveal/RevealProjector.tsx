@@ -1,0 +1,156 @@
+'use client';
+
+import { useCallback, useEffect, useState, useTransition } from 'react';
+import { EVENT, ROUNDS } from '@/lib/config';
+import { formatCrore } from '@/lib/money';
+import { Stage } from '@/components/screen/Stage';
+import type { RevealSlot } from '@/lib/zero-hour-server';
+import type { HeroRow } from '@/lib/zero-hour';
+import { nextReveal } from './actions';
+
+type S = { phase: string; slots: RevealSlot[]; latest: string | null; final: HeroRow[] | null; mission4: { winner: string | null; pending: boolean } };
+
+const fmt = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/0$/, ''));
+
+export function RevealProjector({ canDrive, stateUrl = '/api/screen/reveal' }: { canDrive: boolean; stateUrl?: string }) {
+  const [s, setS] = useState<S | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [pending, start] = useTransition();
+
+  const load = useCallback(async () => {
+    try {
+      const res = await fetch(stateUrl, { cache: 'no-store' });
+      if (res.status === 401) setError('Sign in at /admin/login on this laptop.');
+      else setS((await res.json()) as S);
+    } catch {
+      setError('Signal lost. Reconnecting…');
+    }
+  }, [stateUrl]);
+
+  useEffect(() => {
+    load();
+    const id = window.setInterval(load, 1500);
+    return () => window.clearInterval(id);
+  }, [load]);
+
+  const next = useCallback(() => {
+    if (!canDrive || pending) return;
+    start(async () => {
+      const r = await nextReveal();
+      setError(r.ok ? null : r.error);
+      await load();
+    });
+  }, [canDrive, pending, load]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'n') next();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [next]);
+
+  const latest = s?.slots.find((x) => x.envelope === s.latest) ?? null;
+  return (
+    <Stage>
+      <div className="absolute inset-x-0 top-0 flex items-center justify-between border-b border-line px-[3cqw] py-[1.6cqh]">
+        <p className="text-[1.25cqw] font-semibold tracking-[0.3em] text-steel uppercase">
+          {EVENT.name} · <span className="text-ember">{ROUNDS.zeroHour}</span>
+        </p>
+        {s && <p className="num text-[1.25cqw] font-semibold tracking-[0.3em] text-steel uppercase">{s.slots.filter((x) => x.revealed).length} / {s.slots.length} opened</p>}
+      </div>
+
+      {!s ? (
+        <div className="flex h-full items-center justify-center"><p className="display text-[5cqw]">{error ?? 'Establishing secure line…'}</p></div>
+      ) : s.final ? (
+        <Final rows={s.final} />
+      ) : (
+        <div className="grid h-full grid-cols-[1.5fr_1fr] gap-[3cqw] px-[4cqw] pt-[11cqh] pb-[6cqh]">
+          <div className="relative flex flex-col justify-center">
+            {latest?.revealed ? (
+              <div key={latest.envelope} className="transmission relative">
+                <div className="light-beam -z-10 opacity-90" aria-hidden="true" />
+                <p className="text-[1.5cqw] font-semibold tracking-[0.3em] text-steel uppercase">
+                  Mission File <span className="num text-torch">{latest.envelope}</span> · {latest.agencyId} {latest.name}
+                </p>
+                <h1 className="display mt-[2cqh] text-[5.6cqw] leading-[1.02]">{latest.revealed.outcome}</h1>
+                <p className={`num mt-[1cqh] text-[7cqw] leading-none font-semibold ${latest.revealed.multiplier >= 1.5 ? 'text-toxic' : latest.revealed.multiplier < 1 ? 'text-ember' : 'text-bone'}`}>
+                  ×{fmt(latest.revealed.multiplier)}
+                </p>
+                <p className="num mt-[4cqh] text-[2.4cqw] text-bone">
+                  <span className="text-torch">{latest.power}</span> × {fmt(latest.revealed.multiplier)} + {formatCrore(latest.fund).replace(' Cr', '')} ÷ 2 ={' '}
+                  <span className="text-[3.4cqw] font-semibold text-torch">{fmt(latest.revealed.hero)}</span>
+                </p>
+                <p className="mt-[1cqh] text-[1.3cqw] tracking-[0.2em] text-steel uppercase">Power Level × Battle Outcome + Fund left ÷ 2</p>
+              </div>
+            ) : (
+              <>
+                <h1 className="display text-[8cqw]">Zero Hour</h1>
+                <p className="mt-[2cqh] text-[2.2cqw] text-steel">
+                  {s.mission4.pending
+                    ? `Mission 4's winner ${s.mission4.winner} makes the last call: Swap, X-Ray or ₹6 Cr.`
+                    : 'Eight Mission Files. Opened in ascending Power Level. Highest Hero Score saves Mahanagar.'}
+                </p>
+              </>
+            )}
+          </div>
+          <ol className="flex flex-col justify-center gap-[1cqh] border-l border-line pl-[3cqw]">
+            {s.slots.map((x) => (
+              <li
+                key={x.envelope}
+                className={`flex items-center gap-[1.2cqw] rounded-[0.3cqw] px-[1cqw] py-[1.1cqh] text-[1.8cqw] ${
+                  x.envelope === s.latest ? 'bg-torch/15 ring-1 ring-torch' : x.revealed ? '' : 'opacity-45'
+                }`}
+              >
+                <span className="num w-[3.6cqw] text-steel">{x.envelope}</span>
+                <span className="num w-[4.4cqw] font-semibold text-torch">{x.agencyId}</span>
+                <span className="min-w-0 flex-1 truncate">{x.name}</span>
+                <span className="num w-[4cqw] text-right text-steel">P{x.power}</span>
+                <span className="num w-[6cqw] text-right font-semibold">{x.revealed ? fmt(x.revealed.hero) : 'sealed'}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
+
+      {canDrive && s && !s.final && (
+        <div className="absolute right-[2cqw] bottom-[1.6cqh] flex items-center gap-[1cqw]">
+          {error && <span className="text-[1.1cqw] text-ember">{error}</span>}
+          <button onClick={next} disabled={pending} className="btn btn-primary !min-h-0 !px-[1.4cqw] !py-[0.8cqh] !text-[1cqw]">
+            {pending ? 'Opening…' : 'Next envelope ▸'}
+          </button>
+        </div>
+      )}
+    </Stage>
+  );
+}
+
+function Final({ rows }: { rows: HeroRow[] }) {
+  const winner = rows[0];
+  const runner = rows.find((r) => r.rank === 2) ?? rows[1];
+  const coin = rows.filter((r) => r.coinToss);
+  return (
+    <div className="flex h-full flex-col px-[5cqw] pt-[10cqh] pb-[4cqh]">
+      <div className="relative text-center">
+        <div className="light-beam -z-10" aria-hidden="true" />
+        <p className="text-[1.5cqw] font-semibold tracking-[0.35em] text-torch uppercase">{EVENT.winnerTitle}</p>
+        <h1 className="display mt-[1.5cqh] text-[7cqw] leading-none">{winner.name}</h1>
+        <p className="num mt-[1cqh] text-[2.2cqw] text-steel">
+          {winner.agencyId} · Hero Score <span className="font-semibold text-bone">{fmt(winner.hero)}</span>
+        </p>
+        {runner && <p className="mt-[2cqh] text-[1.8cqw] text-steel">Runner-up: <span className="text-bone">{runner.agencyId} {runner.name}</span> · {fmt(runner.hero)}</p>}
+        {coin.length > 0 && <p className="mt-[1.5cqh] text-[1.8cqw] text-ember">Still level after the tie-breaks: {coin.map((c) => c.agencyId).join(' and ')} — coin toss on stage.</p>}
+      </div>
+      <ol className="mx-auto mt-auto grid w-full max-w-[70cqw] grid-flow-col grid-cols-2 grid-rows-4 gap-x-[4cqw]">
+        {rows.map((r) => (
+          <li key={r.agencyId} className="flex items-center gap-[1.2cqw] border-b border-line py-[1cqh] text-[1.7cqw]">
+            <span className="num w-[3cqw] text-steel">{r.rank}</span>
+            <span className="num w-[4.4cqw] font-semibold text-torch">{r.agencyId}</span>
+            <span className="min-w-0 flex-1 truncate">{r.name}</span>
+            <span className="num font-semibold">{fmt(r.hero)}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
