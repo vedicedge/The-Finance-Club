@@ -77,6 +77,141 @@ body {
   }
 }
 
+/* Shared pieces used across the public site, agency pages and the command centre. */
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 48px; /* comfortable tap target on phones */
+    padding: 0.75rem 1.25rem;
+    border-radius: 2px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-align: center;
+    white-space: nowrap;
+    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 120ms ease;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .btn-primary {
+    background: var(--color-torch);
+    color: var(--color-abyss);
+  }
+  .btn-primary:hover {
+    background: #f3c46c;
+  }
+  .btn-ghost {
+    border: 1px solid var(--color-line-strong);
+    color: var(--color-bone);
+  }
+  .btn-ghost:hover {
+    border-color: var(--color-torch);
+    color: var(--color-torch);
+  }
+
+  .field {
+    display: block;
+    width: 100%;
+    min-height: 48px;
+    margin-top: 0.4rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 2px;
+    background: var(--color-vault-2);
+    color: var(--color-bone);
+    font-size: 1rem; /* 16px stops phones zooming in on focus */
+  }
+  .field::placeholder {
+    color: rgb(163 177 173 / 0.55);
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-torch);
+  }
+  .field[aria-invalid='true'] {
+    border-color: var(--color-ember);
+  }
+
+  .panel {
+    border: 1px solid var(--color-line);
+    border-radius: 2px;
+    background: rgb(11 21 19 / 0.82);
+  }
+
+  /* Rubber stamp for status changes: QUALIFIED, SOLD, ELIMINATED… */
+  .stamp {
+    display: inline-block;
+    padding: 0.25em 0.7em;
+    border: 2px solid currentColor;
+    border-radius: 3px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    transform: rotate(-3deg);
+    animation: stamp-in 380ms cubic-bezier(0.2, 1.5, 0.4, 1) both;
+  }
+
+  /* Threat-level strip on every public page. */
+  .threat {
+    --tone: var(--color-toxic);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: 1px solid var(--color-line);
+    background: var(--color-vault);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .threat[data-tone='warn'] { --tone: var(--color-torch); }
+  .threat[data-tone='danger'],
+  .threat[data-tone='critical'] { --tone: var(--color-ember); }
+  .threat-stripes {
+    align-self: stretch;
+    width: 44px;
+    flex: none;
+    background: repeating-linear-gradient(-45deg, var(--tone) 0 6px, transparent 6px 12px);
+    opacity: 0.85;
+  }
+  .threat-level {
+    color: var(--tone);
+  }
+  .threat[data-tone='critical'] .threat-level {
+    animation: siren 1.2s ease-in-out infinite;
+  }
+
+  /* An incoming transmission: confirmation panels slide open like a decoded message. */
+  .transmission {
+    animation: transmission-in 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@keyframes stamp-in {
+  from { opacity: 0; transform: rotate(-3deg) scale(1.6); }
+  to { opacity: 1; transform: rotate(-3deg) scale(1); }
+}
+@keyframes siren {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+@keyframes transmission-in {
+  from { opacity: 0; clip-path: inset(0 0 100% 0); }
+  to { opacity: 1; clip-path: inset(0 0 0 0); }
+}
+
 /* Film grain over everything, like the reference posters. Pure CSS, no image request. */
 .grain::after {
   content: '';

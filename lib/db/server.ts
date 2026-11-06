@@ -25,6 +25,8 @@ export function serviceDb(): SupabaseClient {
   if (!secretKey) throw new MissingConfigError('SUPABASE_SECRET_KEY');
   cached = createClient(env.supabaseUrl, secretKey, {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    // Never let Next.js cache a database read: scores, funds and quiz state must always be live.
+    global: { fetch: (input, init) => fetch(input, { ...init, cache: 'no-store' }) },
   });
   return cached;
 }
