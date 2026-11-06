@@ -96,7 +96,7 @@ export function RegisterForm({ emailDomain, emailHint }: { emailDomain: string |
         {pending ? 'Transmitting…' : 'Register agency'}
       </button>
       <p className="text-center text-xs text-steel">
-        By registering you confirm all three founders agree to take part. Founders can&apos;t be changed later.
+        By registering you confirm all three founders agree to take part. Spotted a typo later? An organiser can correct founder details until registration closes.
       </p>
     </form>
   );

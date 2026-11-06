@@ -8,7 +8,7 @@ This file is generated from `lib/print/checklist.ts`; edit that file, then run `
 ## The day before
 
 - [ ] Merge the latest pull request on GitHub and wait until Vercel shows the new deployment as **Ready**.
-- [ ] In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (15 files; the last is `20261107001500_news_recap.sql`).
+- [ ] In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (16 files; the last is `20261107001600_playthrough_fixes.sql`).
 - [ ] If the secret seed has never been run, run `supabase/private/seed_secrets.sql` once.
 - [ ] Command centre → Seed data: every row says **OK**.
 - [ ] Every crew member with a website job signs in once at `/admin/login`; an admin gives each their role in Crew & roles (quiz host, 2 ledger keepers, auctioneer, 2 scorers, social-media lead, anchor, 2 floaters).
@@ -35,7 +35,7 @@ This file is generated from `lib/print/checklist.ts`; edit that file, then run `
 - [ ] Testers answer at different speeds; one answers after the timer ends and sees "late" (0 points).
 - [ ] Reveal: only now do phones show right/wrong and points.
 - [ ] Practise: void a question and bring in a spare; reload a phone mid-question; put a phone in airplane mode for 10 s and back.
-- [ ] Sign one test agency in on a second phone: the first phone is signed out (one phone per agency during the prelim).
+- [ ] Sign one test agency in on a second phone after question 1: it gets in, and the first phone is signed out (one phone per agency during the prelim). The login page warns about this.
 - [ ] Type a wrong PIN 5 times on the login page: that ID locks for 60 s.
 - [ ] Every live question must be revealed or voided before publishing. Publish the board, check `/leaderboard` and `/screen/board`, export the CSV, then freeze the top 16 (with 16 or fewer testers, everyone goes through).
 

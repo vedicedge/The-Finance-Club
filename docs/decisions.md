@@ -199,6 +199,25 @@ My Agency in a 1-minute window.
 - Paper is a fallback only: every line written while the site is down is entered on the site
   afterwards, so the Fund Ledger stays the one record.
 
+## Fixes from the 30-agency playthrough (7 Nov 2026)
+
+A full run of the event on the real site (30 agencies, 28 phones in the prelim, every console)
+found these; all are fixed and re-tested:
+
+- **Changing phones.** The phone an agency registers on now counts as its first login, the dry-run
+  reset keeps that mark, and the "joining has closed" rule applies only during the prelim. Before,
+  an agency that never typed its PIN could not sign in on another phone after question 1 opened,
+  for the rest of the event. An organiser's PIN reset also lets the agency in.
+- **Prelim login warning.** During the prelim the login page says that signing in signs the
+  agency's other phones out (one phone per agency), so only the captain should sign in.
+- **Tied poster duels.** The rock-paper-scissors picker is always shown; before, a tie could not be
+  saved at all, because the picker only appeared once a tie was already saved.
+- **Refused saves keep what was typed** (duel votes, tower measurements).
+- **Undo names the entry** it will void and needs a tick; it refuses if a newer entry appeared.
+- **Publishing the prelim board** puts the board on the projector.
+- **Crediting the starting funds shuffles the lots** if nobody has, so secret cards never run in
+  printed card order.
+
 ## Secrets and the public repository
 
 The repository `vedicedge/The-Finance-Club` is public. The spec's Appendix A (questions and

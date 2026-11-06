@@ -33,7 +33,8 @@ export async function saveVotes(duel: number, formData: FormData) {
   const b = count(formData.get('votes_b'));
   const tiebreak = String(formData.get('tiebreak') ?? '') || null;
   const { error } = await serviceDb().rpc('r2_set_votes', { p_duel: duel, p_votes_a: a, p_votes_b: b, p_tiebreak: tiebreak });
-  if (error) back({ error: dbMessage(error) });
+  // On a refusal, send back what was typed so it stays in the boxes.
+  if (error) back({ error: dbMessage(error), duel: String(duel), votes_a: String(formData.get('votes_a') ?? ''), votes_b: String(formData.get('votes_b') ?? '') });
   await audit(me, 'r2.votes', { duel, a, b, tiebreak });
   back({ ok: 'Votes saved.' });
 }
@@ -42,15 +43,18 @@ export async function saveTower(agency: string, formData: FormData) {
   const me = await who(['scorer']);
   const n = (k: string) => Number(String(formData.get(k) ?? '').trim());
   const build = parseBuildTime(String(formData.get('build_time') ?? ''));
+  // On a refusal, send back what was typed so the scorer only fixes the wrong box.
+  const typed = Object.fromEntries(['correct', 'reference', 'build_time', 'fallen', 'frozen'].map((k) => [k, String(formData.get(k) ?? '')]));
+  const refuse = (error: string): never => back({ error, row: agency, ...typed });
   const vals = { correct: n('correct'), reference: n('reference'), frozen: n('frozen'), fallen: n('fallen') };
   if (build === null || Object.values(vals).some((v) => !Number.isInteger(v) || v < 0)) {
-    back({ error: `${agency}: enter whole block counts and a build time like 6:05 (or DNF).` });
+    refuse(`${agency}: enter whole block counts and a build time like 6:05 (or DNF).`);
   }
   const { error } = await serviceDb().rpc('r2_save_tower', {
     p_agency: agency, p_correct: vals.correct, p_reference: vals.reference, p_build_time_s: build,
     p_frozen: vals.frozen, p_fallen: vals.fallen, p_actor: me.userId,
   });
-  if (error) back({ error: `${agency}: ${dbMessage(error).replace(/new row for relation "tower_results" violates check constraint.*/, 'check the block counts (correct ≤ reference, fallen ≤ frozen).')}` });
+  if (error) refuse(`${agency}: ${dbMessage(error).replace(/new row for relation "tower_results" violates check constraint.*/, 'check the block counts (correct ≤ reference, fallen ≤ frozen).')}`);
   await audit(me, 'r2.tower', { agency, ...vals, build });
   back({ ok: `${agency} saved.` });
 }

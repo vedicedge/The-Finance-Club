@@ -49,7 +49,12 @@ export async function setProjector(mode: 'lobby' | 'question' | 'board') {
 }
 
 export async function publishBoard() {
-  await run('quiz.publish', {}, () => serviceDb().rpc('quiz_publish_board'));
+  await run('quiz.publish', {}, async () => {
+    const r = await serviceDb().rpc('quiz_publish_board');
+    // The audience wants the board next: put it on the projector without another click.
+    if (!r.error) await serviceDb().from('event_state').update({ step: 'board' }).eq('id', true);
+    return r;
+  });
 }
 
 export async function unpublishBoard() {
