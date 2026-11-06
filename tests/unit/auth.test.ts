@@ -41,13 +41,13 @@ describe('organiser roles', () => {
 
   it('each role reaches only its own screens', () => {
     const can = (role: Role) => areasFor([role]);
-    expect(can('quiz_host')).toEqual(['dashboard', 'quiz', 'screens']);
-    expect(can('ledger_keeper')).toEqual(['dashboard', 'auction', 'ledger', 'round3', 'screens']);
-    expect(can('scorer')).toEqual(['dashboard', 'round2', 'round3', 'screens']);
-    expect(can('social_lead')).toEqual(['dashboard', 'round2', 'screens']);
-    expect(can('anchor')).toEqual(['dashboard', 'reveal', 'screens']);
-    expect(can('auctioneer')).toEqual(['dashboard', 'auction', 'screens']);
-    expect(can('floater')).toEqual(['dashboard', 'agencies', 'screens']);
+    expect(can('quiz_host')).toEqual(['dashboard', 'quiz', 'screens', 'print']);
+    expect(can('ledger_keeper')).toEqual(['dashboard', 'auction', 'ledger', 'round3', 'screens', 'print']);
+    expect(can('scorer')).toEqual(['dashboard', 'round2', 'round3', 'screens', 'print']);
+    expect(can('social_lead')).toEqual(['dashboard', 'round2', 'screens', 'print']);
+    expect(can('anchor')).toEqual(['dashboard', 'reveal', 'screens', 'print']);
+    expect(can('auctioneer')).toEqual(['dashboard', 'auction', 'screens', 'print']);
+    expect(can('floater')).toEqual(['dashboard', 'agencies', 'screens', 'print']);
   });
 
   it('only admin can change settings or crew roles', () => {

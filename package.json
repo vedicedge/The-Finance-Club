@@ -8,6 +8,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "vitest run tests/unit",
+    "docs:checklist": "WRITE_CHECKLIST=1 vitest run tests/unit/print.test.ts",
     "test:db": "bash scripts/db/test-db.sh",
     "db:local": "bash scripts/db/local-db.sh"
   },

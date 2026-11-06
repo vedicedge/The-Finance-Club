@@ -39,6 +39,7 @@ export const AREAS = {
   round3: { path: '/admin/round3', label: 'The Doomsday Vault', roles: ['ledger_keeper', 'scorer'] },
   reveal: { path: '/screen/reveal', label: 'Zero Hour reveal', roles: ['anchor'] },
   screens: { path: '/screen', label: 'Projector screens', roles: ROLES },
+  print: { path: '/admin/print', label: 'Print & backups', roles: ROLES },
   settings: { path: '/admin/settings', label: 'Settings', roles: [] },
   users: { path: '/admin/users', label: 'Crew & roles', roles: [] },
 } as const satisfies Record<string, { path: string; label: string; roles: readonly Role[] }>;
