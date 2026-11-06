@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { hasDb, sql, sqlError } from './helpers';
+import { hasDb, hasSafeupdate, sql, sqlError } from './helpers';
 
 describe.skipIf(!hasDb)('database security', () => {
   it('Row Level Security is on for every table', () => {
@@ -43,5 +43,13 @@ describe.skipIf(!hasDb)('database security', () => {
 
   it('server code (service role) can read the answer keys', () => {
     expect(sql(`set local role service_role; select count(*) >= 0 from public.question_keys;`)).toEqual(['t']);
+  });
+});
+
+describe.skipIf(!hasSafeupdate)('Supabase safeupdate guard (local stand-in)', () => {
+  it('refuses an UPDATE or DELETE without WHERE inside a function, as Supabase does', () => {
+    expect(sqlError(`do $$ begin update event_state set alert = null; end $$;`)).toMatch(/UPDATE requires a WHERE clause/);
+    expect(sqlError(`do $$ begin delete from poster_duels; end $$;`)).toMatch(/DELETE requires a WHERE clause/);
+    expect(sql(`do $$ begin update event_state set alert = null where id; delete from poster_duels where true; end $$; select 'ok';`)).toEqual(['ok']);
   });
 });

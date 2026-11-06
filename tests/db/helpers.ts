@@ -23,6 +23,9 @@ export const hasSecrets =
   hasDb &&
   psql('select (select count(*) from question_keys) > 0 and (select count(*) from breaking_news) > 0;').stdout.trim() === 't';
 
+/** True when the local stand-in for Supabase's safeupdate guard is loaded (scripts/db/safeupdate). */
+export const hasSafeupdate = hasDb && psql('show session_preload_libraries;').stdout.includes('safeupdate');
+
 /** Runs SQL inside BEGIN … ROLLBACK and returns the output lines. Throws on any SQL error. */
 export function sql(body: string): string[] {
   const r = psql(`begin;\n${body}\nrollback;\n`);
