@@ -19,7 +19,7 @@ export const CHECKLIST: ChecklistSection[] = [
       {
         items: [
           'Merge the latest pull request on GitHub and wait until Vercel shows the new deployment as **Ready**.',
-          'In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (13 files; the last is `20261106001300_where_clauses.sql`).',
+          'In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (15 files; the last is `20261107001500_news_recap.sql`).',
           'If the secret seed has never been run, run `supabase/private/seed_secrets.sql` once.',
           'Command centre → Seed data: every row says **OK**.',
           'Every crew member with a website job signs in once at `/admin/login`; an admin gives each their role in Crew & roles (quiz host, 2 ledger keepers, auctioneer, 2 scorers, social-media lead, anchor, 2 floaters).',
@@ -65,19 +65,19 @@ export const CHECKLIST: ChecklistSection[] = [
       {
         title: 'Round 1 · Power Bazaar',
         items: [
-          'Phase **Round 1**. Power Bazaar console → credit starting funds (+₹50 Cr each, once).',
+          'After freezing, press **Start Round 1 · Power Bazaar →** (quiz console). Power Bazaar console → credit starting funds (+₹50 Cr each, once).',
           'Enter the Breaking News draw (or draw at random) before the first tip.',
-          'Insider Tips: sell a ₹2 Cr tip to one or two agencies. Only that agency’s My Agency page shows its tip.',
+          'Insider Tips: press **Open the 60-second window**. The projector counts down; two testers buy a tip on My Agency (₹2 Cr, with a confirm step) and the console marks each purchase NEW. Only that agency’s page shows its tip; after 0:00 the Buy button disappears.',
           'Marquee and Secret Identity Bids: record sales; the projector moves to the next lot. Try sales the site must refuse: below the minimum, above the fund left, not a ₹0.5 Cr step, a second card in the same category.',
           'Undo the last entry, and void a sale with a reason: the card returns to the auction and the money to the fund.',
           'Last Call, then Breaking News: reveal the headlines one at a time, then the Team-Ups.',
-          '**Apply Jugaad Kits & eliminations**, then **Lock Round 1**. Testers check gear, Power Level and fund left on My Agency, as at the real ledger check.',
+          '**Apply Jugaad Kits & eliminations**, then **Lock Round 1**. Press **Show all news & Team-Ups on the projector**: every headline and Team-Up, with who holds each card. Testers check gear, Power Level and fund left on My Agency, as at the real ledger check; then **Back to the normal view**.',
         ],
       },
       {
         title: 'Round 2 · Operation: Skyline',
         items: [
-          'Phase **Round 2**. Social-media lead draws the duel pairings (an odd number gives one bye).',
+          'After the lock, press **Start Round 2 →** on the Power Bazaar console. Social-media lead draws the duel pairings (an odd number gives one bye).',
           'At the cutoff, type each duel’s story-vote counts; make one a tie and enter the rock-paper-scissors winner.',
           'Scorers enter tower results: correct blocks, reference blocks, build time as m:ss (make one a DNF = 10:00), frozen blocks, blocks fallen. Work one Tower Score by hand on the Round 2 sheet and compare.',
           'Publish: the top 8 stay in, the rest are eliminated in Round 2, and each duel winner or bye in the top 8 gets +₹5 Cr.',
@@ -86,7 +86,7 @@ export const CHECKLIST: ChecklistSection[] = [
       {
         title: 'Round 3 · The Doomsday Vault',
         items: [
-          'Phase **Round 3**. One admin enters a test multiplier map on the Round 3 console (any spread the spec allows). The reset deletes it.',
+          'After publishing, press **Start Round 3 →** on the Round 2 console. One admin enters a test multiplier map on the Round 3 console (any spread the spec allows). The reset deletes it.',
           'Record the deal: which finalist holds which envelope (E1–E8).',
           'Each mission: Force Field (₹5 Cr) → Play → Results → Winner’s choice → Chai Pe Charcha. Try a swap with a protected agency (refused), an X-Ray (organisers only), the ₹6 Cr cash choice, a Chai Pe Charcha transfer and a ₹5 Cr fine.',
           'Undo one choice before the reveal.',
@@ -95,7 +95,7 @@ export const CHECKLIST: ChecklistSection[] = [
       {
         title: 'Zero Hour',
         items: [
-          'Phase **Zero Hour**. Record Mission 4’s choice before the first envelope opens.',
+          'Once Mission 4’s result is in, press **Start Zero Hour →**. Record Mission 4’s choice before the first envelope opens.',
           'Anchor on `/screen/reveal`: **Next envelope** (or →). Envelopes open in ascending Power Level, ties by agency ID. Work one Hero Score by hand on the Zero Hour sheet and compare.',
           'After the eighth, the final ranking shows; a tie for 1st or 2nd that survives fund left and Power Level shows a coin-toss call.',
           'Phase **Event over**.',

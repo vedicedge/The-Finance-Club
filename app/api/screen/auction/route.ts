@@ -23,6 +23,9 @@ export async function GET() {
   const last = r1.recent[0];
   const name = (id: string) => r1.agencies.find((a) => a.id === id)?.name ?? id;
   const showFunds = r1.locked || r1.settings.round1.showFundPublicly;
+  // Who holds each card, for the recap (card ownership is announced at every sale).
+  const holders = (gear: string) =>
+    active.filter((a) => Object.values(a.held).some((h) => h?.gear_name === gear)).map((a) => ({ id: a.id, name: a.name }));
 
   return NextResponse.json(
     {
@@ -51,6 +54,28 @@ export async function GET() {
       board: active
         .map((a) => ({ id: a.id, name: a.name, power: a.power.total, cards: a.power.cards, fund: showFunds ? a.fund : null }))
         .sort((a, b) => b.power - a.power || a.id.localeCompare(b.id)),
+      // The Insider Tips window: when it closes and how many tips were bought (never who or which card).
+      tips:
+        step === 'tips'
+          ? { closesAt: r1.tipsClosesAt, now: r1.now, sold: r1.agencies.filter((a) => a.tipNews).length }
+          : null,
+      // The end-of-round recap: only headlines and Team-Ups already revealed (the database also
+      // refuses the recap until all of them are).
+      recap:
+        r1.screen === 'news_recap'
+          ? {
+              news: r1.news
+                .filter((n) => n.revealed_at && n.draw_order !== null)
+                .sort((a, b) => a.draw_order! - b.draw_order!)
+                .map((n) => ({ id: n.id, headline: n.headline, affects: n.affects_gear, delta: n.delta, holders: holders(n.affects_gear) })),
+              teamUps: r1.teamUps
+                .filter((t) => t.revealed_at)
+                .map((t) => {
+                  const a = new Set(holders(t.gear_a).map((h) => h.id));
+                  return { name: t.name, gearA: t.gear_a, gearB: t.gear_b, bonus: t.bonus, holders: holders(t.gear_b).filter((h) => a.has(h.id)) };
+                }),
+            }
+          : null,
       locked: r1.locked,
     },
     { headers },

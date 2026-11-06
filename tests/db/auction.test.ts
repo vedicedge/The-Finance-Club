@@ -83,6 +83,66 @@ describe.skipIf(!hasDb || !hasSecrets)('Insider Tips', () => {
   });
 });
 
+describe.skipIf(!hasDb || !hasSecrets)('self-service Insider Tips (1-minute window)', () => {
+  const drawn = `select r1_set_news_draw(array['N1','N2','N3','N4','N5','N6']);`;
+  const sessions = `insert into agency_sessions (token_hash, agency_id, expires_at) values
+    ('t1', 'A01', now() + interval '1 day'), ('t2', 'A02', now() + interval '1 day');`;
+  const open = `select r1_open_tips_window(60, '${KEEPER}') > clock_timestamp() + interval '55 seconds';`;
+
+  it('opens a timed window in the Tips step, only once funds are credited and news is drawn', () => {
+    expect(sql(`${setup('rules')} ${drawn} ${open} select step from event_state;`).slice(-2)).toEqual(['t', 'tips']);
+    expect(sqlError(`${setup('rules')} select r1_open_tips_window(60, '${KEEPER}');`)).toMatch(/news_not_drawn/);
+    expect(sqlError(`${setup('rules')} ${drawn} select r1_open_tips_window(5, '${KEEPER}');`)).toMatch(/bad_window/);
+  });
+
+  it('an agency buys its own tip in the window: ₹2 Cr, a random drawn card, once', () => {
+    const out = sql(`${setup('rules')} ${drawn} ${sessions} ${open}
+      select r1_agency_buy_tip('t1') in ('N1','N2','N3','N4','N5','N6');
+      ${fund('A01')} select count(*) from insider_tips where agency_id = 'A01' and created_by is null;`);
+    expect(out.slice(-3)).toEqual(['t', '48.0', '1']);
+    expect(sqlError(`${setup('rules')} ${drawn} ${sessions} ${open}
+      select r1_agency_buy_tip('t1'); select r1_agency_buy_tip('t1');`)).toMatch(/tip_already_bought/);
+  });
+
+  it('is refused before the window opens, after it closes, and without a valid session', () => {
+    expect(sqlError(`${setup('tips')} ${drawn} ${sessions} select r1_agency_buy_tip('t1');`)).toMatch(/tips_closed/);
+    expect(sqlError(`${setup('rules')} ${drawn} ${sessions} ${open}
+      update event_state set tips_closes_at = clock_timestamp() - interval '1 second';
+      select r1_agency_buy_tip('t1');`)).toMatch(/tips_closed/);
+    expect(sqlError(`${setup('rules')} ${drawn} ${sessions} ${open} update event_state set step = 'marquee';
+      select r1_agency_buy_tip('t1');`)).toMatch(/tips_closed/);
+    expect(sqlError(`${setup('rules')} ${drawn} ${open} select r1_agency_buy_tip('nope');`)).toMatch(/not_signed_in/);
+  });
+
+  it('an agency out of the game cannot buy', () => {
+    expect(sqlError(`${setup('rules')} ${drawn} ${sessions} ${open}
+      update agencies set status = 'eliminated', eliminated_in = 'prelim' where id = 'A02';
+      select r1_agency_buy_tip('t2');`)).toMatch(/not_active|not in the game|agency/i);
+  });
+});
+
+describe.skipIf(!hasDb || !hasSecrets)('Breaking News recap on the projector', () => {
+  const drawn = `select r1_set_news_draw(array['N1','N2','N3','N4','N5','N6']);`;
+
+  it('only once every drawn headline and every Team-Up is revealed', () => {
+    expect(sqlError(`${setup('news')} select r1_show_news_recap(true);`)).toMatch(/news_not_drawn/);
+    expect(sqlError(`${setup('news')} ${drawn} select r1_reveal_next_news(); select r1_show_news_recap(true);`)).toMatch(/news_not_all_revealed/);
+    expect(sqlError(`${setup('news')} ${drawn} select r1_reveal_next_news() from generate_series(1, 6);
+      select r1_show_news_recap(true);`)).toMatch(/news_not_all_revealed/);
+    expect(sql(`${setup('news')} ${drawn} select r1_reveal_next_news() from generate_series(1, 6); select r1_reveal_team_ups();
+      select r1_show_news_recap(true); select r1_screen from event_state;
+      select r1_show_news_recap(false); select coalesce(r1_screen, 'normal') from event_state;`).slice(-2)).toEqual(['news_recap', 'normal']);
+  });
+
+  it('works after the lock, and the reset turns it off', () => {
+    expect(sql(`${setup('news')} ${drawn} update event_state set round1_locked_at = now();
+      update breaking_news set revealed_at = now() where draw_order is not null; update team_ups set revealed_at = now();
+      select r1_show_news_recap(true);
+      select admin_reset_event(true, '${KEEPER}');
+      select coalesce(r1_screen, 'off') || '|' || coalesce(tips_closes_at::text, 'none') from event_state;`).slice(-1)).toEqual(['off|none']);
+  });
+});
+
 describe.skipIf(!hasDb)('closing Round 1', () => {
   // A01 holds all four, A02 misses one with money, A03 misses one without ₹8 Cr, A04 misses two.
   const auction = `

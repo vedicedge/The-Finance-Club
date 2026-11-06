@@ -23,6 +23,8 @@ export type DossierData = {
   power: { gear: number; teamUp: number; news: number; total: number };
   /** This agency's own Insider Tip (eyes only), even before Breaking News. */
   tip: { id: string; headline: string; affects: string; delta: number } | null;
+  /** The self-service Insider Tips window, while it is open (database time). */
+  tipsWindow: { closesAt: string; serverNow: string } | null;
   round1Locked: boolean;
   round2: {
     duel: null | { opponent: string | null; opponentName: string | null; mine: number | null; theirs: number | null; won: boolean | null };
@@ -43,7 +45,7 @@ export type DossierData = {
 export async function loadDossier(agencyId: string): Promise<DossierData> {
   const db = serviceDb();
   const [st, ledger, gear, power, tip, news, teamUps, scores, duels, towers, holder, moves, ffs, hero, names] = await Promise.all([
-    db.from('event_state').select('prelim_published_at, round1_locked_at, round2_published_at, current_mission').single(),
+    db.from('event_state').select('phase, step, tips_closes_at, prelim_published_at, round1_locked_at, round2_published_at, current_mission').single(),
     db.from('v_ledger').select('id, agency_id, amount, reason, ref, note, created_at, voided, void_reason').eq('agency_id', agencyId),
     db.from('v_held_gear').select('category, card_id, gear_name, power, price').eq('agency_id', agencyId),
     db.from('v_power_level').select('gear_power, team_up_bonus, news_delta, power_level').eq('agency_id', agencyId).maybeSingle(),
@@ -124,6 +126,11 @@ export async function loadDossier(agencyId: string): Promise<DossierData> {
       total: power.data?.power_level ?? 0,
     },
     tip: t ? { id: t.id, headline: t.headline, affects: t.affects_gear, delta: t.delta } : null,
+    tipsWindow:
+      st.data?.phase === 'round1' && st.data?.step === 'tips' && !st.data?.round1_locked_at && st.data?.tips_closes_at &&
+      Date.parse(st.data.tips_closes_at) > Date.now()
+        ? { closesAt: st.data.tips_closes_at as string, serverNow: new Date().toISOString() }
+        : null,
     round1Locked: Boolean(st.data?.round1_locked_at),
     round2: {
       duel: d

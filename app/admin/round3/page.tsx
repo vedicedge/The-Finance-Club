@@ -4,6 +4,7 @@ import { hasRole, requireOrganiser } from '@/lib/auth/organiser';
 import { formatCrore } from '@/lib/money';
 import { MISSION_STEPS, loadRound3 } from '@/lib/round3/server';
 import { AdminShell } from '@/components/admin/AdminShell';
+import { NextPhase } from '@/components/admin/NextPhase';
 import { AutoRefresh } from '@/components/admin/AutoRefresh';
 import { buyForceField, fine, makeChoice, saveDeal, saveEnvelopeMap, setMissionStep, setWinner, transfer, undoChoice } from './actions';
 
@@ -43,6 +44,8 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
       </div>
       {sp.error && <p role="alert" className="mt-6 rounded-sm border border-ember/40 bg-ember/10 px-4 py-3 text-sm text-ember">Rejected: {sp.error}</p>}
       {sp.ok && <p role="status" className="mt-6 rounded-sm border border-toxic/40 bg-toxic/10 px-4 py-3 text-sm text-toxic">{sp.ok}</p>}
+      <NextPhase organiser={organiser} to="round3" />
+      <NextPhase organiser={organiser} to="zero_hour" />
       {!inVault && r3.phase !== 'zero_hour' && (
         <p className="mt-6 rounded-sm border border-torch/40 bg-torch/10 px-4 py-3 text-sm text-torch">
           The event is not in Round 3. Publish Round 2, then an admin switches the phase to Round 3. The multiplier map can be entered any time.

@@ -5,6 +5,7 @@ import { EVENT, ROUNDS } from '@/lib/config';
 import { formatCrore } from '@/lib/money';
 import { Stage } from '@/components/screen/Stage';
 import { BoardColumns, BoardHeader } from '@/components/screen/BoardColumns';
+import { WindowClock } from '@/components/site/WindowClock';
 
 type S = {
   phase: string;
@@ -18,6 +19,11 @@ type S = {
   news: { id: string; headline: string; affects: string; delta: number }[];
   teamUps: { name: string; bonus: number }[];
   board: { id: string; name: string; power: number; cards: number; fund: number | null }[];
+  tips: null | { closesAt: string | null; now: string; sold: number };
+  recap: null | {
+    news: { id: string; headline: string; affects: string; delta: number; holders: { id: string; name: string }[] }[];
+    teamUps: { name: string; gearA: string; gearB: string; bonus: number; holders: { id: string; name: string }[] }[];
+  };
   locked: boolean;
 };
 
@@ -59,6 +65,8 @@ export function AuctionProjector({ stateUrl = '/api/screen/auction' }: { stateUr
 
       {!s ? (
         <Center title={error ?? 'Establishing secure line…'} />
+      ) : s.recap ? (
+        <RecapView recap={s.recap} />
       ) : step === 'marquee' || step === 'secret' || step === 'last_call' ? (
         <LotView s={s} />
       ) : step === 'news' ? (
@@ -66,10 +74,7 @@ export function AuctionProjector({ stateUrl = '/api/screen/auction' }: { stateUr
       ) : step === 'ledger_check' || step === 'locked' ? (
         <BoardView s={s} />
       ) : step === 'tips' ? (
-        <Center title="Insider Tips">
-          <p className="mt-[3cqh] text-[2.4cqw] text-bone">₹2 Cr buys one sealed tip.</p>
-          <p className="mt-[1cqh] text-[1.8cqw] text-steel">It privately reveals one Breaking News card that will really be played. One per agency.</p>
-        </Center>
+        <TipsView s={s} />
       ) : (
         <Center title={ROUNDS.round1}>
           <ul className="mt-[4cqh] space-y-[1.2cqh] text-[2cqw] text-bone">
@@ -82,6 +87,88 @@ export function AuctionProjector({ stateUrl = '/api/screen/auction' }: { stateUr
       )}
       {error && s && <p className="absolute right-[2cqw] bottom-[1.5cqh] text-[1.2cqw] font-semibold tracking-[0.2em] text-ember uppercase">{error}</p>}
     </Stage>
+  );
+}
+
+function who(holders: { id: string; name: string }[]) {
+  return holders.map((h) => `${h.id} ${h.name}`).join(', ');
+}
+
+/** End of Power Bazaar: every revealed headline and Team-Up at once, with who holds the cards. */
+function RecapView({ recap }: { recap: NonNullable<S['recap']> }) {
+  return (
+    <div className="flex h-full flex-col px-[5cqw] pt-[9cqh] pb-[3cqh]">
+      <h1 className="display text-center text-[4.2cqw]">Breaking News · the full picture</h1>
+      <div className="mt-[2.5cqh] grid min-h-0 flex-1 grid-cols-[1.5fr_1fr] gap-x-[4cqw]">
+        <section className="min-w-0">
+          <p className="text-[1.15cqw] font-semibold tracking-[0.3em] text-ember uppercase">Breaking News · {recap.news.length} headlines</p>
+          <ol className="mt-[1cqh]">
+            {recap.news.map((n) => (
+              <li key={n.id} className="flex items-center gap-[1.5cqw] border-b border-line py-[1cqh]">
+                <div className="min-w-0 flex-1">
+                  <p className="text-[1.7cqw] leading-tight text-bone">{n.headline}</p>
+                  <p className="mt-[0.4cqh] truncate text-[1.2cqw] text-steel">
+                    {n.affects} · {n.holders.length ? <span className="text-bone">{who(n.holders)}</span> : 'not sold'}
+                  </p>
+                </div>
+                <span className={`num w-[5cqw] text-right text-[2.6cqw] font-semibold ${n.delta > 0 ? 'text-toxic' : 'text-ember'}`}>
+                  {n.delta > 0 ? '+' : '−'}
+                  {Math.abs(n.delta)}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </section>
+        <section className="min-w-0">
+          <p className="text-[1.15cqw] font-semibold tracking-[0.3em] text-toxic uppercase">Team-Ups · both cards = +3</p>
+          <ul className="mt-[1cqh]">
+            {recap.teamUps.map((t) => (
+              <li key={t.name} className="border-b border-line py-[1.2cqh]">
+                <div className="flex items-baseline justify-between gap-[1cqw]">
+                  <p className="min-w-0 text-[1.7cqw] leading-tight text-bone">{t.name}</p>
+                  <span className="num text-[2.2cqw] font-semibold text-toxic">+{t.bonus}</span>
+                </div>
+                <p className="mt-[0.3cqh] text-[1.1cqw] text-steel">
+                  {t.gearA} + {t.gearB}
+                </p>
+                <p className={`mt-[0.3cqh] text-[1.3cqw] ${t.holders.length ? 'text-toxic' : 'text-steel'}`}>
+                  {t.holders.length ? `${who(t.holders)} hold${t.holders.length === 1 ? 's' : ''} both` : 'Nobody holds both'}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function TipsView({ s }: { s: S }) {
+  const t = s.tips;
+  const open = t?.closesAt ? Date.parse(t.closesAt) > Date.parse(t.now) : false;
+  return (
+    <Center title="Insider Tips">
+      {open && t?.closesAt ? (
+        <>
+          <WindowClock closesAt={t.closesAt} serverNow={t.now} className="mt-[1cqh] block text-[13cqw] leading-none font-semibold text-torch" />
+          <p className="mt-[3cqh] text-[2.4cqw] text-bone">Buy now on your My Agency page · ₹2 Cr · one per agency</p>
+          <p className="mt-[1cqh] text-[1.8cqw] text-steel">
+            See one Breaking News headline before it is announced. <span className="num text-bone">{t.sold}</span> bought so far.
+          </p>
+        </>
+      ) : (
+        <>
+          <p className="mt-[3cqh] text-[2.4cqw] text-bone">
+            {t?.closesAt ? 'The window has closed.' : '₹2 Cr buys one tip, on your My Agency page.'}
+          </p>
+          <p className="mt-[1cqh] text-[1.8cqw] text-steel">
+            {t?.closesAt
+              ? `${t.sold} tip${t.sold === 1 ? '' : 's'} bought.`
+              : 'It privately reveals one Breaking News card that will really be played. One per agency.'}
+          </p>
+        </>
+      )}
+    </Center>
   );
 }
 

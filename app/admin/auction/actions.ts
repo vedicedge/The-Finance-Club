@@ -5,7 +5,7 @@ import { requireOrganiser } from '@/lib/auth/organiser';
 import { serviceDb } from '@/lib/db/server';
 import { audit } from '@/lib/audit';
 import { formatCrore } from '@/lib/money';
-import { isR1Step } from '@/lib/round1/steps';
+import { isR1Step, TIPS_WINDOW_SECONDS } from '@/lib/round1/steps';
 import { nextLot } from '@/lib/round1/lots';
 import { dbMessage, loadRound1 } from '@/lib/round1/server';
 import type { Area } from '@/lib/auth/roles';
@@ -27,7 +27,8 @@ async function act<T>(area: Area, action: string, payload: Record<string, unknow
 
 export async function setStep(step: string) {
   if (!isR1Step(step)) back({ error: 'Unknown step.' });
-  await act('auction', 'r1.step', { step }, () => serviceDb().from('event_state').update({ step }).eq('id', true), () => `Step: ${step}.`);
+  // Changing step also ends the news recap, so the projector follows the step again.
+  await act('auction', 'r1.step', { step }, () => serviceDb().from('event_state').update({ step, r1_screen: null }).eq('id', true), () => `Step: ${step}.`);
 }
 
 export async function shuffleLots() {
@@ -52,6 +53,12 @@ export async function advanceLot() {
 
 export async function revealNextNews() {
   await act('auction', 'r1.reveal_news', {}, () => serviceDb().rpc('r1_reveal_next_news'), (id) => `Breaking News ${id} is live.`);
+}
+
+/** Puts every revealed headline and Team-Up on the auction projector at once (or back to normal). */
+export async function showNewsRecap(on: boolean) {
+  await act('auction', on ? 'r1.news_recap_on' : 'r1.news_recap_off', {}, () => serviceDb().rpc('r1_show_news_recap', { p_on: on }),
+    () => (on ? 'The projector now shows all Breaking News and Team-Ups.' : 'The projector is back to the normal view.'));
 }
 
 export async function revealTeamUps() {
@@ -93,6 +100,14 @@ export async function voidSale(entryId: number, formData: FormData) {
   await act('ledger', 'ledger.void', { entry: entryId, reason }, () =>
     serviceDb().rpc('ledger_void', { p_entry: entryId, p_reason: reason, p_actor: me.userId }),
   () => 'Sale voided; the card is back on sale and the money is back in the fund.');
+}
+
+/** Opens the self-service Insider Tips window: agencies buy on My Agency until it closes. */
+export async function openTipsWindow() {
+  const me = await requireOrganiser('auction');
+  await act('auction', 'r1.tips_window', { seconds: TIPS_WINDOW_SECONDS }, () =>
+    serviceDb().rpc('r1_open_tips_window', { p_seconds: TIPS_WINDOW_SECONDS, p_actor: me.userId }),
+  () => `Insider Tips window open for ${TIPS_WINDOW_SECONDS} seconds. Agencies buy on their My Agency page.`);
 }
 
 export async function buyTip(formData: FormData) {
