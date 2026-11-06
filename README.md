@@ -18,8 +18,8 @@ Row Level Security), deployed on Vercel. The event name lives in one place: `lib
 | 1. Foundation — project, schema, seed data, roles | 8 Nov | **Done** |
 | 2. Public site + registration | 11 Nov | **Done** |
 | 3. Prelim quiz | 15 Nov | **Done** |
-| 4. Auction + ledger | 18 Nov | Next |
-| 5. Rounds 2–3, leaderboard, reveal | 21 Nov | |
+| 4. Auction + ledger | 18 Nov | **Done** |
+| 5. Rounds 2–3, leaderboard, reveal | 21 Nov | Next |
 | 6. Dry run | 23 Nov | |
 
 ## How the security works
@@ -117,10 +117,11 @@ TypeScript ones for every tenth of a second.
 app/                  pages and route handlers (App Router)
   (site)/             public site: landing, rounds, rules, schedule, register, login, My Agency
   play/               phone quiz screen
-  screen/quiz/        prelim projector (16:9)
+  screen/quiz/        prelim projector (16:9); screen/auction/ for Power Bazaar
   api/quiz/           phone quiz state + answer endpoints; api/screen/ for the projector
   admin/              command centre: systems check, phase + alert, agencies & check-in,
-                      quiz host console + CSV, settings, crew & roles
+                      quiz host console + CSV, Power Bazaar console, Fund Ledger,
+                      settings, crew & roles
   auth/confirm/       where organiser sign-in links land
 components/           shared UI (skyline, threat bar, countdown, dossier, admin shell)
 lib/
@@ -129,6 +130,9 @@ lib/
   registration.ts     registration checks (@imi.edu, phones, agency IDs)
   settings.ts         admin settings with defaults (open decisions)
   quiz/               board ranking (tie-breaks), CSV, phone timer helpers, server loaders
+  round1/             Power Bazaar steps, lot order, Round 1 loader
+  ledger.ts           running balance and ledger labels
+  agency-view.ts      what an agency sees about itself on My Agency
   event-state.ts      live phase, alert and settings for every page
   auth/               roles, organiser auth, agency PINs and session tokens
   db/server.ts        service-role client (server-only)

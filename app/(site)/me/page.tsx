@@ -3,13 +3,15 @@ import { requireAgency } from '@/lib/auth/agency';
 import { serviceDb } from '@/lib/db/server';
 import { getEventState } from '@/lib/event-state';
 import { Dossier } from '@/components/site/Dossier';
+import { AutoRefresh } from '@/components/admin/AutoRefresh';
+import { loadDossier } from '@/lib/agency-view';
 import { logoutAgency } from '../login/actions';
 
 export const metadata: Metadata = { title: 'My Agency' };
 
 export default async function MyAgencyPage() {
   const agency = await requireAgency();
-  const [{ data: founders }, state] = await Promise.all([
+  const [{ data: founders }, state, data] = await Promise.all([
     serviceDb()
       .from('founders')
       .select('name, section, is_captain')
@@ -17,9 +19,15 @@ export default async function MyAgencyPage() {
       .order('is_captain', { ascending: false })
       .order('id'),
     getEventState(),
+    loadDossier(agency.id),
   ]);
   return (
-    <Dossier
+    <>
+      {/* Spec: simple 5-second polling for /me. */}
+      <AutoRefresh ms={5000} />
+      <Dossier
+      data={data}
+      briefing={state.phase === 'registration' || state.phase === 'checkin'}
       agency={agency}
       founders={founders ?? []}
       startsAt={state.settings.event.startsAt}
@@ -30,6 +38,7 @@ export default async function MyAgencyPage() {
           <button className="btn btn-ghost w-full sm:w-auto">Sign out of this phone</button>
         </form>
       }
-    />
+      />
+    </>
   );
 }

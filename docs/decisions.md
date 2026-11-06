@@ -92,6 +92,35 @@ founder emails only, A4 PINs shown on screen only.
 - **Freezing the top 16** marks them "In the game" and everyone else "Eliminated · Prelim". The
   ₹50 Cr starting fund is credited when Round 1 starts (Milestone 4).
 
+## Power Bazaar and the Fund Ledger (Milestone 4)
+
+- **Starting funds** are credited with one button in the Power Bazaar console once Round 1 has
+  started (after the top 16 are frozen): +₹50 Cr to every agency in the game, once.
+- **Steps** (event_state.step): Rules → Insider Tips → Marquee → Secret Identity Bids → Last Call →
+  Breaking News → Ledger check. Tips sell only in the Insider Tips step; sales are recorded only
+  in Marquee (the 8 Marquee lots), Secret Identity Bids (the other 52) or Last Call (any unsold
+  card). Every other ledger check is exactly the spec's table, enforced in the database.
+- **Lot order**: the 8 Marquee lots run in card order (H01, H02, S01 …); the 52 secret cards run
+  one category at a time, categories and cards shuffled once before the first sale. Recording a
+  sale of the lot on the projector moves the projector to the next lot.
+- **Breaking News draw**: entered in the console (6 cards in their sealed order) or drawn at
+  random there; it cannot change once a tip has been sold. Headlines are revealed one at a time
+  on the projector in the Breaking News step; locking Round 1 reveals any left, and the Team-Ups.
+- **Insider Tips**: the site picks one of the 6 drawn cards at random (setting); the ledger keeper
+  sees which, to hand over the matching sealed envelope; the agency sees it on its own My Agency
+  page ("eyes only"). Several agencies can draw the same card.
+- **Close Round 1** is two buttons: *Apply Jugaad Kits & eliminations* (missing one category and
+  ₹8 Cr in the fund → the next free Jugaad Kit row; missing two or more, or short of ₹8 Cr →
+  eliminated in Round 1), then *Lock Round 1*, which refuses while anyone in the game still
+  lacks a category.
+- **After the lock**, Round 1 purchases (gear, Jugaad Kits, tips) can no longer be voided:
+  Power Levels are final. Other entries can still be voided.
+- **Undo** voids the most recent entry made by the ledger keeper who clicks it, so two keepers
+  never undo each other's work. Voiding a sale returns the card to the auction and the money to
+  the fund. Every void and adjustment needs a reason.
+- **Funds on the projector** stay hidden until Round 1 locks (open decision 4), unless the
+  setting shows them.
+
 ## Secrets and the public repository
 
 The repository `vedicedge/The-Finance-Club` is public. The spec's Appendix A (questions and
