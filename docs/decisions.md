@@ -218,6 +218,17 @@ found these; all are fixed and re-tested:
 - **Crediting the starting funds shuffles the lots** if nobody has, so secret cards never run in
   printed card order.
 
+## Safety nets (7 Nov 2026)
+
+- **Database updates check.** Each migration is pasted into the Supabase SQL editor by hand, so one
+  can be missed. The newest migration defines `schema_version()`; the command centre shows
+  "Database updates: Up to date / Update missing", and every organiser page shows a red strip
+  while the database is behind the deployed code. Every new migration must bump the version
+  (a unit test enforces it).
+- **Coin toss at Zero Hour.** If 1st (or 2nd) place is still level after the tie-breaks, the
+  reveal screen and the public leaderboard say a coin toss is coming and name both agencies; no
+  winner or runner-up is shown before it. The anchor announces the result of the toss.
+
 ## Secrets and the public repository
 
 The repository `vedicedge/The-Finance-Club` is public. The spec's Appendix A (questions and

@@ -45,7 +45,8 @@ private, they can become a normal migration.
 
 1. Create a project at [supabase.com](https://supabase.com). Choose region **Mumbai (ap-south-1)**:
    every quiz answer goes phone → Vercel → Supabase, and that delay counts against the agency.
-2. Apply the migrations in `supabase/migrations/` (in filename order). Either:
+2. Apply the migrations in `supabase/migrations/` (in filename order). The command centre's
+   **Database updates** tile (and a red strip on every organiser page) says if one is missing. Either:
    ```bash
    npx supabase login
    ```

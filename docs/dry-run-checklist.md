@@ -8,9 +8,9 @@ This file is generated from `lib/print/checklist.ts`; edit that file, then run `
 ## The day before
 
 - [ ] Merge the latest pull request on GitHub and wait until Vercel shows the new deployment as **Ready**.
-- [ ] In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (16 files; the last is `20261107001600_playthrough_fixes.sql`).
+- [ ] In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (17 files; the last is `20261107001700_schema_version.sql`).
 - [ ] If the secret seed has never been run, run `supabase/private/seed_secrets.sql` once.
-- [ ] Command centre → Seed data: every row says **OK**.
+- [ ] Command centre: **Database updates** says “Up to date”, and Seed data says **OK** on every row.
 - [ ] Every crew member with a website job signs in once at `/admin/login`; an admin gives each their role in Crew & roles (quiz host, 2 ledger keepers, auctioneer, 2 scorers, social-media lead, anchor, 2 floaters).
 - [ ] Settings: start time, venue, registration deadline, read-in (3 s) and PIN lock look right.
 - [ ] Testers are crew only: the rehearsal plays the real quiz questions, Breaking News and Team-Ups.

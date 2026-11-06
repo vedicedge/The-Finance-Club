@@ -42,7 +42,16 @@ export function LeaderboardView({ initial }: { initial: Leaderboard | null }) {
       )}
 
       {lb.zeroHour && (
-        <Block eyebrow="Zero Hour" title={lb.zeroHour.final ? 'Mahanagar has its hero' : 'Envelopes opening'}>
+        <Block
+          eyebrow="Zero Hour"
+          title={
+            !lb.zeroHour.final
+              ? 'Envelopes opening'
+              : lb.zeroHour.final.filter((r) => r.rank === 1).length > 1
+                ? 'A tie at the top: coin toss on stage'
+                : 'Mahanagar has its hero'
+          }
+        >
           {lb.zeroHour.final ? (
             <ol className="divide-y divide-line/60 border-y border-line/60">
               {lb.zeroHour.final.map((r) => (

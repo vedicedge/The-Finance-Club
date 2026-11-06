@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { EXPECTED_SCHEMA } from '@/lib/schema-version';
 
 /**
  * Supabase runs API requests under the `safeupdate` guard: an UPDATE or DELETE without a WHERE
@@ -53,5 +54,13 @@ describe('migrations', () => {
     }
     expect(fns.size).toBeGreaterThan(50);
     expect(offenders).toEqual([]);
+  });
+
+  it('the site expects the newest migration, and that migration reports its own version', () => {
+    const files = readdirSync(DIR).filter((f) => f.endsWith('.sql')).sort();
+    const newest = files.at(-1)!;
+    expect(newest.slice(0, 14)).toBe(EXPECTED_SCHEMA);
+    // The newest migration (re)defines schema_version() to return its own prefix.
+    expect(readFileSync(path.join(DIR, newest), 'utf8')).toMatch(new RegExp(`function public\\.schema_version\\(\\)[\\s\\S]*'${EXPECTED_SCHEMA}'`));
   });
 });
