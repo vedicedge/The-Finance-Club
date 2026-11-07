@@ -378,6 +378,51 @@ body {
   to { transform: scale(1.07); }
 }
 
+/* Gear cards: a printed card with a glowing edge. Sizes inside are in em (see GearCard). */
+.gear-card {
+  display: block;
+  padding: 0.45em;
+  border-radius: 0.7em;
+  border: 0.1em solid rgb(169 207 110 / 0.55);
+  background: linear-gradient(180deg, #121a10, #080b07);
+  box-shadow: 0 0 0 0.06em rgb(0 0 0 / 0.6), 0 0 1.4em -0.2em rgb(169 207 110 / 0.45), inset 0 0.06em 0 rgb(235 232 218 / 0.06);
+}
+
+/* A card turning over (FlipReveal): face down first, then face up. */
+.flip-card {
+  perspective: 1600px;
+}
+.flip-card-inner {
+  display: grid;
+  transform-style: preserve-3d;
+  transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  transform: rotateY(180deg);
+}
+.flip-card[data-up='true'] .flip-card-inner {
+  transform: none;
+}
+.flip-card-face {
+  grid-area: 1 / 1;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-card-back {
+  transform: rotateY(180deg);
+}
+
+/* The projector: screens cross-fade, and the cursor hides when the mouse is still. */
+.projector-fade {
+  animation: projector-fade 700ms ease-out both;
+}
+@keyframes projector-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+html.projector-idle,
+html.projector-idle * {
+  cursor: none !important;
+}
+
 /* Slow drifting fog over the art. */
 .fog {
   pointer-events: none;

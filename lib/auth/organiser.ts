@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { serviceDb } from '@/lib/db/server';
 import { bootstrapAdminEmails } from '@/lib/env';
 import { supabaseAuthClient } from '@/lib/auth/supabase-auth';
-import { canAccess, isRole, type Area, type Role } from '@/lib/auth/roles';
+import { canAccess, isProjectorOnly, isRole, type Area, type Role } from '@/lib/auth/roles';
 
 export type Organiser = {
   userId: string;
@@ -65,7 +65,7 @@ export async function getOrganiser(): Promise<Organiser | null> {
 export async function requireOrganiser(area: Area): Promise<Organiser> {
   const organiser = await getOrganiser();
   if (!organiser) redirect('/admin/login');
-  if (!canAccess(organiser.roles, area)) redirect(`/admin?denied=${area}`);
+  if (!canAccess(organiser.roles, area)) redirect(isProjectorOnly(organiser.roles) ? '/projector' : `/admin?denied=${area}`);
   return organiser;
 }
 

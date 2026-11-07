@@ -3,9 +3,11 @@ import { serviceDb } from '@/lib/db/server';
 import { parseSettings, type EventSettings } from '@/lib/settings';
 import { CATEGORIES, isR1Step, type Category, type R1Step } from '@/lib/round1/steps';
 import type { Lot } from '@/lib/round1/lots';
+import { loadCardNames } from '@/lib/cards';
 
-export type Card = Lot & { gear_name: string; power: number; min_bid: number };
-export type Holding = { card_id: string; gear_name: string; power: number; price: number; phase: string; sale_id: number };
+/** gear_name is the card's series (what Breaking News and Team-Ups match); card_name is its own name. */
+export type Card = Lot & { gear_name: string; card_name: string; power: number; min_bid: number };
+export type Holding = { card_id: string; gear_name: string; card_name: string; power: number; price: number; phase: string; sale_id: number };
 export type R1Agency = {
   id: string;
   name: string;
@@ -52,7 +54,7 @@ export type Round1 = {
  */
 export async function loadRound1(): Promise<Round1> {
   const db = serviceDb();
-  const [st, cards, held, agencies, funds, power, tips, news, teamUps, starts, sales] = await Promise.all([
+  const [st, cards, held, agencies, funds, power, tips, news, teamUps, starts, sales, names] = await Promise.all([
     db.from('event_state').select('phase, step, current_card_id, prelim_frozen_at, round1_locked_at, tips_closes_at, r1_screen, settings').single(),
     db.from('gear_cards').select('id, category, gear_name, power, min_bid, phase, lot_order').order('id'),
     db.from('v_held_gear').select('agency_id, category, card_id, gear_name, power, price, phase, sale_id'),
@@ -69,7 +71,9 @@ export async function loadRound1(): Promise<Round1> {
       .is('voided_at', null)
       .order('id', { ascending: false })
       .limit(10),
+    loadCardNames(),
   ]);
+  const cardName = (id: string, series: string) => names.get(id) ?? series;
   for (const r of [st, cards, held, agencies, funds, power, tips, news, teamUps, sales]) if (r.error) throw r.error;
 
   const fundOf = new Map((funds.data ?? []).map((f) => [f.agency_id as string, Number(f.fund_left)]));
@@ -80,7 +84,8 @@ export async function loadRound1(): Promise<Round1> {
   for (const h of held.data ?? []) {
     const m = heldOf.get(h.agency_id) ?? {};
     m[h.category as Category] = {
-      card_id: h.card_id, gear_name: h.gear_name, power: h.power, price: Number(h.price), phase: h.phase, sale_id: h.sale_id,
+      card_id: h.card_id, gear_name: h.gear_name, card_name: cardName(h.card_id, h.gear_name), power: h.power, price: Number(h.price),
+      phase: h.phase, sale_id: h.sale_id,
     };
     heldOf.set(h.agency_id, m);
   }
@@ -100,7 +105,7 @@ export async function loadRound1(): Promise<Round1> {
     tipsClosesAt: (st.data?.tips_closes_at as string | null) ?? null,
     now: new Date().toISOString(),
     screen: st.data?.r1_screen === 'news_recap' ? 'news_recap' : null,
-    cards: (cards.data ?? []).map((c) => ({ ...c, min_bid: Number(c.min_bid) })) as Card[],
+    cards: (cards.data ?? []).map((c) => ({ ...c, card_name: cardName(c.id, c.gear_name), min_bid: Number(c.min_bid) })) as Card[],
     sold: new Set((held.data ?? []).map((h) => h.card_id as string)),
     agencies: inRound1.map((a) => {
       const p = powerOf.get(a.id);
@@ -127,7 +132,8 @@ export async function loadRound1(): Promise<Round1> {
       const g = (Array.isArray(s.gear_cards) ? s.gear_cards[0] : s.gear_cards) as { gear_name: string; power: number } | null;
       return {
         sale_id: s.id, card_id: s.card_id, agency_id: s.agency_id, category: s.category, price: Number(s.price),
-        phase: s.phase, sold_at: s.sold_at, ledger_entry_id: s.ledger_entry_id, gear_name: g?.gear_name ?? '', power: g?.power ?? 0,
+        phase: s.phase, sold_at: s.sold_at, ledger_entry_id: s.ledger_entry_id, gear_name: g?.gear_name ?? '',
+        card_name: cardName(s.card_id, g?.gear_name ?? ''), power: g?.power ?? 0,
       };
     }),
   };

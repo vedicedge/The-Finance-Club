@@ -8,6 +8,8 @@ import { serviceDb } from '@/lib/db/server';
 import { AdminShell } from '@/components/admin/AdminShell';
 import { loadSchemaStatus } from '@/lib/schema-version-server';
 import { NextPhase } from '@/components/admin/NextPhase';
+import { ProjectorPanel } from '@/components/admin/ProjectorPanel';
+import { isProjectorMode } from '@/lib/projector';
 
 export const metadata: Metadata = { title: 'Command centre' };
 
@@ -28,13 +30,16 @@ async function count(table: string): Promise<number | null> {
   return error ? null : (n ?? 0);
 }
 
-export default async function CommandCentre({ searchParams }: { searchParams: Promise<{ denied?: string; error?: string }> }) {
+export default async function CommandCentre({ searchParams }: { searchParams: Promise<{ denied?: string; error?: string; ok?: string }> }) {
   const organiser = await requireOrganiser('dashboard');
-  const { denied, error } = await searchParams;
+  const { denied, error, ok } = await searchParams;
 
   const db = serviceDb();
-  const [state, counts, agencyRows, crew, schema] = await Promise.all([
+  const [state, projectorRow, counts, agencyRows, crew, schema] = await Promise.all([
     db.from('event_state').select('phase, step, alert, settings').maybeSingle(),
+    // Its own query: before the 8 November update the column is missing, and that must not
+    // make the whole command centre look disconnected.
+    db.from('event_state').select('projector').maybeSingle(),
     Promise.all(EXPECTED.map((e) => count(e.table))),
     db.from('agencies').select('status, is_test'),
     count('organisers'),
@@ -50,6 +55,7 @@ export default async function CommandCentre({ searchParams }: { searchParams: Pr
   const connected = !state.error;
   const allSeeded = EXPECTED.every((e, i) => counts[i] === e.expected);
   const secretsMissing = EXPECTED.some((e, i) => e.secret && counts[i] === 0);
+  const projectorMode = isProjectorMode(projectorRow.data?.projector) ? projectorRow.data.projector : 'auto';
 
   return (
     <AdminShell organiser={organiser}>
@@ -62,6 +68,11 @@ export default async function CommandCentre({ searchParams }: { searchParams: Pr
       {error && (
         <p role="alert" className="mb-8 rounded-sm border border-ember/40 bg-ember/10 px-4 py-3 text-sm text-ember">
           {error}
+        </p>
+      )}
+      {ok && (
+        <p role="status" className="mb-8 rounded-sm border border-toxic/40 bg-toxic/10 px-4 py-3 text-sm text-toxic">
+          {ok}
         </p>
       )}
       {(['round1', 'round2', 'round3', 'zero_hour'] as const).map((to) => (
@@ -103,6 +114,8 @@ export default async function CommandCentre({ searchParams }: { searchParams: Pr
           </dd>
         </div>
       </dl>
+
+      {connected && <ProjectorPanel organiser={organiser} phase={phase} mode={projectorMode} available={!projectorRow.error} />}
 
       {isAdmin && connected && (
         <section

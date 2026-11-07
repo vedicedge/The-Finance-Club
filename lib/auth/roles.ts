@@ -1,19 +1,18 @@
 /**
  * Organiser roles (spec: Roles, and the crew table). One person can hold several roles.
- * Two roles are added beyond the spec's Roles table because the crew table gives them screens:
+ * Three roles are added beyond the spec's Roles table:
  *   - floater: the check-in screen;
- *   - auctioneer: the auction projector screen.
+ *   - auctioneer: the auction projector screen;
+ *   - projector: the projector laptop (view only).
  */
-export const ROLES = [
-  'admin',
-  'quiz_host',
-  'ledger_keeper',
-  'scorer',
-  'social_lead',
-  'anchor',
-  'auctioneer',
-  'floater',
-] as const;
+/** Roles that work in the command centre. */
+const CREW_ROLES = ['admin', 'quiz_host', 'ledger_keeper', 'scorer', 'social_lead', 'anchor', 'auctioneer', 'floater'] as const;
+
+/**
+ * Every role. 'projector' is for the laptop plugged into the auditorium projector: it can open
+ * /projector and the projector screens, and nothing else, so nobody can change anything from it.
+ */
+export const ROLES = [...CREW_ROLES, 'projector'] as const;
 
 export type Role = (typeof ROLES)[number];
 
@@ -26,11 +25,12 @@ export const ROLE_LABELS: Record<Role, string> = {
   anchor: 'Anchor',
   auctioneer: 'Auctioneer',
   floater: 'Floater',
+  projector: 'Projector (view only)',
 };
 
 /** Organiser areas of the site and which roles may use them. Admin can use everything. */
 export const AREAS = {
-  dashboard: { path: '/admin', label: 'Command centre', roles: ROLES },
+  dashboard: { path: '/admin', label: 'Command centre', roles: CREW_ROLES },
   agencies: { path: '/admin/agencies', label: 'Agencies & check-in', roles: ['floater'] },
   quiz: { path: '/admin/quiz', label: 'Quiz host console', roles: ['quiz_host'] },
   auction: { path: '/admin/auction', label: 'Power Bazaar', roles: ['ledger_keeper', 'auctioneer'] },
@@ -39,7 +39,9 @@ export const AREAS = {
   round3: { path: '/admin/round3', label: 'The Doomsday Vault', roles: ['ledger_keeper', 'scorer'] },
   reveal: { path: '/screen/reveal', label: 'Zero Hour reveal', roles: ['anchor'] },
   screens: { path: '/screen', label: 'Projector screens', roles: ROLES },
-  print: { path: '/admin/print', label: 'Print & backups', roles: ROLES },
+  // Choosing what /projector shows (and pinning or blanking it) from the command centre.
+  projector: { path: '/projector', label: 'Projector ↗', roles: ['anchor', 'quiz_host', 'auctioneer'] },
+  print: { path: '/admin/print', label: 'Print & backups', roles: CREW_ROLES },
   settings: { path: '/admin/settings', label: 'Settings', roles: [] },
   users: { path: '/admin/users', label: 'Crew & roles', roles: [] },
 } as const satisfies Record<string, { path: string; label: string; roles: readonly Role[] }>;
@@ -54,6 +56,11 @@ export function canAccess(roles: readonly Role[], area: Area): boolean {
   if (roles.includes('admin')) return true;
   const allowed: readonly Role[] = AREAS[area].roles;
   return roles.some((r) => allowed.includes(r));
+}
+
+/** Signed in only to show the projector: sent straight to /projector. */
+export function isProjectorOnly(roles: readonly Role[]): boolean {
+  return roles.length > 0 && roles.every((r) => r === 'projector');
 }
 
 export function areasFor(roles: readonly Role[]): Area[] {

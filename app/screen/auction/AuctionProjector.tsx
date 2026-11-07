@@ -6,17 +6,23 @@ import { formatCrore } from '@/lib/money';
 import { Stage } from '@/components/screen/Stage';
 import { BoardColumns, BoardHeader } from '@/components/screen/BoardColumns';
 import { WindowClock } from '@/components/site/WindowClock';
+import { GearCard, GearCardBack } from '@/components/cards/GearCard';
+import { FlipReveal } from '@/components/cards/FlipReveal';
+import { seriesLabel } from '@/lib/card-art';
 
 type S = {
   phase: string;
   step: string | null;
   marqueeTotal: number;
   lot: null | {
-    id: string; category: string; gear_name: string; power: number; min_bid: number; phase: string;
+    id: string; category: string; gear_name: string; card_name?: string; power: number; min_bid: number; phase: string;
     lot_order: number | null; sold: boolean; needing: string[];
   };
-  lastSale: null | { card: string; gear_name: string; agency: string; agencyName: string; price: number; at: string };
-  news: { id: string; headline: string; affects: string; delta: number }[];
+  lastSale: null | {
+    card: string; gear_name: string; card_name?: string; category?: string; power?: number;
+    agency: string; agencyName: string; price: number; at: string;
+  };
+  news: { id: string; headline: string; affects: string; delta: number; cards?: { id: string; name: string; category: string; power: number }[] }[];
   teamUps: { name: string; bonus: number }[];
   board: { id: string; name: string; power: number; cards: number; fund: number | null }[];
   tips: null | { closesAt: string | null; now: string; sold: number };
@@ -55,7 +61,7 @@ export function AuctionProjector({ stateUrl = '/api/screen/auction' }: { stateUr
 
   const step = s?.step ?? null;
   return (
-    <Stage art="bazaar">
+    <Stage art="bazaar" artOpacity={0.07}>
       <div className="absolute inset-x-0 top-0 flex items-center justify-between border-b border-line px-[3cqw] py-[1.6cqh]">
         <p className="text-[1.25cqw] font-semibold tracking-[0.3em] text-steel uppercase">
           {EVENT.name} · Round 1 · <span className="text-glow">{ROUNDS.round1}</span>
@@ -184,53 +190,80 @@ function Center({ title, children }: { title: string; children?: React.ReactNode
 function LotView({ s }: { s: S }) {
   const lot = s.lot;
   const sale = s.lastSale;
+  const name = lot ? (lot.card_name ?? lot.gear_name) : '';
+  const series = lot ? seriesLabel(name, lot.gear_name) : null;
   return (
-    <div className="grid h-full grid-cols-[1.55fr_1fr] gap-[3cqw] px-[4cqw] pt-[11cqh] pb-[5cqh]">
-      <div className="flex flex-col justify-center">
+    <div className="grid h-full grid-cols-[auto_minmax(0,1fr)_minmax(0,0.8fr)] items-center gap-[3cqw] px-[4cqw] pt-[11cqh] pb-[5cqh]">
+      {/* the card: it turns over as the lot opens; text sits beside it, never on the picture */}
+      <div className="w-[25cqw] text-[1.8cqw]">
+        {lot ? (
+          <FlipReveal
+            revealKey={lot.id}
+            back={<GearCardBack sizes="25vw" />}
+            front={<GearCard card={{ id: lot.id, name, series: lot.gear_name, category: lot.category, power: lot.power }} sizes="25vw" showSeries={false} />}
+          />
+        ) : (
+          <GearCardBack sizes="25vw" />
+        )}
+      </div>
+
+      <div className="flex min-w-0 flex-col justify-center">
         {lot ? (
           <>
-            <p className="text-[1.5cqw] font-semibold tracking-[0.3em] text-glow uppercase">
+            <p className="text-[1.4cqw] font-semibold tracking-[0.3em] text-glow uppercase">
               {s.step === 'marquee' && lot.lot_order ? `Marquee lot ${lot.lot_order} of ${s.marqueeTotal}` : s.step === 'last_call' ? 'Last Call' : 'Secret Identity Bid'}
               <span className="ml-[1.5cqw] text-steel">{lot.category}</span>
             </p>
-            <p className="num mt-[2cqh] text-[3cqw] font-semibold text-steel">{lot.id}</p>
-            <h1 className="display mt-[1cqh] text-[5.6cqw] leading-[1]">{lot.gear_name}</h1>
-            <div className="mt-[5cqh] flex gap-[4cqw]">
+            <p className="num mt-[2cqh] text-[2.4cqw] font-semibold text-steel">{lot.id}</p>
+            <h1 className="display mt-[1cqh] text-[4.4cqw] leading-[1.02]">{name}</h1>
+            {series && <p className="mt-[1.2cqh] text-[1.6cqw] text-steel">{series}</p>}
+            <div className="mt-[4cqh] flex gap-[4cqw]">
               <div>
-                <p className="text-[1.2cqw] font-semibold tracking-[0.3em] text-steel uppercase">Power</p>
-                <p className="num text-[9cqw] leading-none font-semibold text-glow">{lot.power}</p>
+                <p className="text-[1.15cqw] font-semibold tracking-[0.3em] text-steel uppercase">Power</p>
+                <p className="num text-[7.5cqw] leading-none font-semibold text-glow">{lot.power}</p>
               </div>
               <div>
-                <p className="text-[1.2cqw] font-semibold tracking-[0.3em] text-steel uppercase">Minimum bid</p>
-                <p className="num mt-[2cqh] text-[5cqw] leading-none font-semibold text-bone">{formatCrore(lot.min_bid)}</p>
+                <p className="text-[1.15cqw] font-semibold tracking-[0.3em] text-steel uppercase">Minimum bid</p>
+                <p className="num mt-[2cqh] text-[4.4cqw] leading-none font-semibold text-bone">{formatCrore(lot.min_bid)}</p>
               </div>
             </div>
             {s.step === 'secret' && (
-              <p className="mt-[5cqh] text-[1.6cqw] text-steel">Show 5 s · write your bid or PASS 10 s · unmask on &ldquo;3, 2, 1, mask utaro!&rdquo;</p>
+              <p className="mt-[4cqh] text-[1.45cqw] text-steel">Show 5 s · write your bid or PASS 10 s · unmask on &ldquo;3, 2, 1, mask utaro!&rdquo;</p>
             )}
-            {lot.sold && <p className="stamp mt-[4cqh] self-start text-[2cqw] text-ember">Sold</p>}
+            {lot.sold && <p className="stamp mt-[3cqh] self-start text-[2cqw] text-ember">Sold</p>}
           </>
         ) : (
-          <p className="display text-[4.4cqw] text-steel">Next lot coming up…</p>
+          <p className="display text-[4cqw] text-steel">Next lot coming up…</p>
         )}
       </div>
-      <aside className="flex flex-col justify-center gap-[5cqh] border-l border-line pl-[3cqw]">
+
+      <aside className="flex min-w-0 flex-col justify-center gap-[5cqh] border-l border-line pl-[3cqw]">
         {lot && (
           <div>
-            <p className="text-[1.2cqw] font-semibold tracking-[0.3em] text-steel uppercase">Still needing {lot.category}</p>
-            <p className="num mt-[1.5cqh] text-[2.4cqw] leading-snug text-bone">{lot.needing.join('  ') || 'Nobody'}</p>
+            <p className="text-[1.15cqw] font-semibold tracking-[0.3em] text-steel uppercase">Still needing {lot.category}</p>
+            <p className="num mt-[1.5cqh] text-[2.2cqw] leading-snug text-bone">{lot.needing.join('  ') || 'Nobody'}</p>
           </div>
         )}
         {sale && (
           <div key={sale.at} className="transmission">
-            <p className="text-[1.2cqw] font-semibold tracking-[0.3em] text-steel uppercase">Last sale</p>
-            <p className="stamp mt-[1.5cqh] text-[1.8cqw] text-toxic">Sold</p>
-            <p className="mt-[1.5cqh] text-[2cqw] text-bone">
-              <span className="num font-semibold text-glow">{sale.card}</span> {sale.gear_name}
-            </p>
-            <p className="num mt-[0.5cqh] text-[2.2cqw]">
-              → {sale.agency} <span className="text-steel">{sale.agencyName}</span> · <span className="font-semibold">{formatCrore(sale.price)}</span>
-            </p>
+            <p className="text-[1.15cqw] font-semibold tracking-[0.3em] text-steel uppercase">Last sale</p>
+            <div className="mt-[1.5cqh] flex items-center gap-[1.5cqw]">
+              <div className="w-[8cqw] flex-none text-[0.75cqw]">
+                <GearCard
+                  card={{ id: sale.card, name: sale.card_name ?? sale.gear_name, category: sale.category ?? '', power: sale.power }}
+                  sizes="10vw"
+                  showSeries={false}
+                />
+              </div>
+              <div className="min-w-0">
+                <p className="stamp text-[1.6cqw] text-toxic">Sold</p>
+                <p className="mt-[1.2cqh] text-[1.7cqw] leading-tight text-bone">{sale.card_name ?? sale.gear_name}</p>
+                <p className="num mt-[0.6cqh] text-[1.9cqw]">
+                  → {sale.agency} <span className="text-steel">{sale.agencyName}</span>
+                </p>
+                <p className="num text-[2.2cqw] font-semibold text-glow">{formatCrore(sale.price)}</p>
+              </div>
+            </div>
           </div>
         )}
       </aside>
@@ -244,12 +277,33 @@ function NewsView({ s }: { s: S }) {
   return (
     <div className="flex h-full flex-col px-[5cqw] pt-[11cqh] pb-[5cqh]">
       {latest ? (
-        <div key={latest.id} className="transmission">
-          <p className="inline-block bg-ember px-[1cqw] py-[0.4cqh] text-[1.5cqw] font-bold tracking-[0.3em] text-abyss uppercase">Breaking News</p>
-          <h1 className="display mt-[3cqh] text-[4.8cqw] leading-[1.05]">{latest.headline}</h1>
-          <p className={`num mt-[2cqh] text-[3cqw] font-semibold ${latest.delta > 0 ? 'text-toxic' : 'text-ember'}`}>
-            {latest.delta > 0 ? '+' : ''}{latest.delta} Power · {latest.affects}
-          </p>
+        <div key={latest.id} className="transmission grid grid-cols-[minmax(0,1fr)_auto] items-center gap-[4cqw]">
+          <div className="min-w-0">
+            <p className="inline-block bg-ember px-[1cqw] py-[0.4cqh] text-[1.5cqw] font-bold tracking-[0.3em] text-abyss uppercase">Breaking News</p>
+            <h1 className="display mt-[3cqh] text-[4.2cqw] leading-[1.05]">{latest.headline}</h1>
+            <p className={`num mt-[2cqh] text-[2.6cqw] font-semibold ${latest.delta > 0 ? 'text-toxic' : 'text-ember'}`}>
+              {latest.delta > 0 ? '+' : ''}
+              {latest.delta} Power · {latest.affects}
+              {(latest.cards?.length ?? 0) > 1 ? ' series' : ''}
+            </p>
+          </div>
+          {/* the cards the headline hits, fanned out */}
+          {latest.cards && latest.cards.length > 0 && (
+            <div className="flex pr-[2cqw]">
+              {latest.cards.map((c, i, all) => (
+                <div
+                  key={c.id}
+                  className="w-[11cqw] text-[0.9cqw]"
+                  style={{
+                    marginLeft: i === 0 ? 0 : '-4cqw',
+                    transform: `rotate(${(i - (all.length - 1) / 2) * 6}deg) translateY(${Math.abs(i - (all.length - 1) / 2) * 0.8}cqh)`,
+                  }}
+                >
+                  <GearCard card={c} sizes="12vw" showSeries={false} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       ) : (
         <p className="display mt-[20cqh] text-center text-[5.3cqw]">Breaking News incoming…</p>

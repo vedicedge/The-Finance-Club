@@ -6,6 +6,9 @@ import { formatCrore } from '@/lib/money';
 import { REASON_LABEL, ledgerTime } from '@/lib/ledger';
 import { BuyTip } from '@/components/site/BuyTip';
 import { Scene } from '@/components/art/Scene';
+import { GearCard } from '@/components/cards/GearCard';
+import { GearIcon } from '@/components/art/gear-icons';
+import { seriesLabel } from '@/lib/card-art';
 
 export type DossierFounder = { name: string; section: string; is_captain: boolean };
 
@@ -190,6 +193,29 @@ export function Dossier({
               {data.round1Locked && <span className="text-xs font-semibold tracking-[0.18em] text-toxic uppercase">Final</span>}
             </div>
             <p className="num mt-2 text-5xl font-semibold text-glow">{data.power.total}</p>
+            {/* Your hand: the four cards as printed, with an empty slot for any not signed yet. */}
+            <ul className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {(['HQ', 'Suit', 'Gadget', 'Sidekick'] as const).map((cat) => {
+                const g = data.gear.find((x) => x.category === cat);
+                return (
+                  <li key={cat} className="text-[13px]">
+                    {g ? (
+                      <GearCard
+                        card={{ id: g.card_id, name: g.card_name, series: g.gear_name, category: cat, power: g.power }}
+                        sizes="(min-width: 640px) 150px, 45vw"
+                      />
+                    ) : (
+                      <div className="flex h-full min-h-[14em] flex-col items-center justify-center gap-2 rounded-[0.7em] border border-dashed border-line-strong text-steel">
+                        <svg viewBox="0 0 48 48" className="w-10 opacity-60" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
+                          <GearIcon kind={cat} />
+                        </svg>
+                        <span className="text-[0.72em] font-semibold tracking-[0.16em] uppercase">{cat} · not signed</span>
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
             {/* The Power Level as a sum: each card, any Breaking News change, Team-Up bonuses, total. */}
             <div className="mt-4 grid grid-cols-[4.6rem_1fr_auto] gap-x-3 border-b border-line-strong pb-1.5 text-[0.68rem] font-semibold tracking-[0.18em] text-steel uppercase">
               <span>Slot</span>
@@ -207,7 +233,10 @@ export function Dossier({
                         {g ? (
                           <>
                             <span className="num mr-1.5 text-glow">{g.card_id}</span>
-                            {g.gear_name}
+                            {g.card_name}
+                            {seriesLabel(g.card_name, g.gear_name) && (
+                              <span className="block text-xs text-steel">{seriesLabel(g.card_name, g.gear_name)}</span>
+                            )}
                           </>
                         ) : (
                           <span className="text-steel">— not signed yet</span>

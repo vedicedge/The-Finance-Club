@@ -94,7 +94,7 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
           <h1 className="display mt-3 text-5xl">Quiz host console</h1>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link href="/screen/quiz" target="_blank" className="btn btn-ghost">
+          <Link href="/projector" target="_blank" className="btn btn-ghost">
             Open projector ↗
           </Link>
           <a href="/admin/quiz/export" className="btn btn-ghost">

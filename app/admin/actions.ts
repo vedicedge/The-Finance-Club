@@ -10,6 +10,8 @@ import { getEventState } from '@/lib/event-state';
 import { serializeSettings } from '@/lib/settings';
 import { NEXT_PHASE, canAdvance, isNextPhase } from '@/lib/phase-flow';
 import { loadFlowState } from '@/lib/phase-flow-server';
+import { isProjectorMode } from '@/lib/projector';
+import { nextReveal } from '@/app/screen/reveal/actions';
 
 /** Moves the event to another phase (admin only). Later milestones add the round-specific checks. */
 export async function setPhase(formData: FormData): Promise<void> {
@@ -76,4 +78,29 @@ export async function setDryRun(enabled: boolean): Promise<void> {
   if (error) throw error;
   await audit(me, enabled ? 'event.dry_run_on' : 'event.dry_run_off', {});
   revalidatePath('/', 'layout');
+}
+
+/** What the projector shows: 'auto' follows the phase; anything else pins that screen. */
+export async function setProjector(mode: string): Promise<void> {
+  const me = await requireOrganiser('projector');
+  if (!isProjectorMode(mode)) redirect('/admin?error=' + encodeURIComponent('Unknown projector screen.'));
+  const { error } = await serviceDb()
+    .from('event_state')
+    .update({ projector: mode, updated_at: new Date().toISOString(), updated_by: me.userId })
+    .eq('id', true);
+  if (error) {
+    redirect(
+      '/admin?error=' +
+        encodeURIComponent('Could not switch the projector. Run the newest database update (8 November) in the Supabase SQL editor first.'),
+    );
+  }
+  await audit(me, 'projector.mode', { mode });
+  revalidatePath('/admin');
+}
+
+/** "Open next envelope" at Zero Hour, from the admin laptop (the projector laptop is view only). */
+export async function revealNextEnvelope(back: string): Promise<void> {
+  const r = await nextReveal();
+  const to = back === '/admin/round3' ? back : '/admin';
+  redirect(`${to}?${r.ok ? 'ok=' + encodeURIComponent(`Envelope ${r.envelope} opened on the projector.`) : 'error=' + encodeURIComponent(r.error)}`);
 }

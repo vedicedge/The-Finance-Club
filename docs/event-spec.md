@@ -670,36 +670,40 @@ recommended 15; a spare always replaces a question from the same segment. Seed t
 
 ## Appendix B: gear cards, Team-Ups and Breaking News
 
-60 cards: 15 per category, each with 1 flagship, 1 runner-up, then 2, 3, 4 and 4 copies of cheaper
-gear. Seed one `gear_cards` row per physical card (H01–H15, S01–S15, G01–G15, K01–K15) plus the Jugaad Kit.
+60 cards: 15 per category, each with its own name (`gear_cards.card_name`). Within a category the
+cards form six **series** that share a Power and a minimum bid: 1 flagship, 1 runner-up, then
+series of 2, 3, 4 and 4 cards of cheaper gear. Breaking News and Team-Ups name a series
+(`gear_cards.gear_name`), so they hit every card in it. Seed one `gear_cards` row per physical
+card (H01–H15, S01–S15, G01–G15, K01–K15) plus the Jugaad Kit. (Renamed into 60 distinct cards on
+8 November; Powers, minimum bids, series and phases are unchanged.)
 
-| Category | Gear | Power | Min bid | Cards | Card IDs | Phase |
-|---|---|---|---|---|---|---|
-| HQ | Sky Fortress over Mahanagar | 10 | ₹10 Cr | 1 | H01 | Marquee |
-| HQ | Aravalli Cave Base | 9 | ₹8 Cr | 1 | H02 | Marquee |
-| HQ | Cyber City Glass Tower | 8 | ₹7 Cr | 2 | H03–H04 | Secret bids |
-| HQ | Hauz Khas Rooftop HQ | 6 | ₹5 Cr | 3 | H05–H07 | Secret bids |
-| HQ | Old Metro Depot | 5 | ₹4 Cr | 4 | H08–H11 | Secret bids |
-| HQ | Mama ji's Basement | 3 | ₹2 Cr | 4 | H12–H15 | Secret bids |
-| Suit | Nano-Armour Mk II | 10 | ₹10 Cr | 1 | S01 | Marquee |
-| Suit | Stealth Kurta | 9 | ₹8 Cr | 1 | S02 | Marquee |
-| Suit | Bulletproof Bandhgala | 8 | ₹7 Cr | 2 | S03–S04 | Secret bids |
-| Suit | Khadi Kevlar Jacket | 6 | ₹5 Cr | 3 | S05–S07 | Secret bids |
-| Suit | Reflective Rickshaw Raincoat | 5 | ₹4 Cr | 4 | S08–S11 | Secret bids |
-| Suit | Gully Cricket Pads | 3 | ₹2 Cr | 4 | S12–S15 | Secret bids |
-| Gadget | Jugaad Jetpack | 10 | ₹10 Cr | 1 | G01 | Marquee |
-| Gadget | Tiffin Shield | 9 | ₹8 Cr | 1 | G02 | Marquee |
-| Gadget | Chai-Powered Drone | 8 | ₹7 Cr | 2 | G03–G04 | Secret bids |
-| Gadget | Auto-Rickshaw Hover Kit | 6 | ₹5 Cr | 3 | G05–G07 | Secret bids |
-| Gadget | Metro Card Teleporter | 5 | ₹4 Cr | 4 | G08–G11 | Secret bids |
-| Gadget | Mosquito-Bat Taser | 3 | ₹2 Cr | 4 | G12–G15 | Secret bids |
-| Sidekick | Robo-Chotu | 10 | ₹10 Cr | 1 | K01 | Marquee |
-| Sidekick | Sheru the Ex-Army Dog | 9 | ₹8 Cr | 1 | K02 | Marquee |
-| Sidekick | Hacker Didi | 8 | ₹7 Cr | 2 | K03–K04 | Secret bids |
-| Sidekick | Talking Kabootar | 6 | ₹5 Cr | 3 | K05–K07 | Secret bids |
-| Sidekick | Dabbawala Network | 5 | ₹4 Cr | 4 | K08–K11 | Secret bids |
-| Sidekick | Cousin Bunty | 2 | ₹1 Cr | 4 | K12–K15 | Secret bids |
-| Any (forced) | Jugaad Kit | 2 | ₹8 Cr fixed | unlimited | JK | After Last Call |
+| Category | Series | Power | Min bid | Cards | Phase |
+|---|---|---|---|---|---|
+| HQ | Sky Fortress over Mahanagar | 10 | ₹10 Cr | H01 Sky Fortress over Mahanagar | Marquee |
+| HQ | Aravalli Cave Base | 9 | ₹8 Cr | H02 Aravalli Cave Base | Marquee |
+| HQ | Cyber City Glass Tower | 8 | ₹7 Cr | H03 Cyber City Glass Tower · H04 Sky-Bridge Penthouse | Secret bids |
+| HQ | Hauz Khas Rooftop HQ | 6 | ₹5 Cr | H05 Hauz Khas Rooftop HQ · H06 Chandni Chowk Haveli Terrace · H07 Lodhi Colony Mural Rooftop | Secret bids |
+| HQ | Old Metro Depot | 5 | ₹4 Cr | H08 Old Metro Depot · H09 Abandoned Ticket-Hall Bunker · H10 Yamuna Bank Train Yard · H11 Basement Parking Level B3 | Secret bids |
+| HQ | Mama ji's Basement | 3 | ₹2 Cr | H12 Mama ji's Basement · H13 Laxmi Nagar PG Room · H14 Chai Tapri Back Room · H15 Society Water-Tank Terrace | Secret bids |
+| Suit | Nano-Armour Mk II | 10 | ₹10 Cr | S01 Nano-Armour Mk II | Marquee |
+| Suit | Stealth Kurta | 9 | ₹8 Cr | S02 Stealth Kurta | Marquee |
+| Suit | Bulletproof Bandhgala | 8 | ₹7 Cr | S03 Bulletproof Bandhgala · S04 Thunderproof Sherwani | Secret bids |
+| Suit | Khadi Kevlar Jacket | 6 | ₹5 Cr | S05 Khadi Kevlar Jacket · S06 Pashmina Camouflage Shawl · S07 Mirror-Work Laser Deflector Vest | Secret bids |
+| Suit | Reflective Rickshaw Raincoat | 5 | ₹4 Cr | S08 Reflective Rickshaw Raincoat · S09 Dhaba Chef's Fireproof Apron · S10 Rush-Hour Metro Padding · S11 Monsoon Gumboot Suit | Secret bids |
+| Suit | Gully Cricket Pads | 3 | ₹2 Cr | S12 Gully Cricket Pads · S13 Nani's Hand-Knitted Sweater Armour · S14 Monkey-Cap Stealth Mask · S15 Steel-Bucket Helmet | Secret bids |
+| Gadget | Jugaad Jetpack | 10 | ₹10 Cr | G01 Jugaad Jetpack | Marquee |
+| Gadget | Tiffin Shield | 9 | ₹8 Cr | G02 Tiffin Shield | Marquee |
+| Gadget | Chai-Powered Drone | 8 | ₹7 Cr | G03 Chai-Powered Drone · G04 Pressure-Cooker Sonic Cannon | Secret bids |
+| Gadget | Auto-Rickshaw Hover Kit | 6 | ₹5 Cr | G05 Auto-Rickshaw Hover Kit · G06 Scooter-Sidecar Rocket · G07 Cycle-Rickshaw Turbo Pedals | Secret bids |
+| Gadget | Metro Card Teleporter | 5 | ₹4 Cr | G08 Metro Card Teleporter · G09 Inverter Battery Power Core · G10 Desert-Cooler Freeze Ray · G11 Kite-String Grappling Hook | Secret bids |
+| Gadget | Mosquito-Bat Taser | 3 | ₹2 Cr | G12 Mosquito-Bat Taser · G13 Rolling-Pin Nunchaku · G14 Chappal Boomerang · G15 Half-Charged Power Bank | Secret bids |
+| Sidekick | Robo-Chotu | 10 | ₹10 Cr | K01 Robo-Chotu | Marquee |
+| Sidekick | Sheru the Ex-Army Dog | 9 | ₹8 Cr | K02 Sheru the Ex-Army Dog | Marquee |
+| Sidekick | Hacker Didi | 8 | ₹7 Cr | K03 Hacker Didi · K04 Retired Spy Nani | Secret bids |
+| Sidekick | Talking Kabootar | 6 | ₹5 Cr | K05 Talking Kabootar · K06 Rooftop Monkey Squad · K07 Ullu the Night-Watch Owl | Secret bids |
+| Sidekick | Dabbawala Network | 5 | ₹4 Cr | K08 Dabbawala Network · K09 Shortcut-Expert Auto Bhaiya · K10 Mohalla Cricket Team · K11 Momo-Stall Informant | Secret bids |
+| Sidekick | Cousin Bunty | 2 | ₹1 Cr | K12 Cousin Bunty · K13 Turbo the Tortoise · K14 Stray Goat with Attitude · K15 Billu the Sleepy Cat | Secret bids |
+| Any (forced) | Jugaad Kit | 2 | ₹8 Cr fixed | JK (unlimited) | After Last Call |
 
 Budget check: all four flagships cost ₹40 Cr at minimum (Power 40); a balanced mid set costs ₹20 Cr
 (Power 24 + [redacted]); the cheapest set costs ₹7 Cr (Power 11).

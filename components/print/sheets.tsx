@@ -185,7 +185,10 @@ export function AuctionSheets({ base, auction }: { base: Base; auction: AuctionP
       <tr key={c.id}>
         <td className="num muted">{n}</td>
         <td className="num font-bold">{c.id}</td>
-        <td>{c.gear_name}</td>
+        <td>
+          {c.card_name}
+          {c.card_name !== c.gear_name && <span className="muted"> · {c.gear_name} series</span>}
+        </td>
         <td>{c.category}</td>
         <td className="num">{c.power}</td>
         <td className="num">{cr(c.min_bid)}</td>
@@ -236,7 +239,7 @@ export function AuctionSheets({ base, auction }: { base: Base; auction: AuctionP
                 <tr key={c.id}>
                   <td />
                   <td className="num font-bold">{c.id}</td>
-                  <td>{c.gear_name}</td>
+                  <td>{c.card_name}</td>
                   <td>{s ? s.slot : '→ ______'}</td>
                   <td className="num">{c.power}</td>
                   <td className="num">{cr(c.min_bid)}</td>

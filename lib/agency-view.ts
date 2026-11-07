@@ -3,11 +3,15 @@ import { serviceDb } from '@/lib/db/server';
 import { withRunningBalance, type LedgerRow } from '@/lib/ledger';
 import type { Category } from '@/lib/round1/steps';
 import { rankTower } from '@/lib/round2/tower-board';
+import { loadCardNames } from '@/lib/cards';
 
 export type DossierGear = {
   category: Category;
   card_id: string;
+  /** The card's series (what news and Team-Ups match). */
   gear_name: string;
+  /** The card's own name. */
+  card_name: string;
   power: number;
   price: number;
   /** Revealed Breaking News changes to this card's Power. */
@@ -44,7 +48,7 @@ export type DossierData = {
 /** Everything an agency may see about itself on My Agency. Only ever called for the signed-in agency. */
 export async function loadDossier(agencyId: string): Promise<DossierData> {
   const db = serviceDb();
-  const [st, ledger, gear, power, tip, news, teamUps, scores, duels, towers, holder, moves, ffs, hero, names] = await Promise.all([
+  const [st, ledger, gear, power, tip, news, teamUps, scores, duels, towers, holder, moves, ffs, hero, names, cardNames] = await Promise.all([
     db.from('event_state').select('phase, step, tips_closes_at, prelim_published_at, round1_locked_at, round2_published_at, current_mission').single(),
     db.from('v_ledger').select('id, agency_id, amount, reason, ref, note, created_at, voided, void_reason').eq('agency_id', agencyId),
     db.from('v_held_gear').select('category, card_id, gear_name, power, price').eq('agency_id', agencyId),
@@ -61,6 +65,7 @@ export async function loadDossier(agencyId: string): Promise<DossierData> {
     db.from('force_fields').select('mission').eq('agency_id', agencyId).is('voided_at', null),
     db.from('v_hero_scores').select('outcome_label, multiplier, hero_score').eq('agency_id', agencyId).maybeSingle(),
     db.from('agencies').select('id, name, is_test'),
+    loadCardNames(),
   ]);
 
   const rows = (ledger.data ?? []).map((r) => ({ ...r, amount: Number(r.amount) })) as LedgerRow[];
@@ -113,6 +118,7 @@ export async function loadDossier(agencyId: string): Promise<DossierData> {
         category: g.category as Category,
         card_id: g.card_id,
         gear_name: g.gear_name,
+        card_name: cardNames.get(g.card_id) ?? g.gear_name,
         power: g.power,
         price: Number(g.price),
         news: (news.data ?? []).filter((n) => n.affects_gear === g.gear_name).map((n) => ({ headline: n.headline, delta: n.delta })),
