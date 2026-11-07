@@ -107,7 +107,7 @@ export default async function RulesPage() {
         <div className="divide-y divide-line/70 border-y border-line/70">
           {faq.map(([q, a]) => (
             <details key={q} className="group py-1" open>
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 [&::-webkit-details-marker]:hidden">
+              <summary className="flex list-none items-center justify-between gap-4 py-4 [&::-webkit-details-marker]:hidden">
                 <span className="font-display text-lg font-semibold tracking-[0.02em] text-bone">{q}</span>
                 <span className="font-display flex-none text-xl text-glow transition-transform group-open:rotate-45" aria-hidden="true">
                   +

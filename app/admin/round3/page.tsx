@@ -61,7 +61,7 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
               {r3.multipliersEntered ? 'Entered ✓. Change it only if the envelopes were refilled.' : 'Enter what is inside each numbered envelope.'}
             </p>
             <details>
-              <summary className="cursor-pointer text-sm text-glow">Show / edit the map</summary>
+              <summary className="text-sm text-glow">Show / edit the map</summary>
               <div className="mt-3 grid grid-cols-2 gap-2">
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                   <label key={i} className="text-sm">
