@@ -3,11 +3,16 @@ import { serviceDb } from '@/lib/db/server';
 import { parseSettings, type EventSettings } from '@/lib/settings';
 import { CATEGORIES, isR1Step, type Category, type R1Step } from '@/lib/round1/steps';
 import type { Lot } from '@/lib/round1/lots';
-import { loadCardNames } from '@/lib/cards';
+import { loadCardNames, seriesOf } from '@/lib/cards';
 
-/** gear_name is the card's series (what Breaking News and Team-Ups match); card_name is its own name. */
-export type Card = Lot & { gear_name: string; card_name: string; power: number; min_bid: number };
-export type Holding = { card_id: string; gear_name: string; card_name: string; power: number; price: number; phase: string; sale_id: number };
+/**
+ * gear_name is the card's series key (what Breaking News and Team-Ups match; never shown);
+ * card_name is the card's own name and series_name its series' display name.
+ */
+export type Card = Lot & { gear_name: string; card_name: string; series_name: string; power: number; min_bid: number };
+export type Holding = {
+  card_id: string; gear_name: string; card_name: string; series_name: string; power: number; price: number; phase: string; sale_id: number;
+};
 export type R1Agency = {
   id: string;
   name: string;
@@ -46,6 +51,8 @@ export type Round1 = {
   news: News[]; // SECRET until revealed: organiser screens only
   teamUps: TeamUp[]; // SECRET until revealed: organiser screens only
   recent: RecentSale[];
+  /** Series key (gear_name, as in news and Team-Ups) → its display name. */
+  seriesName: (key: string) => string;
 };
 
 /**
@@ -73,7 +80,8 @@ export async function loadRound1(): Promise<Round1> {
       .limit(10),
     loadCardNames(),
   ]);
-  const cardName = (id: string, series: string) => names.get(id) ?? series;
+  const cardName = (id: string, key: string) => names.card.get(id) ?? key;
+  const seriesName = (key: string) => seriesOf(names, key);
   for (const r of [st, cards, held, agencies, funds, power, tips, news, teamUps, sales]) if (r.error) throw r.error;
 
   const fundOf = new Map((funds.data ?? []).map((f) => [f.agency_id as string, Number(f.fund_left)]));
@@ -84,7 +92,8 @@ export async function loadRound1(): Promise<Round1> {
   for (const h of held.data ?? []) {
     const m = heldOf.get(h.agency_id) ?? {};
     m[h.category as Category] = {
-      card_id: h.card_id, gear_name: h.gear_name, card_name: cardName(h.card_id, h.gear_name), power: h.power, price: Number(h.price),
+      card_id: h.card_id, gear_name: h.gear_name, card_name: cardName(h.card_id, h.gear_name), series_name: seriesName(h.gear_name),
+      power: h.power, price: Number(h.price),
       phase: h.phase, sale_id: h.sale_id,
     };
     heldOf.set(h.agency_id, m);
@@ -105,7 +114,9 @@ export async function loadRound1(): Promise<Round1> {
     tipsClosesAt: (st.data?.tips_closes_at as string | null) ?? null,
     now: new Date().toISOString(),
     screen: st.data?.r1_screen === 'news_recap' ? 'news_recap' : null,
-    cards: (cards.data ?? []).map((c) => ({ ...c, card_name: cardName(c.id, c.gear_name), min_bid: Number(c.min_bid) })) as Card[],
+    cards: (cards.data ?? []).map((c) => ({
+      ...c, card_name: cardName(c.id, c.gear_name), series_name: seriesName(c.gear_name), min_bid: Number(c.min_bid),
+    })) as Card[],
     sold: new Set((held.data ?? []).map((h) => h.card_id as string)),
     agencies: inRound1.map((a) => {
       const p = powerOf.get(a.id);
@@ -128,12 +139,13 @@ export async function loadRound1(): Promise<Round1> {
     }),
     news: (news.data ?? []) as News[],
     teamUps: (teamUps.data ?? []) as TeamUp[],
+    seriesName,
     recent: (sales.data ?? []).map((s) => {
       const g = (Array.isArray(s.gear_cards) ? s.gear_cards[0] : s.gear_cards) as { gear_name: string; power: number } | null;
       return {
         sale_id: s.id, card_id: s.card_id, agency_id: s.agency_id, category: s.category, price: Number(s.price),
         phase: s.phase, sold_at: s.sold_at, ledger_entry_id: s.ledger_entry_id, gear_name: g?.gear_name ?? '',
-        card_name: cardName(s.card_id, g?.gear_name ?? ''), power: g?.power ?? 0,
+        card_name: cardName(s.card_id, g?.gear_name ?? ''), series_name: seriesName(g?.gear_name ?? ''), power: g?.power ?? 0,
       };
     }),
   };

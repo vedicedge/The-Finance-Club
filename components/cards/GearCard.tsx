@@ -12,7 +12,7 @@ import { GearIcon } from '@/components/art/gear-icons';
 export type GearCardData = {
   id: string;
   name: string;
-  /** The series (gear_cards.gear_name); shown when it differs from the name. */
+  /** The series' display name (gear_cards.series_name), shown under the card's name. */
   series?: string;
   category: string;
   power?: number;
@@ -34,7 +34,7 @@ export function GearCard({
   showSeries?: boolean;
 }) {
   const art = cardArt(card.id);
-  const series = showSeries && card.series ? seriesLabel(card.name, card.series) : null;
+  const series = showSeries && card.series ? seriesLabel(card.series) : null;
   return (
     <figure className={`gear-card ${className}`}>
       <div className="relative aspect-[3/4] overflow-hidden rounded-[0.45em] bg-[#070a06]">

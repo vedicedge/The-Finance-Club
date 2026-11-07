@@ -16,7 +16,7 @@ export function cardArt(id: string): string | null {
 /** The card-back picture, or null for the built-in eclipse-and-star back. */
 export const cardBackArt: string | null = ART.BACK ?? null;
 
-/** "Mama ji's Basement series" when a card belongs to a larger series, else null. */
-export function seriesLabel(cardName: string, series: string): string | null {
-  return cardName === series ? null : `${series} series`;
+/** "Budget Bunkers series": a series' display name, as shown under a card. */
+export function seriesLabel(series: string): string {
+  return `${series} series`;
 }

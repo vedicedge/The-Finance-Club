@@ -1,11 +1,13 @@
 -- Doomsday — 8 November: one projector link, a view-only projector role, and a name for every
 -- gear card.
 --
--- 1. Card names. Each of the 60 gear cards gets its own name (card_name). gear_name stays as
---    the card's SERIES: the cards that share a Power and a minimum bid (H08–H11 are the "Old
---    Metro Depot" series). Breaking News and Team-Ups still match on gear_name, so they hit a
---    whole series exactly as before, and the secret seed needs no change. Names are public
---    (Appendix B is printed and shown openly at the auction).
+-- 1. Card and series names. Each of the 60 gear cards gets its own name (card_name), and each
+--    SERIES (the cards that share a Power and a minimum bid) gets a display name of its own
+--    (series_name), different from every card name: H08–H11 are the "Tunnel & Rail Bases"
+--    series. gear_name stays as the series' internal key, with its original values, because
+--    Breaking News and Team-Ups match on it: they still hit a whole series exactly as before,
+--    and the secret seed needs no change. Screens show card_name and series_name only. Names
+--    are public (Appendix B is printed and shown openly at the auction).
 -- 2. A 'projector' crew role: can view the projector screens and nothing else.
 -- 3. event_state.projector: what /projector shows. 'auto' follows the event phase; any other
 --    value pins a screen (or a "back shortly" slide, or blackout) until it is set back.
@@ -86,8 +88,47 @@ update public.gear_cards set card_name = gear_name where card_name is null;
 alter table public.gear_cards alter column card_name set not null;
 create unique index gear_cards_card_name_key on public.gear_cards (card_name) where phase <> 'jugaad';
 
+-- Series display names, keyed by the series' internal key (gear_name).
+alter table public.gear_cards add column series_name text;
+
+update public.gear_cards g
+   set series_name = v.series_name
+  from (values
+    ('Sky Fortress over Mahanagar', 'Sky Command'),
+    ('Aravalli Cave Base', 'Hidden Fortresses'),
+    ('Cyber City Glass Tower', 'High-Rise Hideouts'),
+    ('Hauz Khas Rooftop HQ', 'Rooftop Lairs'),
+    ('Old Metro Depot', 'Tunnel & Rail Bases'),
+    ('Mama ji''s Basement', 'Budget Bunkers'),
+    ('Nano-Armour Mk II', 'Prototype Armour'),
+    ('Stealth Kurta', 'Shadow Wear'),
+    ('Bulletproof Bandhgala', 'Royal Battle Wear'),
+    ('Khadi Kevlar Jacket', 'Handloom Tactical'),
+    ('Reflective Rickshaw Raincoat', 'Commuter Gear'),
+    ('Gully Cricket Pads', 'Hand-Me-Down Armour'),
+    ('Jugaad Jetpack', 'Flight Tech'),
+    ('Tiffin Shield', 'Steel Shielding'),
+    ('Chai-Powered Drone', 'Kitchen Arsenal'),
+    ('Auto-Rickshaw Hover Kit', 'Turbo Rides'),
+    ('Metro Card Teleporter', 'Household Hacks'),
+    ('Mosquito-Bat Taser', 'Last-Resort Weapons'),
+    ('Robo-Chotu', 'Robot Allies'),
+    ('Sheru the Ex-Army Dog', 'Canine Corps'),
+    ('Hacker Didi', 'Undercover Family'),
+    ('Talking Kabootar', 'Animal Brigade'),
+    ('Dabbawala Network', 'Street Intelligence'),
+    ('Cousin Bunty', 'Reluctant Recruits'),
+    ('Jugaad Kit', 'Last-Call Rescue')
+  ) as v(gear_name, series_name)
+ where g.gear_name = v.gear_name;
+
+-- Any series not listed above keeps its key as its name.
+update public.gear_cards set series_name = gear_name where series_name is null;
+alter table public.gear_cards alter column series_name set not null;
+
 comment on column public.gear_cards.gear_name is
-  'The card''s series: cards sharing a Power and minimum bid. Breaking News and Team-Ups match on this.';
+  'The series'' internal key (original names, unchanged). Breaking News and Team-Ups match on this. Not shown on screens.';
+comment on column public.gear_cards.series_name is 'The series'' display name, shown on screens and printed sheets.';
 comment on column public.gear_cards.card_name is 'The card''s own name, printed on the card and shown on screens.';
 
 -- Held cards carry their own name too (added at the end so dependent views stay valid).
@@ -101,7 +142,8 @@ select s.agency_id,
        s.phase,
        s.sold_at,
        s.id as sale_id,
-       g.card_name
+       g.card_name,
+       g.series_name
   from public.sales s
   join public.gear_cards g on g.id = s.card_id
  where s.voided_at is null;

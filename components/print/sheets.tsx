@@ -187,7 +187,7 @@ export function AuctionSheets({ base, auction }: { base: Base; auction: AuctionP
         <td className="num font-bold">{c.id}</td>
         <td>
           {c.card_name}
-          {c.card_name !== c.gear_name && <span className="muted"> · {c.gear_name} series</span>}
+          <span className="muted"> · {c.series_name} series</span>
         </td>
         <td>{c.category}</td>
         <td className="num">{c.power}</td>

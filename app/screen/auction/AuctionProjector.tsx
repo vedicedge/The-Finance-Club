@@ -15,11 +15,11 @@ type S = {
   step: string | null;
   marqueeTotal: number;
   lot: null | {
-    id: string; category: string; gear_name: string; card_name?: string; power: number; min_bid: number; phase: string;
+    id: string; category: string; card_name: string; series: string; power: number; min_bid: number; phase: string;
     lot_order: number | null; sold: boolean; needing: string[];
   };
   lastSale: null | {
-    card: string; gear_name: string; card_name?: string; category?: string; power?: number;
+    card: string; card_name: string; category: string; power: number;
     agency: string; agencyName: string; price: number; at: string;
   };
   news: { id: string; headline: string; affects: string; delta: number; cards?: { id: string; name: string; category: string; power: number }[] }[];
@@ -114,7 +114,7 @@ function RecapView({ recap }: { recap: NonNullable<S['recap']> }) {
                 <div className="min-w-0 flex-1">
                   <p className="text-[1.7cqw] leading-tight text-bone">{n.headline}</p>
                   <p className="mt-[0.4cqh] truncate text-[1.2cqw] text-steel">
-                    {n.affects} · {n.holders.length ? <span className="text-bone">{who(n.holders)}</span> : 'not sold'}
+                    {seriesLabel(n.affects)} · {n.holders.length ? <span className="text-bone">{who(n.holders)}</span> : 'not sold'}
                   </p>
                 </div>
                 <span className={`num w-[5cqw] text-right text-[2.6cqw] font-semibold ${n.delta > 0 ? 'text-toxic' : 'text-ember'}`}>
@@ -135,7 +135,7 @@ function RecapView({ recap }: { recap: NonNullable<S['recap']> }) {
                   <span className="num text-[2.2cqw] font-semibold text-toxic">+{t.bonus}</span>
                 </div>
                 <p className="mt-[0.3cqh] text-[1.1cqw] text-steel">
-                  {t.gearA} + {t.gearB}
+                  {t.gearA} + {t.gearB} series
                 </p>
                 <p className={`mt-[0.3cqh] text-[1.3cqw] ${t.holders.length ? 'text-toxic' : 'text-steel'}`}>
                   {t.holders.length ? `${who(t.holders)} hold${t.holders.length === 1 ? 's' : ''} both` : 'Nobody holds both'}
@@ -190,8 +190,7 @@ function Center({ title, children }: { title: string; children?: React.ReactNode
 function LotView({ s }: { s: S }) {
   const lot = s.lot;
   const sale = s.lastSale;
-  const name = lot ? (lot.card_name ?? lot.gear_name) : '';
-  const series = lot ? seriesLabel(name, lot.gear_name) : null;
+  const name = lot?.card_name ?? '';
   return (
     <div className="grid h-full grid-cols-[auto_minmax(0,1fr)_minmax(0,0.8fr)] items-center gap-[3cqw] px-[4cqw] pt-[11cqh] pb-[5cqh]">
       {/* the card: it turns over as the lot opens; text sits beside it, never on the picture */}
@@ -200,7 +199,7 @@ function LotView({ s }: { s: S }) {
           <FlipReveal
             revealKey={lot.id}
             back={<GearCardBack sizes="25vw" />}
-            front={<GearCard card={{ id: lot.id, name, series: lot.gear_name, category: lot.category, power: lot.power }} sizes="25vw" showSeries={false} />}
+            front={<GearCard card={{ id: lot.id, name, series: lot.series, category: lot.category, power: lot.power }} sizes="25vw" showSeries={false} />}
           />
         ) : (
           <GearCardBack sizes="25vw" />
@@ -216,7 +215,7 @@ function LotView({ s }: { s: S }) {
             </p>
             <p className="num mt-[2cqh] text-[2.4cqw] font-semibold text-steel">{lot.id}</p>
             <h1 className="display mt-[1cqh] text-[4.4cqw] leading-[1.02]">{name}</h1>
-            {series && <p className="mt-[1.2cqh] text-[1.6cqw] text-steel">{series}</p>}
+            <p className="mt-[1.2cqh] text-[1.6cqw] text-steel">{seriesLabel(lot.series)}</p>
             <div className="mt-[4cqh] flex gap-[4cqw]">
               <div>
                 <p className="text-[1.15cqw] font-semibold tracking-[0.3em] text-steel uppercase">Power</p>
@@ -250,14 +249,14 @@ function LotView({ s }: { s: S }) {
             <div className="mt-[1.5cqh] flex items-center gap-[1.5cqw]">
               <div className="w-[8cqw] flex-none text-[0.75cqw]">
                 <GearCard
-                  card={{ id: sale.card, name: sale.card_name ?? sale.gear_name, category: sale.category ?? '', power: sale.power }}
+                  card={{ id: sale.card, name: sale.card_name, category: sale.category, power: sale.power }}
                   sizes="10vw"
                   showSeries={false}
                 />
               </div>
               <div className="min-w-0">
                 <p className="stamp text-[1.6cqw] text-toxic">Sold</p>
-                <p className="mt-[1.2cqh] text-[1.7cqw] leading-tight text-bone">{sale.card_name ?? sale.gear_name}</p>
+                <p className="mt-[1.2cqh] text-[1.7cqw] leading-tight text-bone">{sale.card_name}</p>
                 <p className="num mt-[0.6cqh] text-[1.9cqw]">
                   → {sale.agency} <span className="text-steel">{sale.agencyName}</span>
                 </p>
@@ -283,8 +282,7 @@ function NewsView({ s }: { s: S }) {
             <h1 className="display mt-[3cqh] text-[4.2cqw] leading-[1.05]">{latest.headline}</h1>
             <p className={`num mt-[2cqh] text-[2.6cqw] font-semibold ${latest.delta > 0 ? 'text-toxic' : 'text-ember'}`}>
               {latest.delta > 0 ? '+' : ''}
-              {latest.delta} Power · {latest.affects}
-              {(latest.cards?.length ?? 0) > 1 ? ' series' : ''}
+              {latest.delta} Power · {seriesLabel(latest.affects)}
             </p>
           </div>
           {/* the cards the headline hits, fanned out */}

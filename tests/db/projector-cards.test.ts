@@ -29,6 +29,18 @@ describe.skipIf(!hasDb)('card names and series', () => {
     ]);
   });
 
+  it('every series has a display name of its own, different from every card name', () => {
+    expect(sql(`select count(distinct series_name), count(distinct gear_name) from gear_cards;`)).toEqual(['25|25']);
+    // one display name per series key
+    expect(sql(`select count(*) from (select gear_name from gear_cards group by gear_name having count(distinct series_name) > 1) x;`)).toEqual(['0']);
+    expect(sql(`select count(*) from gear_cards c where exists (select 1 from gear_cards s where s.series_name = c.card_name);`)).toEqual(['0']);
+    expect(sql(`select card_name, series_name from gear_cards where id in ('H08', 'H13', 'K12') order by id;`)).toEqual([
+      'Old Metro Depot|Tunnel & Rail Bases',
+      'Laxmi Nagar PG Room|Budget Bunkers',
+      'Cousin Bunty|Reluctant Recruits',
+    ]);
+  });
+
   it('a series keeps one Power and one minimum bid, so the game is unchanged', () => {
     expect(sql(`select count(*) from (select gear_name from gear_cards
                   group by gear_name having count(distinct power) > 1 or count(distinct min_bid) > 1) x;`)).toEqual(['0']);
@@ -39,14 +51,17 @@ describe.skipIf(!hasDb)('card names and series', () => {
     ]);
   });
 
-  it('held cards carry their own name, and Breaking News still hits the whole series', () => {
+  it('held cards carry their own and their series name; the series key is unchanged for news', () => {
     expect(
       sql(`${agency('A01')}
            ${agency('A02')}
            insert into ledger_entries (agency_id, amount, reason) values ('A01', 50, 'start_fund'), ('A02', 50, 'start_fund');
            ${sale('A01', 'H08', 4)} ${sale('A02', 'H09', 4)}
-           select agency_id, card_name, gear_name from v_held_gear order by agency_id;`),
-    ).toEqual(['A01|Old Metro Depot|Old Metro Depot', 'A02|Abandoned Ticket-Hall Bunker|Old Metro Depot']);
+           select agency_id, card_name, series_name, gear_name from v_held_gear order by agency_id;`),
+    ).toEqual([
+      'A01|Old Metro Depot|Tunnel & Rail Bases|Old Metro Depot',
+      'A02|Abandoned Ticket-Hall Bunker|Tunnel & Rail Bases|Old Metro Depot',
+    ]);
   });
 
   it('two cards cannot be given the same name', () => {

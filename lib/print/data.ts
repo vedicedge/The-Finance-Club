@@ -3,7 +3,7 @@ import { serviceDb } from '@/lib/db/server';
 import { EVENT } from '@/lib/config';
 import { parseSettings, type EventSettings } from '@/lib/settings';
 import { CATEGORIES, type Category } from '@/lib/round1/steps';
-import { loadCardNames } from '@/lib/cards';
+import { loadCardNames, seriesOf } from '@/lib/cards';
 
 /**
  * Data for the printable backup sheets. Every sheet prints only what organisers can already see
@@ -24,10 +24,12 @@ export type PrintAgency = {
 export type PrintCard = {
   id: string;
   category: string;
-  /** The card's series. */
+  /** The card's series key (not printed). */
   gear_name: string;
-  /** The card's own name (the series name before the 8 November database update). */
+  /** The card's own name (the series key before the 8 November database update). */
   card_name: string;
+  /** Its series' display name. */
+  series_name: string;
   power: number;
   min_bid: number;
   phase: 'marquee' | 'secret' | 'jugaad';
@@ -138,7 +140,9 @@ export async function loadAuctionPrint(): Promise<AuctionPrint> {
     loadCardNames(),
   ]);
   check(cards, sales, tips, funds, power, starts);
-  const list = (cards.data ?? []).map((c) => ({ ...c, card_name: names.get(c.id) ?? c.gear_name })) as PrintCard[];
+  const list = (cards.data ?? []).map((c) => ({
+    ...c, card_name: names.card.get(c.id) ?? c.gear_name, series_name: seriesOf(names, c.gear_name),
+  })) as PrintCard[];
   const soldTo = new Map<string, { agency: string; price: number; slot: string }>();
   const held = new Map<string, Partial<Record<Category | 'Jugaad', Holding>>>();
   for (const s of sales.data ?? []) {

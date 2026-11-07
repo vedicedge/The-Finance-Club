@@ -185,7 +185,7 @@ export default async function AuctionConsole({
                       {r1.sold.has(lot.id) && <span className="stamp text-ember">Sold</span>}
                     </p>
                     <p className="font-serif mt-1 text-2xl">{lot.card_name}</p>
-                    {seriesLabel(lot.card_name, lot.gear_name) && <p className="text-sm text-steel">{seriesLabel(lot.card_name, lot.gear_name)}</p>}
+                    <p className="text-sm text-steel">{seriesLabel(lot.series_name)}</p>
                     <p className="num mt-1 text-steel">
                       Power <span className="text-bone">{lot.power}</span> · minimum <span className="text-bone">{formatCrore(lot.min_bid)}</span>
                     </p>
@@ -351,7 +351,7 @@ export default async function AuctionConsole({
               {drawn.map((n) => (
                 <li key={n.id} className={n.revealed_at ? 'text-bone' : 'text-steel'}>
                   <span className="num mr-2">#{n.draw_order} {n.id}</span>
-                  {n.headline} <span className="num">({n.delta > 0 ? '+' : ''}{n.delta} to {n.affects_gear})</span>
+                  {n.headline} <span className="num">({n.delta > 0 ? '+' : ''}{n.delta} to {seriesLabel(r1.seriesName(n.affects_gear))})</span>
                   {n.revealed_at && <span className="ml-2 text-xs text-toxic">live</span>}
                 </li>
               ))}

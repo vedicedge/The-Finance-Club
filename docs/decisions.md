@@ -259,9 +259,12 @@ and the register button, with no scrolling.
   until it is set back to Automatic, and shows a live preview. The anchor opens each envelope
   with **Open next envelope** in the command centre or the Vault console. The old per-screen
   links (`/screen/quiz` etc.) still work.
-- **60 named cards in series.** Every gear card has its own name and picture. Cards that share a
-  Power and minimum bid form a series named after the original card, and Breaking News and
-  Team-Ups still name a series, so the game and the secret seed are unchanged (spec Appendix B).
+- **60 named cards in 24 series.** Every gear card has its own name and picture. Cards that share
+  a Power and minimum bid form a series with a display name of its own, never a card's name
+  (e.g. "Budget Bunkers"). Each series keeps its original Appendix B name as an internal key,
+  which Breaking News and Team-Ups use, so the game and the secret seed are unchanged; screens
+  show only the display names (spec Appendix B). Printed Breaking News and Team-Up cards should
+  use the display names.
 - **Card pictures:** one per card, added later by the club as `public/cards/<card ID>.webp`
   (plus `JK.webp` and `back.webp`); a card without one shows its category icon. Pictures are
   not shown publicly before the auction.

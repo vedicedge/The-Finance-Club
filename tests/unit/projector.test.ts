@@ -32,9 +32,8 @@ describe('projector', () => {
 });
 
 describe('gear cards', () => {
-  it('names the series only when the card is one of several', () => {
-    expect(seriesLabel('Laxmi Nagar PG Room', "Mama ji's Basement")).toBe("Mama ji's Basement series");
-    expect(seriesLabel('Old Metro Depot', 'Old Metro Depot')).toBeNull();
+  it('labels a series by its display name', () => {
+    expect(seriesLabel('Budget Bunkers')).toBe('Budget Bunkers series');
   });
 
   it('a card without a picture falls back to its icon', () => {

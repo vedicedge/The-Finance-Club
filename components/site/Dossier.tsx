@@ -181,7 +181,7 @@ export function Dossier({
             <p className="eyebrow text-ember">Insider Tip · eyes only</p>
             <p className="font-serif mt-2 text-xl text-bone">&ldquo;{data.tip.headline}&rdquo;</p>
             <p className="num mt-1 text-sm text-steel">
-              {data.tip.delta > 0 ? '+' : ''}{data.tip.delta} Power to {data.tip.affects}, when Breaking News hits.
+              {data.tip.delta > 0 ? '+' : ''}{data.tip.delta} Power to every card in the {seriesLabel(data.tip.affects)}, when Breaking News hits.
             </p>
           </section>
         )}
@@ -201,7 +201,7 @@ export function Dossier({
                   <li key={cat} className="text-[13px]">
                     {g ? (
                       <GearCard
-                        card={{ id: g.card_id, name: g.card_name, series: g.gear_name, category: cat, power: g.power }}
+                        card={{ id: g.card_id, name: g.card_name, series: g.series_name, category: cat, power: g.power }}
                         sizes="(min-width: 640px) 150px, 45vw"
                       />
                     ) : (
@@ -234,9 +234,7 @@ export function Dossier({
                           <>
                             <span className="num mr-1.5 text-glow">{g.card_id}</span>
                             {g.card_name}
-                            {seriesLabel(g.card_name, g.gear_name) && (
-                              <span className="block text-xs text-steel">{seriesLabel(g.card_name, g.gear_name)}</span>
-                            )}
+                            <span className="block text-xs text-steel">{seriesLabel(g.series_name)}</span>
                           </>
                         ) : (
                           <span className="text-steel">— not signed yet</span>
