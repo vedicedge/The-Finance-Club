@@ -55,7 +55,7 @@ export function Section({
   eyebrow: string;
   title: string;
   meta?: string;
-  /** A scene shown as a film frame behind the section title. */
+  /** A scene shown as a film frame above the section title. */
   scene?: SceneName;
   /** "01", "02"… shown on the frame. */
   index?: string;
@@ -65,17 +65,17 @@ export function Section({
     <section id={id} className="scroll-mt-20 border-b border-line/60">
       <div className="mx-auto max-w-4xl px-[var(--gutter)] py-16">
         {scene ? (
-          <div className="frame corners aspect-[4/3] [--corner-inset:12px] sm:aspect-[21/9]">
-            <Scene name={scene} className="absolute inset-0" sizes="(min-width: 896px) 832px, 100vw" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" aria-hidden="true" />
-            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-              <p className="eyebrow text-glow">
-                {index && <span className="num mr-2 text-bone">{index}</span>}
-                {eyebrow}
-              </p>
-              <h2 className="display metal mt-3 text-[clamp(2.2rem,6vw,3.8rem)]">{title}</h2>
+          <>
+            {/* the picture on its own, with the title below it: text never sits on the art */}
+            <div className="frame corners aspect-video [--corner-inset:12px] sm:aspect-[2/1]">
+              <Scene name={scene} className="absolute inset-0" sizes="(min-width: 896px) 832px, 100vw" />
             </div>
-          </div>
+            <p className="eyebrow mt-8 text-glow">
+              {index && <span className="num mr-2 text-bone">{index}</span>}
+              {eyebrow}
+            </p>
+            <h2 className="display metal mt-3 text-[clamp(2.2rem,6vw,3.8rem)]">{title}</h2>
+          </>
         ) : (
           <>
             <p className="eyebrow flex items-center gap-3">
