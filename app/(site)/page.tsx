@@ -24,14 +24,11 @@ export default async function Landing() {
   return (
     <>
       {/* ---------------------------------------------------------------- hero: Kalyug over Mahanagar */}
+      {/* Everything that sells the event fits the first screen: the art, the wordmark, the clock and
+          the register button. On phones and tablets the art takes whatever height is left once the
+          title block is placed, so the button never falls below the fold. On wide screens the
+          title column sits beside Professor Kalyug and tightens on short laptop screens. */}
       <section className="relative isolate overflow-hidden">
-        {/* the poster's hooded figure, eclipse and skyline, widened for the screen. Below 1024 px the
-            title sits under the art, so the eclipse and the hood stay clear. */}
-        <div className="absolute inset-x-0 top-0 -z-20 h-[27rem] overflow-hidden sm:h-[36rem] md:h-[42rem] lg:inset-y-0 lg:h-auto" aria-hidden="true">
-          <HeroArt className="hero-drift object-cover object-[74%_center] sm:object-[79%_center] md:object-[82%_center] lg:object-[68%_center]" />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(8_10_7/0.3),transparent_16%,transparent_74%,var(--color-abyss))] lg:bg-[linear-gradient(90deg,var(--color-abyss)_0%,rgb(8_10_7/0.88)_30%,rgb(8_10_7/0.35)_58%,transparent_78%)]" />
-          <div className="absolute inset-x-0 bottom-0 hidden h-48 bg-gradient-to-b from-transparent to-abyss lg:block" />
-        </div>
         <div className="streaks absolute inset-0 -z-10" aria-hidden="true" />
         <div className="fog absolute inset-0 -z-10" aria-hidden="true" />
 
@@ -43,40 +40,64 @@ export default async function Landing() {
           <span className="absolute right-0 bottom-0">Threat · total</span>
         </div>
 
-        <div className="mx-auto flex max-w-7xl px-[var(--gutter)] pt-[25rem] pb-20 sm:pt-[32rem] md:pt-[37rem] lg:min-h-[min(54rem,calc(100svh-6.5rem))] lg:items-center lg:py-24">
-          <div className="mx-auto w-full max-w-xl text-center lg:mx-0 lg:text-left">
-            <p className="eyebrow text-glow">Incoming transmission · {EVENT.city}</p>
-            <h1 className="mt-5">
-              <Wordmark sizes="(min-width: 640px) 560px, 90vw" preload className="mx-auto h-auto w-[min(100%,35rem)] lg:mx-0 lg:-ml-2" />
-            </h1>
-            <p className="mt-4 font-serif text-[clamp(1.45rem,3vw,1.95rem)] leading-snug text-silver italic">{EVENT.tagline}</p>
-            <p className="mx-auto mt-4 max-w-md text-[0.95rem] leading-relaxed text-steel lg:mx-0">
-              {EVENT.villain} has announced a doomsday attack on {EVENT.city}. Three founders, ₹50 crore, one evening to build a hero.
-            </p>
+        <div className="flex min-h-[calc(100svh-6.25rem)] flex-col lg:block lg:min-h-0">
+          {/* the poster's hooded figure, eclipse and skyline, widened for the screen */}
+          <div className="relative -z-20 min-h-[13rem] flex-1 overflow-hidden lg:absolute lg:inset-0" aria-hidden="true">
+            <HeroArt className="hero-drift object-cover object-[84%_center] md:object-[78%_center] lg:object-[68%_center]" />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(8_10_7/0.3),transparent_14%,transparent_62%,var(--color-abyss))] lg:bg-[linear-gradient(90deg,var(--color-abyss)_0%,rgb(8_10_7/0.88)_30%,rgb(8_10_7/0.35)_58%,transparent_78%)]" />
+            <div className="absolute inset-x-0 bottom-0 hidden h-48 bg-gradient-to-b from-transparent to-abyss lg:block" />
+          </div>
 
-            <p className="eyebrow mt-9">{EVENT.villain} strikes in</p>
-            <div className="mt-3 flex justify-center lg:justify-start">
-              <Countdown target={event.startsAt} after={<p className="display text-4xl text-ember">Doomsday is here.</p>} />
-            </div>
-
-            <div className="mx-auto mt-9 flex w-full max-w-md flex-col gap-3 sm:flex-row lg:mx-0">
-              {reg.open ? (
-                <Link href="/register" className="btn btn-primary flex-1">
-                  Register your agency
-                </Link>
-              ) : (
-                <span className="btn btn-ghost flex-1 cursor-default text-steel">Registration closed</span>
-              )}
-              <Link href="/login" className="btn btn-ghost flex-1">
-                Agency login
-              </Link>
-            </div>
-            {reg.open && (
-              <p className="mt-4 text-sm text-steel">
-                <span className="num text-glow">{slotsLeft}</span> of <span className="num">{registration.maxAgencies}</span> agency slots left
-                · closes {longDate(registration.closesAt)}
+          <div className="relative mx-auto w-full max-w-7xl px-[var(--gutter)] pb-5 sm:pb-8 lg:flex lg:min-h-[min(54rem,calc(100svh-6.25rem))] lg:items-center lg:py-20 lg:short:py-8">
+            <div className="mx-auto -mt-14 w-full max-w-xl text-center sm:-mt-20 lg:mx-0 lg:mt-0 lg:text-left">
+              <p className="eyebrow hidden text-glow lg:block">Incoming transmission · {EVENT.city}</p>
+              <h1 className="lg:mt-5 lg:short:mt-3">
+                <Wordmark
+                  sizes="(min-width: 1024px) 560px, (min-width: 640px) 420px, 80vw"
+                  preload
+                  className="mx-auto h-auto w-[min(80vw,21rem)] sm:w-[26rem] lg:mx-0 lg:-ml-2 lg:w-[min(100%,35rem)] lg:short:w-[27rem]"
+                />
+              </h1>
+              <p className="mt-1 font-serif text-[1.15rem] leading-snug text-silver italic sm:text-[1.45rem] lg:mt-4 lg:text-[clamp(1.45rem,3vw,1.95rem)] lg:short:mt-2">
+                {EVENT.tagline}
               </p>
-            )}
+              <p className="mt-4 hidden max-w-md text-[0.95rem] leading-relaxed text-steel lg:block lg:short:hidden">
+                {EVENT.villain} has announced a doomsday attack on {EVENT.city}. Three founders, ₹50 crore, one evening to build a hero.
+              </p>
+
+              <p className="eyebrow mt-4 sm:mt-6 lg:mt-9 lg:short:mt-5">{EVENT.villain} strikes in</p>
+              <div className="mt-2 flex justify-center lg:mt-3 lg:justify-start">
+                <Countdown target={event.startsAt} after={<p className="display text-4xl text-ember">Doomsday is here.</p>} />
+              </div>
+
+              <div className="mx-auto mt-4 flex w-full max-w-md gap-3 sm:mt-6 lg:mx-0 lg:mt-9 lg:short:mt-5">
+                {reg.open ? (
+                  <Link href="/register" className="btn btn-primary flex-1">
+                    Register your agency
+                  </Link>
+                ) : (
+                  <span className="btn btn-ghost flex-1 cursor-default text-steel">Registration closed</span>
+                )}
+                <Link href="/login" className="btn btn-ghost hidden flex-1 sm:flex">
+                  Agency login
+                </Link>
+              </div>
+              <p className="mt-3 flex flex-wrap items-center justify-center gap-x-2 text-sm text-steel lg:justify-start">
+                {reg.open && (
+                  <span>
+                    <span className="num text-glow">{slotsLeft}</span> of <span className="num">{registration.maxAgencies}</span>
+                    <span className="sm:hidden"> slots left · closes {shortDate(registration.closesAt)}</span>
+                    <span className="hidden sm:inline"> agency slots left · closes {longDate(registration.closesAt)}</span>
+                  </span>
+                )}
+                <span className="sm:hidden">
+                  {reg.open && <span aria-hidden="true">· </span>}
+                  <Link href="/login" className="text-glow underline underline-offset-4">
+                    Agency login
+                  </Link>
+                </span>
+              </p>
+            </div>
           </div>
         </div>
       </section>

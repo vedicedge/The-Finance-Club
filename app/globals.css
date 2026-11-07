@@ -10,6 +10,10 @@
    The site is dark by design; there is no light theme.
    ========================================================================== */
 
+/* Short screens (laptops at 768 px tall, landscape tablets): the hero tightens so the clock and
+   the register button stay on the first screen. */
+@custom-variant short (@media (max-height: 860px));
+
 @theme {
   --color-abyss: #080a07;
   --color-vault: #0e130d;
