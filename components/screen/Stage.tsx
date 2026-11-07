@@ -1,19 +1,25 @@
 import Image from 'next/image';
 import ambient from '@/assets/art/ambient.jpg';
+import { Scene, type SceneName } from '@/components/art/Scene';
 
 /**
  * A 16:9 projector stage that fills the screen without stretching. Everything inside is sized
  * in container units (cqw/cqh), so the same layout reads the same on any projector. Behind it
- * sits the poster's green haze, kept dark so text stays readable from the back of the hall.
+ * sits the round's picture (or the poster's green haze), kept dark so text stays readable from
+ * the back of the hall.
  */
-export function Stage({ children }: { children: React.ReactNode }) {
+export function Stage({ children, art }: { children: React.ReactNode; /** The round's picture, shown dim behind everything. */ art?: SceneName }) {
   return (
     <div className="fixed inset-0 grid place-items-center bg-black">
       <div
         className="relative overflow-hidden bg-abyss text-bone [container-type:size]"
         style={{ width: 'min(100vw, calc(100vh * 16 / 9))', height: 'min(100vh, calc(100vw * 9 / 16))' }}
       >
-        <Image src={ambient} alt="" fill sizes="100vw" className="pointer-events-none object-cover opacity-35" aria-hidden="true" />
+        {art ? (
+          <Scene name={art} className="pointer-events-none absolute inset-0 opacity-[0.14]" sizes="100vw" />
+        ) : (
+          <Image src={ambient} alt="" fill sizes="100vw" className="pointer-events-none object-cover opacity-35" aria-hidden="true" />
+        )}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0"

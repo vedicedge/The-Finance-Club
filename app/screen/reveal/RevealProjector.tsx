@@ -53,7 +53,7 @@ export function RevealProjector({ canDrive, stateUrl = '/api/screen/reveal' }: {
 
   const latest = s?.slots.find((x) => x.envelope === s.latest) ?? null;
   return (
-    <Stage>
+    <Stage art="zerohour">
       <div className="absolute inset-x-0 top-0 flex items-center justify-between border-b border-line px-[3cqw] py-[1.6cqh]">
         <p className="text-[1.25cqw] font-semibold tracking-[0.3em] text-steel uppercase">
           {EVENT.name} · <span className="text-ember">{ROUNDS.zeroHour}</span>

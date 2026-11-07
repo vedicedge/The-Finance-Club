@@ -4,19 +4,23 @@ import { Scene, type SceneName } from '@/components/art/Scene';
 
 export type HeroArt = SceneName | 'poster' | 'kalyug';
 
-/** The art behind a page title: a scene, the poster haze, or Professor Kalyug. */
-function HeroBackdrop({ art }: { art: HeroArt }) {
-  if (art === 'poster') return <Ambient className="-z-20 opacity-80" />;
+/** A page banner's picture: a scene or Professor Kalyug, filling its box. */
+function BannerArt({ art }: { art: Exclude<HeroArt, 'poster'> }) {
   if (art === 'kalyug')
     return (
-      <div className="absolute inset-0 -z-20 overflow-hidden">
-        <KalyugImage sizes="100vw" className="size-full object-cover object-[50%_42%] opacity-80" />
+      <div className="absolute inset-0 overflow-hidden">
+        <KalyugImage sizes="(min-width: 1024px) 55vw, 100vw" className="size-full object-cover object-[50%_42%]" />
       </div>
     );
-  return <Scene name={art} className="absolute inset-0 -z-20" sizes="100vw" preload />;
+  return <Scene name={art} className="absolute inset-0" sizes="(min-width: 1024px) 55vw, 100vw" preload />;
 }
 
-/** A cinematic title banner: art, viewfinder corners, the title set low like a film card. */
+/**
+ * A page's title banner. With a picture, the picture and the title never overlap: the picture
+ * fills the right half on laptops (fading in from its left edge) with the title on the left,
+ * and sits above the title on phones and tablets. With the poster haze (no subject to cover),
+ * the title sits low over it like a film card.
+ */
 export function PageHero({
   eyebrow,
   title,
@@ -28,15 +32,40 @@ export function PageHero({
   art?: HeroArt;
   children?: React.ReactNode;
 }) {
+  if (art === 'poster') {
+    return (
+      <header className="corners relative isolate overflow-hidden border-b border-line/60 [--corner-inset:16px] [--corner-size:22px]">
+        <Ambient className="-z-20 opacity-80" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-abyss via-abyss/55 to-abyss/10" aria-hidden="true" />
+        <div className="streaks absolute inset-0 -z-10" aria-hidden="true" />
+        <div className="mx-auto flex min-h-[22rem] max-w-4xl flex-col justify-end px-[var(--gutter)] pt-24 pb-12 sm:min-h-[27rem] sm:pb-14">
+          <p className="eyebrow text-glow">{eyebrow}</p>
+          <h1 className="display metal mt-4 text-[clamp(2.9rem,10vw,6rem)]">{title}</h1>
+          {children && <div className="mt-5 max-w-2xl font-serif text-[1.3rem] leading-relaxed text-bone/90">{children}</div>}
+        </div>
+      </header>
+    );
+  }
   return (
-    <header className="corners relative isolate overflow-hidden border-b border-line/60 [--corner-inset:16px] [--corner-size:22px]">
-      <HeroBackdrop art={art} />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-abyss via-abyss/55 to-abyss/10" aria-hidden="true" />
-      <div className="streaks absolute inset-0 -z-10" aria-hidden="true" />
-      <div className="mx-auto flex min-h-[22rem] max-w-4xl flex-col justify-end px-[var(--gutter)] pt-24 pb-12 sm:min-h-[27rem] sm:pb-14">
-        <p className="eyebrow text-glow">{eyebrow}</p>
-        <h1 className="display metal mt-4 text-[clamp(2.9rem,10vw,6rem)]">{title}</h1>
-        {children && <div className="mt-5 max-w-2xl font-serif text-[1.3rem] leading-relaxed text-bone/90">{children}</div>}
+    <header className="relative isolate overflow-hidden border-b border-line/60">
+      <div
+        className="absolute inset-x-0 top-0 -z-20 h-60 sm:h-80 lg:inset-y-0 lg:right-0 lg:left-auto lg:h-auto lg:w-[55%] lg:[mask-image:linear-gradient(90deg,transparent,#000_20%)] xl:w-1/2"
+        aria-hidden="true"
+      >
+        <BannerArt art={art} />
+      </div>
+      <div
+        className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,transparent_0,transparent_10rem,var(--color-abyss)_15rem)] sm:bg-[linear-gradient(180deg,transparent_0,transparent_14rem,var(--color-abyss)_20rem)] lg:bg-[linear-gradient(180deg,var(--color-abyss),transparent_16%,transparent_84%,var(--color-abyss))]"
+        aria-hidden="true"
+      />
+      <div className="mx-auto flex max-w-6xl flex-col px-[var(--gutter)] pt-[13rem] pb-12 sm:pt-[17.5rem] lg:min-h-[27rem] lg:justify-center lg:py-16">
+        <div className="max-w-xl lg:max-w-[min(36rem,calc(48vw-8rem))]">
+          <p className="eyebrow text-glow">{eyebrow}</p>
+          {/* sized so the longest one-word title ("Leaderboard") fits the column: metallic text
+              that overflows its box would be invisible */}
+          <h1 className="display metal mt-4 text-[clamp(2.4rem,8.5vw,4.6rem)] lg:text-[clamp(2.4rem,4.6vw,4.4rem)]">{title}</h1>
+          {children && <div className="mt-5 font-serif text-[1.25rem] leading-relaxed text-bone/90">{children}</div>}
+        </div>
       </div>
     </header>
   );
@@ -55,7 +84,7 @@ export function Section({
   eyebrow: string;
   title: string;
   meta?: string;
-  /** A scene shown as a film frame behind the section title. */
+  /** A scene shown as a film frame above the section title. */
   scene?: SceneName;
   /** "01", "02"… shown on the frame. */
   index?: string;
@@ -65,17 +94,17 @@ export function Section({
     <section id={id} className="scroll-mt-20 border-b border-line/60">
       <div className="mx-auto max-w-4xl px-[var(--gutter)] py-16">
         {scene ? (
-          <div className="frame corners aspect-[4/3] [--corner-inset:12px] sm:aspect-[21/9]">
-            <Scene name={scene} className="absolute inset-0" sizes="(min-width: 896px) 832px, 100vw" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" aria-hidden="true" />
-            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-              <p className="eyebrow text-glow">
-                {index && <span className="num mr-2 text-bone">{index}</span>}
-                {eyebrow}
-              </p>
-              <h2 className="display metal mt-3 text-[clamp(2.2rem,6vw,3.8rem)]">{title}</h2>
+          <>
+            {/* the picture on its own, with the title below it: text never sits on the art */}
+            <div className="frame corners aspect-video [--corner-inset:12px] sm:aspect-[2/1]">
+              <Scene name={scene} className="absolute inset-0" sizes="(min-width: 896px) 832px, 100vw" />
             </div>
-          </div>
+            <p className="eyebrow mt-8 text-glow">
+              {index && <span className="num mr-2 text-bone">{index}</span>}
+              {eyebrow}
+            </p>
+            <h2 className="display metal mt-3 text-[clamp(2.2rem,6vw,3.8rem)]">{title}</h2>
+          </>
         ) : (
           <>
             <p className="eyebrow flex items-center gap-3">

@@ -53,7 +53,7 @@ export function BoardProjector() {
   const shown = rows.slice(0, 16);
 
   return (
-    <Stage>
+    <Stage art="chess">
       <div className="flex h-full flex-col px-[5cqw] pt-[7cqh] pb-[5cqh]">
         <p className="text-center text-[1.3cqw] font-semibold tracking-[0.3em] text-steel uppercase">{EVENT.name} · Leaderboard</p>
         <h1 className="display mt-[1.5cqh] text-center text-[4.4cqw]">{title}</h1>

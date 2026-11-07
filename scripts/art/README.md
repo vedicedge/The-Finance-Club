@@ -14,32 +14,34 @@ real people (spec, tone rules).
 | `kalyug-hood.jpg` | A close-up of the hood (the synopsis "dossier photo") | `derive_from_poster.py` |
 | `wordmark.webp` | The DOOMSDAY lettering, keyed onto transparency | `derive_from_poster.py` |
 | `ambient.jpg` | The poster blurred into a green haze (page banners, projector and crew sign-in backdrops) | `derive_from_poster.py` |
-| `sky-*.jpg` | Painted storm skies with the green eclipse | `sky.py` |
-| `scene-*.jpg` | The seven scenes shown on the site (rounds, founders, leaderboard) | `render-scenes.cjs`, or `generate-ai-art.py` |
+| `scene-*.jpg` | The seven scenes: the five rounds, the three founders and the leaderboard chessboard (club's own pictures, 16 : 9) | `round_art.py` |
 | `app/opengraph-image.jpg` | The link preview (WhatsApp, Instagram DMs): the desktop hero art, wordmark and tagline (no date or venue) | `og_image.py` |
 
 ## Scenes
 
-`<Scene name="vault" />` shows `assets/art/scene-vault.jpg`. The scenes are drawn in SVG
-(`components/art/SceneDrawing.tsx`, silhouettes in `components/art/silhouettes.tsx`) over the
-painted skies, then photographed into JPEGs so pages stay light on phones:
+`<Scene name="vault" />` shows `assets/art/scene-vault.jpg`. The seven scenes are the club's own
+16:9 pictures, prepared by `round_art.py` (resized to 2400 x 1350 with light film grain):
 
 ```bash
-npm run dev
-```
-```bash
-NODE_PATH="$(npm root -g)" node scripts/art/render-scenes.cjs http://localhost:3000
+python3 scripts/art/round_art.py "path/to/Round Images/Cover" assets/art
 ```
 
-`/dev/art` shows the drawings while you edit them (development only; it 404s in production).
+| Scene | Picture | Shown on |
+|---|---|---|
+| `prelim` | Prelims.png | Round card 1, Rounds page, quiz projector |
+| `bazaar` | Auction.png | Round card 2, Rounds page, auction projector |
+| `skyline` | Round 2.png | Round card 3, Rounds page, 404 page |
+| `vault` | round 3.png | Round card 4, Rounds page, agency login |
+| `zerohour` | Zero hour.png | Round card 5, Rounds page, schedule banner, reveal projector |
+| `heroes` | Three Characters.png | Enlist section, registration, My Agency |
+| `chess` | LeaderBoard.png | Leaderboard banner, board projector |
 
-### Painting them with AI instead
+In Auction.png two of the four gear cards came out looking like well-known Marvel designs (an
+armoured suit with a chest light and a gem-set gauntlet). The site must not show copyrighted
+characters, so `round_art.py` repaints those two card faces as sealed cards with an
+eclipse-and-star sigil. Keep that step if the picture is ever replaced, or regenerate it without
+those two designs.
 
-`generate-ai-art.py` asks Gemini to paint each scene with the poster as the style reference and
-saves over the same `scene-*.jpg` files, so no code changes. It needs a Gemini API key **with
-billing enabled** (the free tier allows no image generation). Review every image before
-committing.
-
-```bash
-GEMINI_API_KEY=... python3 scripts/art/generate-ai-art.py
-```
+Wherever a scene appears, text sits beside or below it, never on it: round cards put the words
+beside the picture, page banners put the picture in the right half (above the title on phones),
+and the projectors show the round's picture only as a dim backdrop.

@@ -78,7 +78,7 @@ export function QuizProjector({ stateUrl = '/api/screen/quiz' }: { stateUrl?: st
   }, [stateUrl]);
 
   return (
-    <Stage>
+    <Stage art="prelim">
       <TopBar s={s} />
       {!s ? (
         <Center title={error ?? 'Establishing secure line…'} />
