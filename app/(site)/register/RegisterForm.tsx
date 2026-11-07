@@ -42,8 +42,8 @@ export function RegisterForm({ emailDomain, emailHint }: { emailDomain: string |
   return (
     <form action={action} className="space-y-8" noValidate>
       {emailDomain && (
-        <p className="panel border-l-2 border-l-torch px-4 py-3 text-sm text-bone">
-          <strong className="text-torch">Reminder:</strong> {emailHint}
+        <p className="panel border-l-2 border-l-glow px-4 py-3 text-sm text-bone">
+          <strong className="text-glow">Reminder:</strong> {emailHint}
         </p>
       )}
 
@@ -56,7 +56,7 @@ export function RegisterForm({ emailDomain, emailHint }: { emailDomain: string |
         <fieldset key={i} className="panel space-y-4 px-4 py-5 sm:px-5">
           <legend className="eyebrow -ml-1 px-1">
             Founder {i + 1}
-            {i === 0 && <span className="ml-2 text-torch">· Captain</span>}
+            {i === 0 && <span className="ml-2 text-glow">· Captain</span>}
           </legend>
           {i === 0 && <p className="text-sm text-steel">The captain logs in on the quiz phone on Doomsday.</p>}
           <Field name={`f${i}_name`} label="Full name" state={state} required maxLength={60} autoComplete={i === 0 ? 'name' : 'off'} />

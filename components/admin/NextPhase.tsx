@@ -13,7 +13,7 @@ export async function NextPhase({ organiser, to }: { organiser: Organiser; to: T
   if (!canAdvance(to, state)) return null;
   const admin = canAccess(organiser.roles, 'settings');
   return (
-    <section className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-sm border border-torch bg-torch/10 px-5 py-4">
+    <section className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-sm border border-glow bg-glow/10 px-5 py-4">
       <p className="text-bone">
         {NEXT_PHASE[to].done} Next: <strong>{phaseLabel(to)}</strong>.
         {!admin && <span className="block text-sm text-steel">An admin starts it from here or the command centre.</span>}

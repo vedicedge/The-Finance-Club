@@ -4,6 +4,7 @@ import { getEventState, registrationStatus } from '@/lib/event-state';
 import { longDate } from '@/lib/schedule';
 import { RegisterForm } from './RegisterForm';
 import { QuickJoinForm } from './QuickJoinForm';
+import { WithArt } from '@/components/site/WithArt';
 
 export const metadata: Metadata = { title: 'Register your agency' };
 
@@ -24,8 +25,8 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
 
   if (dryRun && full !== '1') {
     return (
-      <div className="mx-auto max-w-xl px-[var(--gutter)] pt-12 pb-20">
-        <p className="eyebrow text-torch">Dry run · rehearsal</p>
+      <WithArt art="heroes" label="Dry run · rehearsal" caption="Suit up for the rehearsal.">
+        <p className="eyebrow text-glow">Dry run · rehearsal</p>
         <h1 className="display mt-4 text-[clamp(2.8rem,10vw,4.2rem)]">Join the dry run</h1>
         <p className="mt-4 text-steel">Type your name. That&apos;s it: no team, no IMI email.</p>
         <div className="mt-8">
@@ -34,15 +35,15 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
         {status.open && (
           <p className="mt-10 text-sm text-steel">
             Registering a real agency for Doomsday?{' '}
-            <a href="/register?full=1" className="text-torch underline underline-offset-4">Use the full registration form</a>.
+            <a href="/register?full=1" className="text-glow underline underline-offset-4">Use the full registration form</a>.
           </p>
         )}
-      </div>
+      </WithArt>
     );
   }
 
   return (
-    <div className="mx-auto max-w-xl px-[var(--gutter)] pt-12 pb-20">
+    <WithArt art="heroes" label="Enlist" caption="Three founders. One agency.">
       <p className="eyebrow">Enlist · Hero agency registration</p>
       <h1 className="display mt-4 text-[clamp(2.8rem,10vw,4.2rem)]">Found your agency</h1>
 
@@ -58,15 +59,15 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
           </div>
         </>
       ) : (
-        <div className="mt-8 panel px-5 py-6">
+        <div className="panel corners mt-8 px-5 py-6 [--corner-inset:6px] [--corner-size:12px]">
           <p className="stamp text-ember">Closed</p>
-          <p className="font-display mt-5 text-2xl text-bone">{CLOSED_COPY[status.reason ?? 'closed'][0]}</p>
+          <p className="display mt-5 text-2xl text-bone">{CLOSED_COPY[status.reason ?? 'closed'][0]}</p>
           <p className="mt-2 text-steel">{CLOSED_COPY[status.reason ?? 'closed'][1]}</p>
           <Link href="/login" className="btn btn-ghost mt-6">
             Agency login
           </Link>
         </div>
       )}
-    </div>
+    </WithArt>
   );
 }

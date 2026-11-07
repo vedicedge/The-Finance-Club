@@ -28,7 +28,7 @@ function Text({ name, label, value, wide, ...rest }: { name: string; label: stri
 function Check({ name, label, checked }: { name: string; label: string; checked: boolean }) {
   return (
     <label className="flex items-center gap-3 text-sm text-bone sm:col-span-2">
-      <input type="checkbox" name={name} defaultChecked={checked} className="size-5 accent-torch" /> {label}
+      <input type="checkbox" name={name} defaultChecked={checked} className="size-5 accent-glow" /> {label}
     </label>
   );
 }

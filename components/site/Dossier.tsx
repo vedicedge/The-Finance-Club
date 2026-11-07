@@ -5,6 +5,7 @@ import type { DossierData } from '@/lib/agency-view';
 import { formatCrore } from '@/lib/money';
 import { REASON_LABEL, ledgerTime } from '@/lib/ledger';
 import { BuyTip } from '@/components/site/BuyTip';
+import { Scene } from '@/components/art/Scene';
 
 export type DossierFounder = { name: string; section: string; is_captain: boolean };
 
@@ -13,7 +14,7 @@ const ROUND_LABEL: Record<string, string> = { prelim: 'Prelim', round1: 'Round 1
 export function statusStamp(a: AgencySession): { text: string; className: string; note: string } {
   switch (a.status) {
     case 'registered':
-      return { text: 'Registered', className: 'text-torch', note: 'All three founders check in at the desk on Doomsday.' };
+      return { text: 'Registered', className: 'text-glow', note: 'All three founders check in at the desk on Doomsday.' };
     case 'checked_in':
       return { text: 'Checked in', className: 'text-toxic', note: 'You are cleared for the prelim. Captain: keep the quiz phone charged.' };
     case 'active':
@@ -30,13 +31,22 @@ export function statusStamp(a: AgencySession): { text: string; className: string
 /** A dossier section whose contents unlock later in the event. */
 function Sealed({ eyebrow, title, unlocks }: { eyebrow: string; title: string; unlocks: string }) {
   return (
-    <section className="panel px-5 py-5">
-      <p className="eyebrow">{eyebrow}</p>
-      <h2 className="font-display mt-2 text-2xl text-bone">{title}</h2>
-      <p className="mt-3 flex items-center gap-3 text-sm text-steel">
-        <span className="inline-block h-3 w-24 rounded-[1px] bg-steel/25" aria-hidden="true" />
-        Sealed until {unlocks}
-      </p>
+    <section className="panel relative overflow-hidden px-5 py-5">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="eyebrow">{eyebrow}</p>
+          <h2 className="font-display mt-2 text-xl font-semibold tracking-[0.02em] text-bone/80">{title}</h2>
+        </div>
+        <svg viewBox="0 0 24 24" className="mt-1 size-5 flex-none text-steel/70" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.6">
+          <rect x="5" y="10.5" width="14" height="10" rx="1.5" />
+          <path d="M8 10.5 V7.5 A4 4 0 0 1 16 7.5 V10.5" />
+        </svg>
+      </div>
+      <div className="mt-4 space-y-1.5" aria-hidden="true">
+        <span className="block h-2.5 w-11/12 bg-steel/15" />
+        <span className="block h-2.5 w-2/3 bg-steel/15" />
+      </div>
+      <p className="mt-3 text-sm text-steel">Sealed until {unlocks}</p>
     </section>
   );
 }
@@ -69,12 +79,17 @@ export function Dossier({
   return (
     <div className="mx-auto max-w-2xl px-[var(--gutter)] pt-10 pb-20">
       {/* ---------------------------------------------------------------- dossier cover */}
-      <section className="panel relative overflow-hidden px-5 py-6 sm:px-7">
-        <p className="eyebrow">Agency dossier · Classified</p>
+      <section className="panel corners relative isolate overflow-hidden px-5 py-6 [--corner-inset:8px] [--corner-size:14px] sm:px-7">
+        <Scene
+          name="heroes"
+          className="absolute inset-x-0 top-0 -z-10 h-52 opacity-55 [mask-image:linear-gradient(180deg,#000_30%,transparent)]"
+          sizes="(min-width: 672px) 672px, 100vw"
+        />
+        <p className="eyebrow text-glow">Agency dossier · Classified</p>
         <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
           <div className="min-w-0">
-            <p className="num text-6xl leading-none font-semibold text-torch">{agency.id}</p>
-            <h1 className="display mt-3 text-4xl break-words">{agency.name}</h1>
+            <p className="num glow-text mt-16 text-7xl leading-none font-semibold text-glow">{agency.id}</p>
+            <h1 className="display metal mt-3 text-4xl break-words">{agency.name}</h1>
           </div>
           <p className={`stamp ${stamp.className}`}>{stamp.text}</p>
         </div>
@@ -86,7 +101,7 @@ export function Dossier({
             <li key={f.name} className="flex items-baseline justify-between gap-4 py-2.5">
               <span className="text-bone">
                 {f.name}
-                {f.is_captain && <span className="ml-2 text-xs font-semibold tracking-[0.18em] text-torch uppercase">Captain</span>}
+                {f.is_captain && <span className="ml-2 text-xs font-semibold tracking-[0.18em] text-glow uppercase">Captain</span>}
               </span>
               <span className="text-sm text-steel">Section {f.section}</span>
             </li>
@@ -102,9 +117,9 @@ export function Dossier({
 
       {/* ---------------------------------------------------------------- what's next */}
       {briefing && (
-        <section className="mt-6 panel border-l-2 border-l-torch px-5 py-5">
+        <section className="panel mt-6 border-l-2 !border-l-glow px-5 py-5">
           <p className="eyebrow">Next briefing</p>
-          <p className="font-display mt-2 text-2xl text-bone">
+          <p className="display mt-2 text-2xl text-bone">
             {longDate(start)} · {wallClock(start, 0)}
           </p>
           <p className="mt-2 text-sm text-steel">
@@ -131,7 +146,7 @@ export function Dossier({
         {data && data.ledger.length > 0 ? (
           <section className="panel px-5 py-5">
             <p className="eyebrow">Fund left</p>
-            <p className="num mt-2 text-5xl font-semibold text-torch">{formatCrore(data.fund)}</p>
+            <p className="num mt-2 text-5xl font-semibold text-glow">{formatCrore(data.fund)}</p>
             <p className="mt-1 text-sm text-steel">Counts half in your Hero Score. Every credit and debit:</p>
             <ol className="mt-4 divide-y divide-line/60 border-y border-line/60 text-sm">
               {data.ledger.map((e) => (
@@ -159,9 +174,9 @@ export function Dossier({
         )}
 
         {data?.tip && (
-          <section className="panel border-l-2 border-l-ember px-5 py-5">
+          <section className="panel border-l-2 !border-l-ember px-5 py-5">
             <p className="eyebrow text-ember">Insider Tip · eyes only</p>
-            <p className="font-display mt-2 text-xl text-bone">&ldquo;{data.tip.headline}&rdquo;</p>
+            <p className="font-serif mt-2 text-xl text-bone">&ldquo;{data.tip.headline}&rdquo;</p>
             <p className="num mt-1 text-sm text-steel">
               {data.tip.delta > 0 ? '+' : ''}{data.tip.delta} Power to {data.tip.affects}, when Breaking News hits.
             </p>
@@ -174,7 +189,7 @@ export function Dossier({
               <p className="eyebrow">Gear · Power Level</p>
               {data.round1Locked && <span className="text-xs font-semibold tracking-[0.18em] text-toxic uppercase">Final</span>}
             </div>
-            <p className="num mt-2 text-5xl font-semibold text-torch">{data.power.total}</p>
+            <p className="num mt-2 text-5xl font-semibold text-glow">{data.power.total}</p>
             {/* The Power Level as a sum: each card, any Breaking News change, Team-Up bonuses, total. */}
             <div className="mt-4 grid grid-cols-[4.6rem_1fr_auto] gap-x-3 border-b border-line-strong pb-1.5 text-[0.68rem] font-semibold tracking-[0.18em] text-steel uppercase">
               <span>Slot</span>
@@ -191,7 +206,7 @@ export function Dossier({
                       <span className="min-w-0">
                         {g ? (
                           <>
-                            <span className="num mr-1.5 text-torch">{g.card_id}</span>
+                            <span className="num mr-1.5 text-glow">{g.card_id}</span>
                             {g.gear_name}
                           </>
                         ) : (
@@ -226,7 +241,7 @@ export function Dossier({
               <li className="grid grid-cols-[4.6rem_1fr_auto] gap-x-3 border-t border-line-strong py-2 font-semibold">
                 <span />
                 <span>Power Level</span>
-                <span className="num text-right text-torch">{data.power.total}</span>
+                <span className="num text-right text-glow">{data.power.total}</span>
               </li>
             </ul>
             {!data.round1Locked && (
@@ -247,7 +262,7 @@ export function Dossier({
               <p className="mt-2 text-bone">
                 Poster duel:{' '}
                 {data.round2.duel.opponent ? (
-                  <>vs <span className="num text-torch">{data.round2.duel.opponent}</span> {data.round2.duel.opponentName}</>
+                  <>vs <span className="num text-glow">{data.round2.duel.opponent}</span> {data.round2.duel.opponentName}</>
                 ) : (
                   'a bye (counts as a win)'
                 )}
@@ -261,7 +276,7 @@ export function Dossier({
             )}
             {data.round2.tower ? (
               <>
-                <p className="num mt-4 text-4xl font-semibold text-torch">{data.round2.tower.score.toFixed(2)}</p>
+                <p className="num mt-4 text-4xl font-semibold text-glow">{data.round2.tower.score.toFixed(2)}</p>
                 <p className="num mt-1 text-sm text-steel">
                   Accuracy {data.round2.tower.a.toFixed(1)} · Speed {data.round2.tower.s.toFixed(1)} · Destruction {data.round2.tower.d.toFixed(1)} · rank #{data.round2.tower.rank}
                 </p>
@@ -282,7 +297,7 @@ export function Dossier({
           <section className="panel px-5 py-5">
             <p className="eyebrow">Round 3 · {ROUNDS.round3}</p>
             <p className="mt-2 flex items-baseline gap-3">
-              <span className="num text-5xl font-semibold text-torch">{data.round3.envelope}</span>
+              <span className="num text-5xl font-semibold text-glow">{data.round3.envelope}</span>
               <span className="text-sm text-steel">your Mission File · keep it sealed</span>
             </p>
             {data.round3.currentMission && (
@@ -318,7 +333,7 @@ export function Dossier({
             </div>
             {data.hero ? (
               <p className="mt-4 text-bone">
-                {data.hero.outcome} · Hero Score <span className="num text-2xl font-semibold text-torch">{Number.isInteger(data.hero.hero) ? data.hero.hero : data.hero.hero.toFixed(2)}</span>
+                {data.hero.outcome} · Hero Score <span className="num text-2xl font-semibold text-glow">{Number.isInteger(data.hero.hero) ? data.hero.hero : data.hero.hero.toFixed(2)}</span>
               </p>
             ) : (
               <p className="mt-3 text-xs text-steel">The Battle Outcome stays classified until your envelope opens at Zero Hour.</p>

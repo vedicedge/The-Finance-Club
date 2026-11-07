@@ -1,5 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="12" fill="#050807"/>
-  <path d="M32 8 L52 15 V31 C52 44 43 53 32 57 C21 53 12 44 12 31 V15 Z" fill="#11201c" stroke="#e9b04e" stroke-width="3"/>
-  <path d="M32 18 V46 M22 30 H42" stroke="#62d6a8" stroke-width="3" stroke-linecap="round"/>
+  <defs>
+    <radialGradient id="corona" cx="32" cy="30" r="26" gradientUnits="userSpaceOnUse">
+      <stop offset="0.62" stop-color="#a9cf6e" stop-opacity="0.9"/>
+      <stop offset="0.8" stop-color="#6e8f45" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#080a07" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="12" fill="#080a07"/>
+  <circle cx="32" cy="30" r="26" fill="url(#corona)"/>
+  <circle cx="32" cy="30" r="16.5" fill="#080a07" stroke="#d9ecb8" stroke-width="1.2"/>
+  <path d="M32 40 L33.4 50 L32 60 L30.6 50 Z M24 50 L32 48.8 L40 50 L32 51.2 Z" fill="#ebe8da"/>
 </svg>

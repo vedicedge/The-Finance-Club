@@ -106,10 +106,10 @@ export default async function CommandCentre({ searchParams }: { searchParams: Pr
 
       {isAdmin && connected && (
         <section
-          className={`mt-10 flex flex-wrap items-center justify-between gap-4 rounded-sm border px-5 py-5 ${dryRun ? 'border-torch bg-torch/10' : 'border-line bg-vault'}`}
+          className={`mt-10 flex flex-wrap items-center justify-between gap-4 rounded-sm border px-5 py-5 ${dryRun ? 'border-glow bg-glow/10' : 'border-line bg-vault'}`}
         >
           <div className="max-w-2xl">
-            <h2 className="eyebrow">Dry run mode · {dryRun ? <span className="text-torch">ON</span> : 'off'}</h2>
+            <h2 className="eyebrow">Dry run mode · {dryRun ? <span className="text-glow">ON</span> : 'off'}</h2>
             <p className="mt-2 text-sm text-bone/85">
               For rehearsals with your team. While it is on, anyone can join on the register page by typing just their name:
               a one-person test agency, no IMI email, checked in straight away, ready for the rounds. Real registrations keep
@@ -142,7 +142,7 @@ export default async function CommandCentre({ searchParams }: { searchParams: Pr
               ))}
             </select>
             <label className="flex items-center gap-3 text-sm text-bone">
-              <input type="checkbox" name="confirm" className="size-5 accent-torch" /> I&apos;m sure
+              <input type="checkbox" name="confirm" className="size-5 accent-glow" /> I&apos;m sure
             </label>
             <button className="btn btn-primary">Switch phase</button>
           </form>
@@ -181,7 +181,7 @@ export default async function CommandCentre({ searchParams }: { searchParams: Pr
               <tr key={e.table} className="border-b border-line/60">
                 <td className="py-2 pr-4">
                   {e.label}
-                  {e.secret && <span className="ml-2 text-xs text-torch">secret seed</span>}
+                  {e.secret && <span className="ml-2 text-xs text-glow">secret seed</span>}
                 </td>
                 <td className="num py-2 pr-4 text-steel">{e.expected}</td>
                 <td className="num py-2 pr-4">{found ?? '—'}</td>
@@ -193,7 +193,7 @@ export default async function CommandCentre({ searchParams }: { searchParams: Pr
       </table>
 
       {secretsMissing && (
-        <p className="mt-6 rounded-sm border border-torch/40 bg-torch/10 px-4 py-3 text-sm text-torch">
+        <p className="mt-6 rounded-sm border border-glow/40 bg-glow/10 px-4 py-3 text-sm text-glow">
           The secret seed (questions, answer keys, Team-Ups, Breaking News) is not loaded. Run
           <code className="mx-1">supabase/private/seed_secrets.sql</code> in the Supabase SQL editor.
         </p>

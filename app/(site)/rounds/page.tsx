@@ -16,17 +16,20 @@ export default async function RoundsPage() {
         are played on the floor, and organisers post the results here.
       </PageHero>
 
-      <nav aria-label="Rounds" className="border-b border-line/60">
-        <ol className="mx-auto flex max-w-4xl flex-wrap gap-x-6 gap-y-2 px-[var(--gutter)] py-4 text-sm text-steel">
+      <nav aria-label="Rounds" className="sticky top-0 z-20 border-b border-line/60 bg-abyss/85 backdrop-blur-md">
+        <ol className="mx-auto flex max-w-4xl gap-2 overflow-x-auto px-[var(--gutter)] py-3 [scrollbar-width:none]">
           {[
-            ['#prelim', 'Prelim'],
-            ['#round-1', 'Round 1'],
-            ['#round-2', 'Round 2'],
-            ['#round-3', 'Round 3'],
-            ['#zero-hour', 'Zero Hour'],
+            ['#prelim', '01 Prelim'],
+            ['#round-1', '02 Round 1'],
+            ['#round-2', '03 Round 2'],
+            ['#round-3', '04 Round 3'],
+            ['#zero-hour', '05 Zero Hour'],
           ].map(([href, label]) => (
-            <li key={href}>
-              <a href={href} className="hover:text-torch">
+            <li key={href} className="flex-none">
+              <a
+                href={href}
+                className="font-display block border border-line-strong px-3 py-1.5 text-[0.72rem] font-semibold tracking-[0.14em] whitespace-nowrap text-steel uppercase hover:border-glow hover:text-glow"
+              >
                 {label}
               </a>
             </li>
@@ -34,7 +37,7 @@ export default async function RoundsPage() {
         </ol>
       </nav>
 
-      <Section id="prelim" eyebrow="Prelim · 15 min · on your phone" title={ROUNDS.prelim} meta="50+ agencies → top 16">
+      <Section id="prelim" index="01" scene="prelim" eyebrow="Prelim · 15 min · on your phone" title={ROUNDS.prelim} meta="50+ agencies → top 16">
         <p>
           A 15-question live quiz. Questions appear on the projector; your captain answers on one phone. Scores are
           worked out on the server, and faster correct answers score more. 7 of the 15 questions are finance.
@@ -74,7 +77,7 @@ export default async function RoundsPage() {
         </p>
       </Section>
 
-      <Section id="round-1" eyebrow="Round 1 · 50 min · live auction" title={ROUNDS.round1} meta="16 agencies · start ₹50 Cr">
+      <Section id="round-1" index="02" scene="bazaar" eyebrow="Round 1 · 50 min · live auction" title={ROUNDS.round1} meta="16 agencies · start ₹50 Cr">
         <p>
           Each agency signs one <strong>HQ</strong>, one <strong>Suit</strong>, one <strong>Gadget</strong> and one{' '}
           <strong>Sidekick</strong> from 60 gear cards, using its ₹50 Cr. There are 15 cards per category, one fewer than
@@ -106,7 +109,7 @@ export default async function RoundsPage() {
         <p>Round 1 fixes your Power Level and your fund left. Fund left counts half in the Hero Score, so spend with care.</p>
       </Section>
 
-      <Section id="round-2" eyebrow="Round 2 · 35 min · on the floor" title={ROUNDS.round2} meta="→ top 8">
+      <Section id="round-2" index="03" scene="skyline" eyebrow="Round 2 · 35 min · on the floor" title={ROUNDS.round2} meta="→ top 8">
         <H3>Part A — Signal Before the Storm (posters, 5 min)</H3>
         <ul>
           <li>Draw a poster for your hero: your agency ID, the hero built in Round 1, its identity and its doomsday mission. Original artwork only.</li>
@@ -137,7 +140,7 @@ export default async function RoundsPage() {
         <p>The 8 highest Tower Scores go to the Vault; everyone else is eliminated.</p>
       </Section>
 
-      <Section id="round-3" eyebrow="Round 3 · 31 min · seated, on paper" title={ROUNDS.round3} meta="8 finalists">
+      <Section id="round-3" index="04" scene="vault" eyebrow="Round 3 · 31 min · seated, on paper" title={ROUNDS.round3} meta="8 finalists">
         <p>
           Each finalist holds one sealed <strong>Mission File</strong> (numbered E1–E8) carrying a secret Battle Outcome
           multiplier. Keep it sealed on the table. Envelopes open only at Zero Hour.
@@ -172,13 +175,14 @@ export default async function RoundsPage() {
         </ul>
       </Section>
 
-      <Section id="zero-hour" eyebrow="Finale · 20 min" title={ROUNDS.zeroHour} meta="→ one Hero Agency">
+      <Section id="zero-hour" index="05" scene="zerohour" eyebrow="Finale · 20 min" title={ROUNDS.zeroHour} meta="→ one Hero Agency">
         <p>
           Mission 4&apos;s winner makes the last swap, X-Ray or cash call. Then all 8 envelopes are opened on stage, in
           ascending Power Level, and each Hero Score appears on the projector:
         </p>
-        <p className="font-display text-center text-2xl text-bone">
-          <span className="text-torch">Power Level</span> × <span className="text-toxic">Battle Outcome</span> + Fund left ÷ 2
+        <p className="display panel corners px-4 py-6 text-center text-[clamp(1.3rem,3.6vw,2rem)] leading-snug text-bone [--corner-inset:6px] [--corner-size:12px]">
+          <span className="whitespace-nowrap text-glow">Power Level</span> × <span className="whitespace-nowrap text-toxic">Battle Outcome</span> +{' '}
+          <span className="whitespace-nowrap">Fund left ÷ 2</span>
         </p>
         <Table
           head={['Award', 'Decided by', 'Reward']}

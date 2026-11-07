@@ -62,7 +62,7 @@ export function RevealProjector({ canDrive, stateUrl = '/api/screen/reveal' }: {
       </div>
 
       {!s ? (
-        <div className="flex h-full items-center justify-center"><p className="display text-[5cqw]">{error ?? 'Establishing secure line…'}</p></div>
+        <div className="flex h-full items-center justify-center"><p className="display text-[4.4cqw]">{error ?? 'Establishing secure line…'}</p></div>
       ) : s.final ? (
         <Final rows={s.final} />
       ) : (
@@ -72,21 +72,21 @@ export function RevealProjector({ canDrive, stateUrl = '/api/screen/reveal' }: {
               <div key={latest.envelope} className="transmission relative">
                 <div className="light-beam -z-10 opacity-90" aria-hidden="true" />
                 <p className="text-[1.5cqw] font-semibold tracking-[0.3em] text-steel uppercase">
-                  Mission File <span className="num text-torch">{latest.envelope}</span> · {latest.agencyId} {latest.name}
+                  Mission File <span className="num text-glow">{latest.envelope}</span> · {latest.agencyId} {latest.name}
                 </p>
-                <h1 className="display mt-[2cqh] text-[5.6cqw] leading-[1.02]">{latest.revealed.outcome}</h1>
+                <h1 className="display mt-[2cqh] text-[4.9cqw] leading-[1.02]">{latest.revealed.outcome}</h1>
                 <p className={`num mt-[1cqh] text-[7cqw] leading-none font-semibold ${latest.revealed.multiplier >= 1.5 ? 'text-toxic' : latest.revealed.multiplier < 1 ? 'text-ember' : 'text-bone'}`}>
                   ×{fmt(latest.revealed.multiplier)}
                 </p>
                 <p className="num mt-[4cqh] text-[2.4cqw] text-bone">
-                  <span className="text-torch">{latest.power}</span> × {fmt(latest.revealed.multiplier)} + {formatCrore(latest.fund).replace(' Cr', '')} ÷ 2 ={' '}
-                  <span className="text-[3.4cqw] font-semibold text-torch">{fmt(latest.revealed.hero)}</span>
+                  <span className="text-glow">{latest.power}</span> × {fmt(latest.revealed.multiplier)} + {formatCrore(latest.fund).replace(' Cr', '')} ÷ 2 ={' '}
+                  <span className="text-[3.4cqw] font-semibold text-glow">{fmt(latest.revealed.hero)}</span>
                 </p>
                 <p className="mt-[1cqh] text-[1.3cqw] tracking-[0.2em] text-steel uppercase">Power Level × Battle Outcome + Fund left ÷ 2</p>
               </div>
             ) : (
               <>
-                <h1 className="display text-[8cqw]">Zero Hour</h1>
+                <h1 className="display metal text-[7cqw]">Zero Hour</h1>
                 <p className="mt-[2cqh] text-[2.2cqw] text-steel">
                   {s.mission4.pending
                     ? `Mission 4's winner ${s.mission4.winner} makes the last call: Swap, X-Ray or ₹6 Cr.`
@@ -100,11 +100,11 @@ export function RevealProjector({ canDrive, stateUrl = '/api/screen/reveal' }: {
               <li
                 key={x.envelope}
                 className={`flex items-center gap-[1.2cqw] rounded-[0.3cqw] px-[1cqw] py-[1.1cqh] text-[1.8cqw] ${
-                  x.envelope === s.latest ? 'bg-torch/15 ring-1 ring-torch' : x.revealed ? '' : 'opacity-45'
+                  x.envelope === s.latest ? 'bg-glow/15 ring-1 ring-glow' : x.revealed ? '' : 'opacity-45'
                 }`}
               >
                 <span className="num w-[3.6cqw] text-steel">{x.envelope}</span>
-                <span className="num w-[4.4cqw] font-semibold text-torch">{x.agencyId}</span>
+                <span className="num w-[4.4cqw] font-semibold text-glow">{x.agencyId}</span>
                 <span className="min-w-0 flex-1 truncate">{x.name}</span>
                 <span className="num w-[4cqw] text-right text-steel">P{x.power}</span>
                 <span className="num w-[6cqw] text-right font-semibold">{x.revealed ? fmt(x.revealed.hero) : 'sealed'}</span>
@@ -140,10 +140,10 @@ function Final({ rows }: { rows: HeroRow[] }) {
     <div className="flex h-full flex-col px-[5cqw] pt-[10cqh] pb-[4cqh]">
       <div className="relative text-center">
         <div className="light-beam -z-10" aria-hidden="true" />
-        <p className="text-[1.5cqw] font-semibold tracking-[0.35em] text-torch uppercase">{EVENT.winnerTitle}</p>
+        <p className="text-[1.5cqw] font-semibold tracking-[0.35em] text-glow uppercase">{EVENT.winnerTitle}</p>
         {tossForFirst ? (
           <>
-            <h1 className="display mt-[1.5cqh] text-[6cqw] leading-none">Coin toss on stage</h1>
+            <h1 className="display mt-[1.5cqh] text-[5.3cqw] leading-none">Coin toss on stage</h1>
             <p className="mt-[1.5cqh] text-[2.2cqw] text-bone">{names(firsts)}</p>
             <p className="num mt-[1cqh] text-[1.8cqw] text-steel">
               Hero Score <span className="font-semibold text-bone">{fmt(winner.hero)}</span> each, still level after the tie-breaks. The
@@ -152,7 +152,7 @@ function Final({ rows }: { rows: HeroRow[] }) {
           </>
         ) : (
           <>
-            <h1 className="display mt-[1.5cqh] text-[7cqw] leading-none">{winner.name}</h1>
+            <h1 className="display metal glow-text mt-[1.5cqh] text-[6.2cqw] leading-none">{winner.name}</h1>
             <p className="num mt-[1cqh] text-[2.2cqw] text-steel">
               {winner.agencyId} · Hero Score <span className="font-semibold text-bone">{fmt(winner.hero)}</span>
             </p>
@@ -185,7 +185,7 @@ function Final({ rows }: { rows: HeroRow[] }) {
         renderRow={(r) => (
           <li key={r.agencyId} className="flex items-center gap-[1.2cqw] border-b border-line py-[1cqh] text-[1.7cqw]">
             <span className="num w-[3cqw] text-steel">{r.rank}</span>
-            <span className="num w-[4.4cqw] font-semibold text-torch">{r.agencyId}</span>
+            <span className="num w-[4.4cqw] font-semibold text-glow">{r.agencyId}</span>
             <span className="min-w-0 flex-1 truncate">{r.name}</span>
             <span className="num w-[8cqw] text-right font-semibold">{fmt(r.hero)}</span>
           </li>

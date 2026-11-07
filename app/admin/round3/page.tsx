@@ -47,7 +47,7 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
       <NextPhase organiser={organiser} to="round3" />
       <NextPhase organiser={organiser} to="zero_hour" />
       {!inVault && r3.phase !== 'zero_hour' && (
-        <p className="mt-6 rounded-sm border border-torch/40 bg-torch/10 px-4 py-3 text-sm text-torch">
+        <p className="mt-6 rounded-sm border border-glow/40 bg-glow/10 px-4 py-3 text-sm text-glow">
           The event is not in Round 3. Publish Round 2, then an admin switches the phase to Round 3. The multiplier map can be entered any time.
         </p>
       )}
@@ -61,7 +61,7 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
               {r3.multipliersEntered ? 'Entered ✓. Change it only if the envelopes were refilled.' : 'Enter what is inside each numbered envelope.'}
             </p>
             <details>
-              <summary className="cursor-pointer text-sm text-torch">Show / edit the map</summary>
+              <summary className="cursor-pointer text-sm text-glow">Show / edit the map</summary>
               <div className="mt-3 grid grid-cols-2 gap-2">
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                   <label key={i} className="text-sm">
@@ -86,7 +86,7 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
             <div className="grid gap-2 sm:grid-cols-2">
               {r3.finalists.map((f) => (
                 <label key={f.id} className="flex items-center justify-between gap-2 text-sm">
-                  <span><span className="num font-semibold text-torch">{f.id}</span> {f.name}</span>
+                  <span><span className="num font-semibold text-glow">{f.id}</span> {f.name}</span>
                   <select name={`deal_${f.id}`} defaultValue={f.envelope ?? ''} disabled={!keeper || !inVault} className={sel}>
                     <option value="">—</option>
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => <option key={i} value={`E${i}`}>E{i}</option>)}
@@ -236,7 +236,7 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
             <tbody>
               {r3.finalists.map((f) => (
                 <tr key={f.id} className="border-b border-line/60">
-                  <td className="py-1.5"><span className="num font-semibold text-torch">{f.id}</span> {f.name}</td>
+                  <td className="py-1.5"><span className="num font-semibold text-glow">{f.id}</span> {f.name}</td>
                   <td className="num py-1.5">{f.envelope ?? '—'}</td>
                   <td className="num py-1.5 text-right">{f.power}</td>
                   <td className="num py-1.5 text-right">{formatCrore(f.fund)}</td>
@@ -254,7 +254,7 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
                 <span className="text-steel">M{x.no} {x.name}:</span>{' '}
                 {x.choice === 'none' ? 'no winner' : x.winner_agency_id ? (
                   <>
-                    <span className="num text-torch">{x.winner_agency_id}</span>{' '}
+                    <span className="num text-glow">{x.winner_agency_id}</span>{' '}
                     {x.choice ? `→ ${CHOICE_LABEL[x.choice]}${x.choice === 'swap' ? ` with ${x.swap_target}` : ''}` : '(choosing)'}
                   </>
                 ) : '—'}
@@ -262,7 +262,7 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
             ))}
           </ol>
           {m4.winner_agency_id && !m4.choice && (
-            <p className="mt-3 text-xs text-torch">Mission 4&apos;s choice is made at the start of Zero Hour, before the first envelope opens.</p>
+            <p className="mt-3 text-xs text-glow">Mission 4&apos;s choice is made at the start of Zero Hour, before the first envelope opens.</p>
           )}
         </div>
       </section>

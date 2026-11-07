@@ -208,13 +208,13 @@ function Body({
       <p className="num mt-1 text-xs text-steel">
         {q.timer_s} s{q.weight > 1 ? ` · ×${q.weight} points` : ''}
       </p>
-      <h1 className="font-display mt-3 text-[1.65rem] leading-snug text-bone">{q.prompt}</h1>
+      <h1 className="font-serif mt-3 text-[1.65rem] leading-snug text-bone">{q.prompt}</h1>
 
       {/* Timer */}
       {!q.revealed && (
         <div className="mt-4" aria-live="off">
           {toStart > 0 ? (
-            <p className="num text-center text-5xl font-semibold text-torch" aria-label={`Starts in ${Math.ceil(toStart)}`}>
+            <p className="num text-center text-5xl font-semibold text-glow" aria-label={`Starts in ${Math.ceil(toStart)}`}>
               {Math.ceil(toStart)}
             </p>
           ) : (
@@ -236,23 +236,23 @@ function Body({
                 disabled={!answerable}
                 onClick={() => onAnswer(q, i)}
                 className={[
-                  'flex min-h-16 w-full items-center gap-4 rounded-sm border px-4 py-3 text-left text-lg transition-colors',
+                  'flex min-h-16 w-full items-center gap-4 rounded-[3px] border px-4 py-3 text-left text-lg transition-colors',
                   correct
                     ? 'border-toxic bg-toxic/15 text-bone'
                     : wrongPick
                       ? 'border-ember bg-ember/15 text-bone'
                       : chosen
-                        ? 'border-torch bg-torch/15 text-bone'
+                        ? 'border-glow bg-glow/15 text-bone'
                         : answerable
-                          ? 'border-line-strong bg-vault-2 text-bone active:border-torch active:bg-torch/10'
+                          ? 'border-line-strong bg-vault-2 text-bone active:border-glow active:bg-glow/10'
                           : 'border-line bg-vault/60 text-bone/55',
                 ].join(' ')}
               >
-                <span className="num flex size-9 flex-none items-center justify-center rounded-sm border border-current text-base font-semibold">
+                <span className="font-display flex size-9 flex-none items-center justify-center rounded-sm border border-current text-base font-bold">
                   {OPTION_LETTERS[i]}
                 </span>
                 <span className="flex-1">{opt}</span>
-                {chosen && !q.revealed && <span className="text-xs font-semibold tracking-[0.18em] text-torch uppercase">Locked</span>}
+                {chosen && !q.revealed && <span className="text-xs font-semibold tracking-[0.18em] text-glow uppercase">Locked</span>}
               </button>
             </li>
           );
@@ -296,7 +296,7 @@ function Fuse({ left, total }: { left: number; total: number }) {
       </div>
       <div className="mt-1.5 h-2.5 overflow-hidden rounded-full bg-vault-2" role="progressbar" aria-valuemin={0} aria-valuemax={total} aria-valuenow={Math.max(0, Math.ceil(left))}>
         <div
-          className={`h-full origin-left rounded-full ${urgent ? 'bg-ember motion-safe:animate-pulse' : 'bg-torch'}`}
+          className={`h-full origin-left rounded-full ${urgent ? 'bg-ember motion-safe:animate-pulse' : 'bg-glow'}`}
           style={{ transform: `scaleX(${frac})`, transition: 'transform 200ms linear' }}
         />
       </div>
@@ -320,13 +320,16 @@ function Shell({
   dryRun?: boolean;
 }) {
   return (
-    <main id="main" className="mx-auto flex min-h-dvh max-w-lg flex-col">
+    <main
+      id="main"
+      className="mx-auto flex min-h-dvh max-w-lg flex-col bg-[radial-gradient(120%_45%_at_50%_0%,rgb(169_207_110/0.13),transparent_70%)]"
+    >
       {dryRun && (
-        <p className="bg-torch px-4 py-1 text-center text-[0.65rem] font-bold tracking-[0.24em] text-abyss uppercase">Dry run · rehearsal</p>
+        <p className="bg-glow px-4 py-1 text-center text-[0.65rem] font-bold tracking-[0.24em] text-abyss uppercase">Dry run · rehearsal</p>
       )}
-      <header className="flex items-center justify-between gap-3 border-b border-line bg-vault px-4 py-3">
+      <header className="flex items-center justify-between gap-3 border-b border-line bg-abyss/80 px-4 py-3 backdrop-blur-md">
         <span className="min-w-0">
-          <span className="num text-lg font-semibold text-torch">{agency?.id ?? '—'}</span>
+          <span className="num text-lg font-semibold text-glow">{agency?.id ?? '—'}</span>
           <span className="ml-2 truncate text-sm text-bone">{agency?.name}</span>
         </span>
         {agency && (
@@ -358,8 +361,17 @@ function Centered({
 }) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-6 py-12 text-center">
-      <p className={`eyebrow ${tone === 'ember' ? 'text-ember' : ''}`}>{eyebrow}</p>
-      <h1 className="display mt-4 text-[2.6rem]">{title}</h1>
+      {/* the eclipse from the poster: green while all is well, red when something needs attention */}
+      <span aria-hidden="true" className="relative mb-9 block size-24">
+        <span className={`absolute -inset-2 rounded-full blur-xl ${tone === 'ember' ? 'bg-ember/30' : 'bg-glow/30'}`} />
+        <span
+          className={`absolute inset-0 rounded-full border bg-abyss ${
+            tone === 'ember' ? 'border-ember/80 shadow-[0_0_44px_rgb(229_87_74/0.55)]' : 'border-[#dcedbf]/80 shadow-[0_0_44px_rgb(169_207_110/0.55)]'
+          }`}
+        />
+      </span>
+      <p className={`eyebrow ${tone === 'ember' ? 'text-ember' : 'text-glow'}`}>{eyebrow}</p>
+      <h1 className="display metal mt-4 text-[2.4rem]">{title}</h1>
       {children}
     </div>
   );

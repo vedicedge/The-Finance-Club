@@ -56,7 +56,7 @@ export function BoardProjector() {
     <Stage>
       <div className="flex h-full flex-col px-[5cqw] pt-[7cqh] pb-[5cqh]">
         <p className="text-center text-[1.3cqw] font-semibold tracking-[0.3em] text-steel uppercase">{EVENT.name} · Leaderboard</p>
-        <h1 className="display mt-[1.5cqh] text-center text-[5cqw]">{title}</h1>
+        <h1 className="display mt-[1.5cqh] text-center text-[4.4cqw]">{title}</h1>
         {shown.length === 0 ? (
           <p className="mt-[20cqh] text-center text-[2.4cqw] text-steel">The board lights up after the prelim.</p>
         ) : (
@@ -74,7 +74,7 @@ export function BoardProjector() {
             renderRow={(r) => (
               <li key={r.id} className={`flex items-center gap-[1.4cqw] border-b border-line py-[1.3cqh] text-[2cqw] ${r.dim ? 'opacity-45' : ''}`}>
                 <span className="num w-[5cqw] text-steel">{r.left}</span>
-                <span className="num w-[5cqw] font-semibold text-torch">{r.id}</span>
+                <span className="num w-[5cqw] font-semibold text-glow">{r.id}</span>
                 <span className="min-w-0 flex-1 truncate">{r.name}</span>
                 <span className="num w-[10cqw] text-right font-semibold">{r.right}</span>
               </li>

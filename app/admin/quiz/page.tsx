@@ -32,9 +32,9 @@ function liveStatus(q: QuestionRow, now: number) {
   if (q.revealed_at) return { label: 'Revealed', tone: 'text-toxic' };
   if (!q.opened_at) return { label: 'Pending', tone: 'text-steel' };
   const start = Date.parse(q.opened_at);
-  if (now < start) return { label: `Read-in ${Math.ceil((start - now) / 1000)} s`, tone: 'text-torch' };
+  if (now < start) return { label: `Read-in ${Math.ceil((start - now) / 1000)} s`, tone: 'text-glow' };
   const left = Math.ceil((start + q.timer_s * 1000 - now) / 1000);
-  if (left > 0) return { label: `Live · ${left} s left`, tone: 'text-torch' };
+  if (left > 0) return { label: `Live · ${left} s left`, tone: 'text-glow' };
   return { label: 'Time up · reveal', tone: 'text-bone' };
 }
 
@@ -110,7 +110,7 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
       )}
       <NextPhase organiser={organiser} to="round1" />
       {phase !== 'prelim' && (
-        <p className="mt-6 rounded-sm border border-torch/40 bg-torch/10 px-4 py-3 text-sm text-torch">
+        <p className="mt-6 rounded-sm border border-glow/40 bg-glow/10 px-4 py-3 text-sm text-glow">
           The event is in <strong>{PHASE_INFO[phase].label}</strong>. Questions can only be opened in the Prelim phase; an
           admin switches it in the command centre.
         </p>
@@ -131,7 +131,7 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
                 {current.segment === 'sudden_death' ? 'Sudden death' : `Slot ${current.order_no}`} · {current.id} ·{' '}
                 {SEGMENTS[current.segment].label} · {liveStatus(current, now).label}
               </p>
-              <p className="font-display mt-2 text-2xl text-bone">{current.prompt}</p>
+              <p className="font-serif mt-2 text-2xl text-bone">{current.prompt}</p>
               <ol className="mt-3 grid gap-1.5 sm:grid-cols-2">
                 {current.options.map((o, i) => (
                   <li
@@ -249,7 +249,7 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
                   <td className="py-2 pr-3">
                     {q ? (
                       <>
-                        <span className="num font-semibold text-torch">{q.id}</span>{' '}
+                        <span className="num font-semibold text-glow">{q.id}</span>{' '}
                         <span className="text-xs text-steel">{SEGMENTS[q.segment].label}</span>
                         <span className="block max-w-md truncate text-bone/85">{q.prompt}</span>
                       </>
@@ -310,10 +310,10 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
             {board.rows.slice(0, 24).map((r) => (
               <li
                 key={r.agencyId}
-                className={`flex items-center gap-3 border-b border-line/60 py-1.5 ${r.position === 16 ? 'border-b-torch' : ''}`}
+                className={`flex items-center gap-3 border-b border-line/60 py-1.5 ${r.position === 16 ? 'border-b-glow' : ''}`}
               >
                 <span className="num w-7 text-steel">{r.rank}</span>
-                <span className="num w-12 font-semibold text-torch">{r.agencyId}</span>
+                <span className="num w-12 font-semibold text-glow">{r.agencyId}</span>
                 <span className="min-w-0 flex-1 truncate">{r.name}</span>
                 <span className="num w-16 text-right">{r.total.toLocaleString('en-IN')}</span>
                 <span className="num w-14 text-right text-xs text-steel">{Number(r.correctTime).toFixed(1)} s</span>
@@ -354,7 +354,7 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
               {board.cutoffGroup.map((id) => (
                 <label key={id} className="flex items-center justify-between gap-3 text-sm">
                   <span>
-                    <span className="num font-semibold text-torch">{id}</span> {board.names.get(id)}
+                    <span className="num font-semibold text-glow">{id}</span> {board.names.get(id)}
                   </span>
                   <input
                     name={`rank_${id}`}
@@ -381,8 +381,8 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
                   {!allRevealed && <p className="mt-2 text-xs text-steel">Unlocks when all 15 slots are revealed.</p>}
                 </form>
                 {toReveal.length > 0 && (
-                  <div className="space-y-2 rounded-sm border border-torch/40 bg-torch/10 px-3 py-3 text-sm">
-                    <p className="text-torch">Not revealed yet:</p>
+                  <div className="space-y-2 rounded-sm border border-glow/40 bg-glow/10 px-3 py-3 text-sm">
+                    <p className="text-glow">Not revealed yet:</p>
                     {toReveal.map((q) => (
                       <form key={q.id} action={revealQuestion.bind(null, q.id)} className="flex items-center justify-between gap-3">
                         <span className="num">
@@ -400,7 +400,7 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
               <>
                 <form action={freezeTop16} className="space-y-2">
                   <label className="flex items-center gap-2 text-sm text-steel">
-                    <input type="checkbox" name="confirm" className="accent-torch" /> The board is final
+                    <input type="checkbox" name="confirm" className="accent-glow" /> The board is final
                   </label>
                   <button disabled={board.qualifiers === null} className="btn btn-primary w-full">
                     Freeze the top 16 for Round 1
