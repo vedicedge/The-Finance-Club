@@ -36,6 +36,13 @@ export async function undoLast(formData: FormData) {
   const me = await requireOrganiser('ledger');
   const reason = String(formData.get('reason') ?? '');
   const filter = String(formData.get('filter') ?? '');
+  if (formData.get('confirm') !== 'on') back(filter, { error: 'Tick “Yes, void this entry” to undo it.' });
+  // Undo only the entry the keeper was shown: if a newer one landed since (another tab), stop.
+  const { data: latest } = await serviceDb().from('v_ledger').select('id').eq('created_by', me.userId).eq('voided', false)
+    .order('id', { ascending: false }).limit(1).maybeSingle();
+  if (!latest || String(latest.id) !== String(formData.get('expect') ?? '')) {
+    back(filter, { error: 'Your latest entry has changed since this page loaded. Check it below, then undo again.' });
+  }
   const { data, error } = await serviceDb().rpc('ledger_undo_last', { p_actor: me.userId, p_reason: reason });
   if (error) back(filter, { error: dbMessage(error) });
   await audit(me, 'ledger.undo_last', { entry: data, reason });

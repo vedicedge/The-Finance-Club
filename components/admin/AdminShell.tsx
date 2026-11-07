@@ -5,14 +5,21 @@ import type { Organiser } from '@/lib/auth/organiser';
 import { signOut } from '@/app/admin/login/actions';
 import { getEventState } from '@/lib/event-state';
 import { DryRunStrip } from '@/components/site/DryRunStrip';
+import { loadSchemaStatus } from '@/lib/schema-version-server';
 
 /** Header and navigation for organiser pages. Shows only the areas the organiser's roles allow. */
 export async function AdminShell({ organiser, children }: { organiser: Organiser; children: React.ReactNode }) {
   const areas = areasFor(organiser.roles).filter((a) => a !== 'screens');
-  const { settings } = await getEventState();
+  const [{ settings }, schema] = await Promise.all([getEventState(), loadSchemaStatus()]);
   return (
     <div className="min-h-dvh">
       {settings.dryRun.enabled && <DryRunStrip />}
+      {!schema.ok && (
+        <p role="alert" className="border-b border-ember/50 bg-ember/15 px-[var(--gutter)] py-2.5 text-center text-sm text-ember">
+          The database is missing an update (it reports {schema.found ?? 'an older version'}; this site needs {schema.expected}). An admin
+          runs the newer files from <code>supabase/migrations/</code> in the Supabase SQL editor before the event continues.
+        </p>
+      )}
       <header className="border-b border-line bg-vault/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-[var(--gutter)] py-4">
           <Link href="/admin" className="display text-2xl text-bone">

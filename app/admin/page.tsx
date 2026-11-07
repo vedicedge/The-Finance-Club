@@ -6,6 +6,7 @@ import { setAlert, setDryRun, setPhase } from './actions';
 import { parseSettings } from '@/lib/settings';
 import { serviceDb } from '@/lib/db/server';
 import { AdminShell } from '@/components/admin/AdminShell';
+import { loadSchemaStatus } from '@/lib/schema-version-server';
 import { NextPhase } from '@/components/admin/NextPhase';
 
 export const metadata: Metadata = { title: 'Command centre' };
@@ -32,11 +33,12 @@ export default async function CommandCentre({ searchParams }: { searchParams: Pr
   const { denied, error } = await searchParams;
 
   const db = serviceDb();
-  const [state, counts, agencyRows, crew] = await Promise.all([
+  const [state, counts, agencyRows, crew, schema] = await Promise.all([
     db.from('event_state').select('phase, step, alert, settings').maybeSingle(),
     Promise.all(EXPECTED.map((e) => count(e.table))),
     db.from('agencies').select('status, is_test'),
     count('organisers'),
+    loadSchemaStatus(),
   ]);
   const statuses = (agencyRows.data ?? []).map((r) => r.status as string);
   const agencies = agencyRows.error ? null : statuses.length;
@@ -68,10 +70,10 @@ export default async function CommandCentre({ searchParams }: { searchParams: Pr
 
       <p className="eyebrow mt-8">Systems check</p>
       <h1 className="display mt-3 text-5xl">
-        {connected && allSeeded ? 'All systems armed.' : 'Systems coming online.'}
+        {connected && allSeeded && schema.ok ? 'All systems armed.' : 'Systems coming online.'}
       </h1>
 
-      <dl className="mt-10 grid gap-px overflow-hidden rounded-sm border border-line bg-line sm:grid-cols-3">
+      <dl className="mt-10 grid gap-px overflow-hidden rounded-sm border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
         <div className="bg-vault px-5 py-4">
           <dt className="eyebrow">Database</dt>
           <dd className={`mt-2 text-lg ${connected ? 'text-toxic' : 'text-ember'}`}>
@@ -91,6 +93,13 @@ export default async function CommandCentre({ searchParams }: { searchParams: Pr
           </dd>
           <dd className="num mt-1 text-xs text-steel">
             {byStatus('checked_in')} checked in · {byStatus('active')} in the game · {byStatus('eliminated')} eliminated
+          </dd>
+        </div>
+        <div className="bg-vault px-5 py-4">
+          <dt className="eyebrow">Database updates</dt>
+          <dd className={`mt-2 text-lg ${schema.ok ? 'text-toxic' : 'text-ember'}`}>{schema.ok ? 'Up to date' : 'Update missing'}</dd>
+          <dd className="num mt-1 text-xs text-steel">
+            {schema.ok ? `Version ${schema.found}` : `Has ${schema.found ?? 'an older version'} · needs ${schema.expected}`}
           </dd>
         </div>
       </dl>

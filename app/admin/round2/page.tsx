@@ -11,7 +11,9 @@ export const metadata: Metadata = { title: 'Operation: Skyline console' };
 const small = 'btn !min-h-0 !px-3 !py-1.5 !text-xs';
 const num = 'w-16 rounded-sm border border-line-strong bg-vault-2 px-2 py-1 text-sm num';
 
-export default async function Round2Console({ searchParams }: { searchParams: Promise<{ ok?: string; error?: string }> }) {
+type Typed = { duel?: string; votes_a?: string; votes_b?: string; row?: string; correct?: string; reference?: string; build_time?: string; fallen?: string; frozen?: string };
+
+export default async function Round2Console({ searchParams }: { searchParams: Promise<{ ok?: string; error?: string } & Typed> }) {
   const organiser = await requireOrganiser('round2');
   const sp = await searchParams;
   const r2 = await loadRound2();
@@ -58,24 +60,26 @@ export default async function Round2Console({ searchParams }: { searchParams: Pr
         ) : (
           <ul className="mt-3 divide-y divide-line/60">
             {r2.duels.map((d) => {
-              const tied = d.agency_b && d.votes_a !== null && d.votes_a === d.votes_b;
+              // After a refused save, show what was typed rather than the stored values.
+              const again = sp.error && sp.duel === String(d.id);
+              const va = again ? sp.votes_a : d.votes_a ?? '';
+              const vb = again ? sp.votes_b : d.votes_b ?? '';
               return (
                 <li key={d.id} className="py-2.5">
                   <form action={saveVotes.bind(null, d.id)} className="flex flex-wrap items-center gap-3 text-sm">
                     <span className="min-w-48"><span className="num font-semibold text-torch">{d.agency_a}</span> {r2.names.get(d.agency_a)}</span>
-                    <input name="votes_a" type="number" min={0} defaultValue={d.votes_a ?? ''} disabled={!social || !live} className={num} aria-label={`Votes for ${d.agency_a}`} />
+                    <input name="votes_a" type="number" min={0} defaultValue={va} disabled={!social || !live} className={num} aria-label={`Votes for ${d.agency_a}`} />
                     {d.agency_b ? (
                       <>
                         <span className="text-steel">vs</span>
-                        <input name="votes_b" type="number" min={0} defaultValue={d.votes_b ?? ''} disabled={!social || !live} className={num} aria-label={`Votes for ${d.agency_b}`} />
+                        <input name="votes_b" type="number" min={0} defaultValue={vb} disabled={!social || !live} className={num} aria-label={`Votes for ${d.agency_b}`} />
                         <span className="min-w-48"><span className="num font-semibold text-torch">{d.agency_b}</span> {r2.names.get(d.agency_b)}</span>
-                        {(tied || d.tiebreak_winner) && (
-                          <select name="tiebreak" defaultValue={d.tiebreak_winner ?? ''} disabled={!social || !live} className="rounded-sm border border-line-strong bg-vault-2 px-2 py-1">
-                            <option value="">RPS winner…</option>
-                            <option value={d.agency_a}>{d.agency_a}</option>
-                            <option value={d.agency_b}>{d.agency_b}</option>
-                          </select>
-                        )}
+                        {/* Always offered: a tie can only be saved together with its rock-paper-scissors winner. */}
+                        <select name="tiebreak" defaultValue={d.tiebreak_winner ?? ''} disabled={!social || !live} aria-label="Rock-paper-scissors winner, if tied" className="rounded-sm border border-line-strong bg-vault-2 px-2 py-1">
+                          <option value="">If tied: RPS winner…</option>
+                          <option value={d.agency_a}>{d.agency_a}</option>
+                          <option value={d.agency_b}>{d.agency_b}</option>
+                        </select>
                       </>
                     ) : (
                       <span className="text-steel">bye (wins the duel)</span>
@@ -117,19 +121,20 @@ export default async function Round2Console({ searchParams }: { searchParams: Pr
             <tbody>
               {r2.field.map((a) => {
                 const t = r2.raw.get(a.id);
+                const retry = Boolean(sp.error && sp.row === a.id);
                 const s = scoreOf.get(a.id);
                 return (
                   <tr key={a.id} className="border-b border-line/60">
                     <td className="py-2 pr-3"><span className="num font-semibold text-torch">{a.id}</span> {a.name}</td>
                     <td colSpan={4} className="py-2 pr-3">
                       <form action={saveTower.bind(null, a.id)} className="flex flex-wrap items-center gap-2">
-                        <input name="correct" defaultValue={t?.correct_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Correct blocks" />
+                        <input name="correct" defaultValue={retry ? sp.correct : t?.correct_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Correct blocks" />
                         <span className="text-steel">/</span>
-                        <input name="reference" defaultValue={t?.reference_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Reference blocks" />
-                        <input name="build_time" defaultValue={t ? (t.build_time_s >= 600 ? 'DNF' : formatBuildTime(t.build_time_s)) : ''} placeholder="6:05" disabled={!scorer || !live} className={`${num} !w-20`} aria-label="Build time" />
-                        <input name="fallen" defaultValue={t?.blocks_fallen ?? ''} disabled={!scorer || !live} className={num} aria-label="Blocks fallen" />
+                        <input name="reference" defaultValue={retry ? sp.reference : t?.reference_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Reference blocks" />
+                        <input name="build_time" defaultValue={retry ? sp.build_time : t ? (t.build_time_s >= 600 ? 'DNF' : formatBuildTime(t.build_time_s)) : ''} placeholder="6:05" disabled={!scorer || !live} className={`${num} !w-20`} aria-label="Build time" />
+                        <input name="fallen" defaultValue={retry ? sp.fallen : t?.blocks_fallen ?? ''} disabled={!scorer || !live} className={num} aria-label="Blocks fallen" />
                         <span className="text-steel">/</span>
-                        <input name="frozen" defaultValue={t?.frozen_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Blocks in frozen build" />
+                        <input name="frozen" defaultValue={retry ? sp.frozen : t?.frozen_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Blocks in frozen build" />
                         {scorer && live && <button className={`${small} btn-ghost`}>Save</button>}
                       </form>
                     </td>

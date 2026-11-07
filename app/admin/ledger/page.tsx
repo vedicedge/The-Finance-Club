@@ -19,12 +19,16 @@ export default async function LedgerPage({ searchParams }: { searchParams: Promi
   const db = serviceDb();
   let q = db.from('v_ledger').select('id, agency_id, amount, reason, ref, note, created_by, created_at, voided, void_reason').order('id', { ascending: false }).limit(400);
   if (filter) q = q.eq('agency_id', filter);
-  const [entries, agencies, funds, crew] = await Promise.all([
+  const [entries, agencies, funds, crew, mine] = await Promise.all([
     q,
     db.from('agencies').select('id, name, status').order('id'),
     db.from('v_fund_left').select('agency_id, fund_left'),
     db.from('organisers').select('user_id, email, display_name'),
+    // What "Undo my last entry" would void: this organiser's latest entry that is not voided yet.
+    db.from('v_ledger').select('id, agency_id, amount, reason, ref, note, created_at').eq('created_by', organiser.userId).eq('voided', false)
+      .order('id', { ascending: false }).limit(1).maybeSingle(),
   ]);
+  const last = mine.data as (Pick<LedgerRow, 'id' | 'agency_id' | 'reason' | 'ref' | 'note' | 'created_at'> & { amount: number | string }) | null;
   if (entries.error) throw entries.error;
   const rows = (entries.data ?? []).map((r) => ({ ...r, amount: Number(r.amount) })) as Row[];
   const who = new Map((crew.data ?? []).map((c) => [c.user_id as string, (c.display_name as string | null) ?? (c.email as string).split('@')[0]]));
@@ -61,9 +65,23 @@ export default async function LedgerPage({ searchParams }: { searchParams: Promi
         <form action={undoLast} className="panel space-y-3 px-5 py-5">
           <h2 className="eyebrow">Undo my last entry</h2>
           <input type="hidden" name="filter" value={filter} />
-          <p className="text-sm text-steel">Voids the most recent entry you made (a sale also returns its card). Nothing is deleted.</p>
+          {last ? (
+            <p className="text-sm text-bone">
+              Will void <span className="num">#{last.id}</span> · <span className="num text-torch">{last.agency_id}</span> ·{' '}
+              {REASON_LABEL[last.reason] ?? last.reason}
+              {last.ref ? ` (${last.ref})` : ''} · <span className="num">{formatCrore(Number(last.amount), { signed: true })}</span> ·{' '}
+              <span className="num text-steel">{ledgerTime(last.created_at)}</span>
+            </p>
+          ) : (
+            <p className="text-sm text-steel">You have no entry to undo.</p>
+          )}
+          <p className="text-xs text-steel">A sale also returns its card to the auction. Nothing is deleted.</p>
+          <input type="hidden" name="expect" value={last?.id ?? ''} />
           <input name="reason" placeholder="Why? (optional)" className="field !mt-0" />
-          <button className="btn btn-ghost w-full hover:!border-ember hover:!text-ember">Undo</button>
+          <label className="flex items-center gap-2 text-sm text-steel">
+            <input type="checkbox" name="confirm" className="accent-ember" /> Yes, void this entry
+          </label>
+          <button disabled={!last} className="btn btn-ghost w-full hover:!border-ember hover:!text-ember">Undo {last ? `#${last.id}` : ''}</button>
         </form>
       </section>
 

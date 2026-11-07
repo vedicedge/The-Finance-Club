@@ -127,20 +127,48 @@ export function RevealProjector({ canDrive, stateUrl = '/api/screen/reveal' }: {
 }
 
 function Final({ rows }: { rows: HeroRow[] }) {
-  const winner = rows[0];
-  const runner = rows.find((r) => r.rank === 2) ?? rows[1];
-  const coin = rows.filter((r) => r.coinToss);
+  // A tie that survives every tie-break is settled by a coin toss on stage: never name a
+  // winner (or runner-up) on screen before it happens.
+  const firsts = rows.filter((r) => r.rank === 1);
+  const seconds = rows.filter((r) => r.rank === 2);
+  const tossForFirst = firsts.length > 1;
+  const tossForSecond = !tossForFirst && seconds.length > 1;
+  const winner = firsts[0] ?? rows[0];
+  const runner = seconds[0] ?? rows[1];
+  const names = (rs: HeroRow[]) => rs.map((r) => `${r.agencyId} ${r.name}`).join(' and ');
   return (
     <div className="flex h-full flex-col px-[5cqw] pt-[10cqh] pb-[4cqh]">
       <div className="relative text-center">
         <div className="light-beam -z-10" aria-hidden="true" />
         <p className="text-[1.5cqw] font-semibold tracking-[0.35em] text-torch uppercase">{EVENT.winnerTitle}</p>
-        <h1 className="display mt-[1.5cqh] text-[7cqw] leading-none">{winner.name}</h1>
-        <p className="num mt-[1cqh] text-[2.2cqw] text-steel">
-          {winner.agencyId} · Hero Score <span className="font-semibold text-bone">{fmt(winner.hero)}</span>
-        </p>
-        {runner && <p className="mt-[2cqh] text-[1.8cqw] text-steel">Runner-up: <span className="text-bone">{runner.agencyId} {runner.name}</span> · {fmt(runner.hero)}</p>}
-        {coin.length > 0 && <p className="mt-[1.5cqh] text-[1.8cqw] text-ember">Still level after the tie-breaks: {coin.map((c) => c.agencyId).join(' and ')} — coin toss on stage.</p>}
+        {tossForFirst ? (
+          <>
+            <h1 className="display mt-[1.5cqh] text-[6cqw] leading-none">Coin toss on stage</h1>
+            <p className="mt-[1.5cqh] text-[2.2cqw] text-bone">{names(firsts)}</p>
+            <p className="num mt-[1cqh] text-[1.8cqw] text-steel">
+              Hero Score <span className="font-semibold text-bone">{fmt(winner.hero)}</span> each, still level after the tie-breaks. The
+              toss decides the title; the other is runner-up.
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className="display mt-[1.5cqh] text-[7cqw] leading-none">{winner.name}</h1>
+            <p className="num mt-[1cqh] text-[2.2cqw] text-steel">
+              {winner.agencyId} · Hero Score <span className="font-semibold text-bone">{fmt(winner.hero)}</span>
+            </p>
+            {tossForSecond ? (
+              <p className="mt-[2cqh] text-[1.8cqw] text-ember">
+                Runner-up: coin toss on stage between {names(seconds)} · {fmt(seconds[0].hero)} each
+              </p>
+            ) : (
+              runner && (
+                <p className="mt-[2cqh] text-[1.8cqw] text-steel">
+                  Runner-up: <span className="text-bone">{runner.agencyId} {runner.name}</span> · {fmt(runner.hero)}
+                </p>
+              )
+            )}
+          </>
+        )}
       </div>
       <BoardColumns
         className="mt-auto !max-w-[70cqw] mx-auto"

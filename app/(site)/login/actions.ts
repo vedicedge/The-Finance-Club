@@ -43,10 +43,13 @@ export async function loginAgency(_prev: AgencyLoginState, formData: FormData): 
     return fail(`Too many wrong PINs. This agency ID is locked for ${s} more second${s === 1 ? '' : 's'}.`);
   }
 
-  // Spec: new agency logins close when question 1 opens; agencies that signed in before may return.
-  if (!auth.first_login_at) {
+  // Spec: new agency logins close when question 1 opens; agencies that signed in before (including
+  // the phone they registered on) may return. Only during the prelim: afterwards there is nothing to join.
+  if (!auth.first_login_at && state.phase === 'prelim') {
     const { data: started } = await db.rpc('quiz_has_started');
-    if (started === true) return fail('Joining has closed: the prelim has begun. Find an organiser.');
+    if (started === true) {
+      return fail('Joining has closed: the prelim has begun. An organiser at the desk can reset your PIN, which lets you in.');
+    }
   }
 
   const ok = await verifyPin(pin, auth.pin_hash);

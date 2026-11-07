@@ -199,6 +199,36 @@ My Agency in a 1-minute window.
 - Paper is a fallback only: every line written while the site is down is entered on the site
   afterwards, so the Fund Ledger stays the one record.
 
+## Fixes from the 30-agency playthrough (7 Nov 2026)
+
+A full run of the event on the real site (30 agencies, 28 phones in the prelim, every console)
+found these; all are fixed and re-tested:
+
+- **Changing phones.** The phone an agency registers on now counts as its first login, the dry-run
+  reset keeps that mark, and the "joining has closed" rule applies only during the prelim. Before,
+  an agency that never typed its PIN could not sign in on another phone after question 1 opened,
+  for the rest of the event. An organiser's PIN reset also lets the agency in.
+- **Prelim login warning.** During the prelim the login page says that signing in signs the
+  agency's other phones out (one phone per agency), so only the captain should sign in.
+- **Tied poster duels.** The rock-paper-scissors picker is always shown; before, a tie could not be
+  saved at all, because the picker only appeared once a tie was already saved.
+- **Refused saves keep what was typed** (duel votes, tower measurements).
+- **Undo names the entry** it will void and needs a tick; it refuses if a newer entry appeared.
+- **Publishing the prelim board** puts the board on the projector.
+- **Crediting the starting funds shuffles the lots** if nobody has, so secret cards never run in
+  printed card order.
+
+## Safety nets (7 Nov 2026)
+
+- **Database updates check.** Each migration is pasted into the Supabase SQL editor by hand, so one
+  can be missed. The newest migration defines `schema_version()`; the command centre shows
+  "Database updates: Up to date / Update missing", and every organiser page shows a red strip
+  while the database is behind the deployed code. Every new migration must bump the version
+  (a unit test enforces it).
+- **Coin toss at Zero Hour.** If 1st (or 2nd) place is still level after the tie-breaks, the
+  reveal screen and the public leaderboard say a coin toss is coming and name both agencies; no
+  winner or runner-up is shown before it. The anchor announces the result of the toss.
+
 ## Secrets and the public repository
 
 The repository `vedicedge/The-Finance-Club` is public. The spec's Appendix A (questions and
