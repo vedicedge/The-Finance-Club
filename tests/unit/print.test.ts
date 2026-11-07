@@ -18,7 +18,7 @@ const agency = (id: string, status: string, eliminatedIn: string | null = null):
   id, name: id, status, eliminatedIn, checkedIn: true, founders: [],
 });
 const card = (id: string, phase: PrintCard['phase'], lot_order: number | null = null): PrintCard => ({
-  id, category: 'HQ', gear_name: id, power: 1, min_bid: 1, phase, lot_order,
+  id, category: 'HQ', gear_name: id, card_name: id, series_name: id, power: 1, min_bid: 1, phase, lot_order,
 });
 
 describe('backup sheet helpers', () => {

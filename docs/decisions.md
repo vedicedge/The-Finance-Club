@@ -247,3 +247,24 @@ itself is not shown on the site (its date, venue and club line are still being f
 hero uses the club's character art of Professor Kalyug (hood to waist) and the poster's
 lettering instead. The hero fits the first screen on phones and laptops: art, wordmark, clock
 and the register button, with no scrolling.
+
+## Projector and gear cards (8 November)
+
+- **One projector link: `/projector`.** The projector laptop opens it once, full screen, signed in
+  with a view-only **Projector** crew account (Crew & roles → role "Projector (view only)"; it can
+  open the projector screens and nothing else, and signing in sends it straight to `/projector`).
+  The screen follows the event phase: Welcome (registration, check-in) → Prelim quiz → Power
+  Bazaar → Leaderboard (Rounds 2 and 3) → Zero Hour reveal (also after the event ends). The
+  command centre's **Projector** panel can pin any screen, a "Back shortly" slide or a blackout
+  until it is set back to Automatic, and shows a live preview. The anchor opens each envelope
+  with **Open next envelope** in the command centre or the Vault console. The old per-screen
+  links (`/screen/quiz` etc.) still work.
+- **60 named cards in 24 series.** Every gear card has its own name and picture. Cards that share
+  a Power and minimum bid form a series with a display name of its own, never a card's name
+  (e.g. "Budget Bunkers"). Each series keeps its original Appendix B name as an internal key,
+  which Breaking News and Team-Ups use, so the game and the secret seed are unchanged; screens
+  show only the display names (spec Appendix B). Printed Breaking News and Team-Up cards should
+  use the display names.
+- **Card pictures:** one per card, added later by the club as `public/cards/<card ID>.webp`
+  (plus `JK.webp` and `back.webp`); a card without one shows its category icon. Pictures are
+  not shown publicly before the auction.

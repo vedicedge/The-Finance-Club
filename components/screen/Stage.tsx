@@ -8,15 +8,32 @@ import { Scene, type SceneName } from '@/components/art/Scene';
  * sits the round's picture (or the poster's green haze), kept dark so text stays readable from
  * the back of the hall.
  */
-export function Stage({ children, art }: { children: React.ReactNode; /** The round's picture, shown dim behind everything. */ art?: SceneName }) {
+export function Stage({
+  children,
+  art,
+  backdrop,
+  artOpacity = 0.14,
+}: {
+  children: React.ReactNode;
+  /** The round's picture, shown dim behind everything. */
+  art?: SceneName;
+  /** A backdrop of the screen's own (shown as it is, in place of the dim art or haze). */
+  backdrop?: React.ReactNode;
+  /** How strongly the round's picture shows (0–1). */
+  artOpacity?: number;
+}) {
   return (
     <div className="fixed inset-0 grid place-items-center bg-black">
       <div
         className="relative overflow-hidden bg-abyss text-bone [container-type:size]"
         style={{ width: 'min(100vw, calc(100vh * 16 / 9))', height: 'min(100vh, calc(100vw * 9 / 16))' }}
       >
-        {art ? (
-          <Scene name={art} className="pointer-events-none absolute inset-0 opacity-[0.14]" sizes="100vw" />
+        {backdrop ? (
+          backdrop
+        ) : art ? (
+          <div className="pointer-events-none absolute inset-0" style={{ opacity: artOpacity }}>
+            <Scene name={art} className="absolute inset-0" sizes="100vw" />
+          </div>
         ) : (
           <Image src={ambient} alt="" fill sizes="100vw" className="pointer-events-none object-cover opacity-35" aria-hidden="true" />
         )}

@@ -28,7 +28,12 @@ export async function AdminShell({ organiser, children }: { organiser: Organiser
           </Link>
           <nav aria-label="Organiser areas" className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-steel">
             {areas.map((a) => (
-              <Link key={a} href={AREAS[a].path} className="font-display text-[0.74rem] font-semibold tracking-[0.12em] uppercase hover:text-glow">
+              <Link
+                key={a}
+                href={AREAS[a].path}
+                target={AREAS[a].path.startsWith('/admin') ? undefined : '_blank'}
+                className="font-display text-[0.74rem] font-semibold tracking-[0.12em] uppercase hover:text-glow"
+              >
                 {AREAS[a].label}
               </Link>
             ))}

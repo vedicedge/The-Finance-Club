@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { requireOrganiser } from '@/lib/auth/organiser';
 import { canAccess } from '@/lib/auth/roles';
 import { formatCrore } from '@/lib/money';
+import { GearCard } from '@/components/cards/GearCard';
+import { seriesLabel } from '@/lib/card-art';
 import { CATEGORIES, R1_STEPS, TIPS_WINDOW_SECONDS, isR1Step } from '@/lib/round1/steps';
 import { lotPool, needing } from '@/lib/round1/lots';
 import { loadRound1 } from '@/lib/round1/server';
@@ -71,7 +73,7 @@ export default async function AuctionConsole({
           <h1 className="display mt-3 text-5xl">Power Bazaar console</h1>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link href="/screen/auction" target="_blank" className="btn btn-ghost">Open projector ↗</Link>
+          <Link href="/projector" target="_blank" className="btn btn-ghost">Open projector ↗</Link>
           {canMoney && <Link href="/admin/ledger" className="btn btn-ghost">Fund Ledger</Link>}
         </div>
       </div>
@@ -171,15 +173,24 @@ export default async function AuctionConsole({
             </div>
             {lot ? (
               <>
-                <p className="mt-3 flex items-baseline gap-3">
-                  <span className="num text-4xl font-semibold text-glow">{lot.id}</span>
-                  <span className="text-sm text-steel">{lot.category}</span>
-                  {r1.sold.has(lot.id) && <span className="stamp text-ember">Sold</span>}
-                </p>
-                <p className="font-serif mt-1 text-2xl">{lot.gear_name}</p>
-                <p className="num mt-1 text-steel">
-                  Power <span className="text-bone">{lot.power}</span> · minimum <span className="text-bone">{formatCrore(lot.min_bid)}</span>
-                </p>
+                <div className="mt-3 flex gap-4">
+                  {/* what the room sees on the projector */}
+                  <div className="w-24 flex-none text-[9px]">
+                    <GearCard card={{ id: lot.id, name: lot.card_name, category: lot.category, power: lot.power }} sizes="96px" showSeries={false} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="flex items-baseline gap-3">
+                      <span className="num text-4xl font-semibold text-glow">{lot.id}</span>
+                      <span className="text-sm text-steel">{lot.category}</span>
+                      {r1.sold.has(lot.id) && <span className="stamp text-ember">Sold</span>}
+                    </p>
+                    <p className="font-serif mt-1 text-2xl">{lot.card_name}</p>
+                    <p className="text-sm text-steel">{seriesLabel(lot.series_name)}</p>
+                    <p className="num mt-1 text-steel">
+                      Power <span className="text-bone">{lot.power}</span> · minimum <span className="text-bone">{formatCrore(lot.min_bid)}</span>
+                    </p>
+                  </div>
+                </div>
                 <p className="mt-3 text-sm text-steel">
                   Still needing {lot.category}:{' '}
                   <span className="num text-bone">
@@ -199,7 +210,7 @@ export default async function AuctionConsole({
                   <select name="card" defaultValue={lot?.id ?? ''} className="rounded-sm border border-line-strong bg-vault-2 px-2 py-2 text-sm">
                     {pool.map((c) => (
                       <option key={c.id} value={c.id}>
-                        {c.id} · {c.gear_name} · P{c.power} · min {c.min_bid}
+                        {c.id} · {c.card_name} · P{c.power} · min {c.min_bid}
                       </option>
                     ))}
                   </select>
@@ -224,7 +235,7 @@ export default async function AuctionConsole({
                   <option value="">—</option>
                   {lotPool(r1.cards, r1.sold, step === 'marquee' || step === 'secret' ? step : 'last_call').map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.id} · {c.gear_name} ({c.category}) · min {c.min_bid}
+                      {c.id} · {c.card_name} ({c.category}) · min {c.min_bid}
                     </option>
                   ))}
                 </select>
@@ -261,7 +272,7 @@ export default async function AuctionConsole({
             {r1.recent.map((s) => (
               <li key={s.sale_id} className="flex flex-wrap items-center gap-3 py-2">
                 <span className="num w-12 font-semibold text-glow">{s.card_id}</span>
-                <span className="min-w-40 flex-1">{s.gear_name}</span>
+                <span className="min-w-40 flex-1">{s.card_name}</span>
                 <span className="num w-12">{s.agency_id}</span>
                 <span className="num w-20 text-right">{formatCrore(s.price)}</span>
                 <span className="w-20 text-xs text-steel">{s.phase}</span>
@@ -340,7 +351,7 @@ export default async function AuctionConsole({
               {drawn.map((n) => (
                 <li key={n.id} className={n.revealed_at ? 'text-bone' : 'text-steel'}>
                   <span className="num mr-2">#{n.draw_order} {n.id}</span>
-                  {n.headline} <span className="num">({n.delta > 0 ? '+' : ''}{n.delta} to {n.affects_gear})</span>
+                  {n.headline} <span className="num">({n.delta > 0 ? '+' : ''}{n.delta} to {seriesLabel(r1.seriesName(n.affects_gear))})</span>
                   {n.revealed_at && <span className="ml-2 text-xs text-toxic">live</span>}
                 </li>
               ))}
@@ -441,7 +452,7 @@ export default async function AuctionConsole({
                 {CATEGORIES.map((c) => (
                   <td key={c} className="py-2 pr-3">
                     {a.held[c] ? (
-                      <span title={a.held[c]!.gear_name}>
+                      <span title={a.held[c]!.card_name}>
                         <span className="num">{a.held[c]!.card_id}</span> <span className="text-xs text-steel">P{a.held[c]!.power}</span>
                       </span>
                     ) : (

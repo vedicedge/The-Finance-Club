@@ -25,7 +25,20 @@ const nextConfig: NextConfig = {
     },
   },
   async headers() {
-    return [{ source: '/:path*', headers: securityHeaders }];
+    return [
+      { source: '/:path*', headers: securityHeaders },
+      // The command centre shows a small live preview of the projector in a frame (same site only).
+      {
+        source: '/projector',
+        headers: [
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'",
+          },
+        ],
+      },
+    ];
   },
 };
 

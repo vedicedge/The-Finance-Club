@@ -76,12 +76,21 @@ private, they can become a normal migration.
 3. **Settings → Functions → Function Region:** Mumbai (`bom1`), next to the database.
 4. Deploy.
 
-### 3. First admin
+### 3. Gear card pictures (optional)
+
+Put one picture per card in `public/cards/`, named by card ID: `H01.webp` … `K15.webp`, plus
+`JK.webp` (Jugaad Kit) and `back.webp` (card back). Portrait 3:4 works best; `.jpg`, `.png` and
+`.avif` are fine too. Commit and deploy: the build lists them (`scripts/card-art-manifest.mjs`).
+A card without a picture shows its category icon.
+
+### 4. First admin
 
 1. Supabase → **Authentication → Users → Add user**: your email and a password, "Auto confirm".
 2. Make sure that email is in `BOOTSTRAP_ADMIN_EMAILS` on Vercel.
 3. Sign in at `/admin/login`. You become admin on first sign-in. Add the rest of the crew on
-   **Crew & roles** (`/admin/users`).
+   **Crew & roles** (`/admin/users`), including one **Projector (view only)** account for the
+   laptop plugged into the auditorium projector: sign it in there and it goes straight to
+   `/projector`.
 
 ## Developing locally
 
@@ -124,6 +133,7 @@ a WHERE clause the way Supabase's API does; `npm test` also checks the migration
 app/                  pages and route handlers (App Router)
   (site)/             public site: landing, rounds, rules, schedule, register, login, My Agency
   play/               phone quiz screen
+  projector/          the one projector link: follows the event phase, admin can pin a screen
   screen/              projectors (16:9): quiz/, auction/, board/, reveal/
   api/quiz/           phone quiz state + answer endpoints; api/screen/ for the projector
   admin/              command centre: systems check, phase + alert, agencies & check-in,

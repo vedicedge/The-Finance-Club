@@ -23,6 +23,10 @@ export async function GET() {
   const last = r1.recent[0];
   const name = (id: string) => r1.agencies.find((a) => a.id === id)?.name ?? id;
   const showFunds = r1.locked || r1.settings.round1.showFundPublicly;
+  // The cards of a series (what a revealed headline affects), to show them on screen. Series are
+  // matched on their key (gear_name) and shown by their display name (series_name).
+  const seriesCards = (series: string) =>
+    r1.cards.filter((c) => c.gear_name === series).map((c) => ({ id: c.id, name: c.card_name, category: c.category, power: c.power }));
   // Who holds each card, for the recap (card ownership is announced at every sale).
   const holders = (gear: string) =>
     active.filter((a) => Object.values(a.held).some((h) => h?.gear_name === gear)).map((a) => ({ id: a.id, name: a.name }));
@@ -36,7 +40,8 @@ export async function GET() {
         ? {
             id: lotCard.id,
             category: lotCard.category,
-            gear_name: lotCard.gear_name,
+            card_name: lotCard.card_name,
+            series: lotCard.series_name,
             power: lotCard.power,
             min_bid: lotCard.min_bid,
             phase: lotCard.phase,
@@ -45,11 +50,16 @@ export async function GET() {
             needing: needing(lotCard.category, active.map((a) => ({ id: a.id, held: Object.keys(a.held) }))),
           }
         : null,
-      lastSale: last ? { card: last.card_id, gear_name: last.gear_name, agency: last.agency_id, agencyName: name(last.agency_id), price: last.price, at: last.sold_at } : null,
+      lastSale: last
+        ? {
+            card: last.card_id, card_name: last.card_name, category: last.category, power: last.power,
+            agency: last.agency_id, agencyName: name(last.agency_id), price: last.price, at: last.sold_at,
+          }
+        : null,
       news: r1.news
         .filter((n) => n.revealed_at && n.draw_order !== null)
         .sort((a, b) => a.draw_order! - b.draw_order!)
-        .map((n) => ({ id: n.id, headline: n.headline, affects: n.affects_gear, delta: n.delta })),
+        .map((n) => ({ id: n.id, headline: n.headline, affects: r1.seriesName(n.affects_gear), delta: n.delta, cards: seriesCards(n.affects_gear) })),
       teamUps: r1.teamUps.filter((t) => t.revealed_at).map((t) => ({ name: t.name, bonus: t.bonus })),
       board: active
         .map((a) => ({ id: a.id, name: a.name, power: a.power.total, cards: a.power.cards, fund: showFunds ? a.fund : null }))
@@ -67,12 +77,17 @@ export async function GET() {
               news: r1.news
                 .filter((n) => n.revealed_at && n.draw_order !== null)
                 .sort((a, b) => a.draw_order! - b.draw_order!)
-                .map((n) => ({ id: n.id, headline: n.headline, affects: n.affects_gear, delta: n.delta, holders: holders(n.affects_gear) })),
+                .map((n) => ({
+                  id: n.id, headline: n.headline, affects: r1.seriesName(n.affects_gear), delta: n.delta, holders: holders(n.affects_gear),
+                })),
               teamUps: r1.teamUps
                 .filter((t) => t.revealed_at)
                 .map((t) => {
                   const a = new Set(holders(t.gear_a).map((h) => h.id));
-                  return { name: t.name, gearA: t.gear_a, gearB: t.gear_b, bonus: t.bonus, holders: holders(t.gear_b).filter((h) => a.has(h.id)) };
+                  return {
+                    name: t.name, gearA: r1.seriesName(t.gear_a), gearB: r1.seriesName(t.gear_b), bonus: t.bonus,
+                    holders: holders(t.gear_b).filter((h) => a.has(h.id)),
+                  };
                 }),
             }
           : null,

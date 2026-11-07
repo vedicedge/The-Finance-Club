@@ -3,11 +3,17 @@ import { serviceDb } from '@/lib/db/server';
 import { withRunningBalance, type LedgerRow } from '@/lib/ledger';
 import type { Category } from '@/lib/round1/steps';
 import { rankTower } from '@/lib/round2/tower-board';
+import { loadCardNames, seriesOf } from '@/lib/cards';
 
 export type DossierGear = {
   category: Category;
   card_id: string;
+  /** The card's series key (what news and Team-Ups match; not shown). */
   gear_name: string;
+  /** The card's own name. */
+  card_name: string;
+  /** Its series' display name. */
+  series_name: string;
   power: number;
   price: number;
   /** Revealed Breaking News changes to this card's Power. */
@@ -44,7 +50,7 @@ export type DossierData = {
 /** Everything an agency may see about itself on My Agency. Only ever called for the signed-in agency. */
 export async function loadDossier(agencyId: string): Promise<DossierData> {
   const db = serviceDb();
-  const [st, ledger, gear, power, tip, news, teamUps, scores, duels, towers, holder, moves, ffs, hero, names] = await Promise.all([
+  const [st, ledger, gear, power, tip, news, teamUps, scores, duels, towers, holder, moves, ffs, hero, names, cardNames] = await Promise.all([
     db.from('event_state').select('phase, step, tips_closes_at, prelim_published_at, round1_locked_at, round2_published_at, current_mission').single(),
     db.from('v_ledger').select('id, agency_id, amount, reason, ref, note, created_at, voided, void_reason').eq('agency_id', agencyId),
     db.from('v_held_gear').select('category, card_id, gear_name, power, price').eq('agency_id', agencyId),
@@ -61,6 +67,7 @@ export async function loadDossier(agencyId: string): Promise<DossierData> {
     db.from('force_fields').select('mission').eq('agency_id', agencyId).is('voided_at', null),
     db.from('v_hero_scores').select('outcome_label, multiplier, hero_score').eq('agency_id', agencyId).maybeSingle(),
     db.from('agencies').select('id, name, is_test'),
+    loadCardNames(),
   ]);
 
   const rows = (ledger.data ?? []).map((r) => ({ ...r, amount: Number(r.amount) })) as LedgerRow[];
@@ -113,6 +120,8 @@ export async function loadDossier(agencyId: string): Promise<DossierData> {
         category: g.category as Category,
         card_id: g.card_id,
         gear_name: g.gear_name,
+        card_name: cardNames.card.get(g.card_id) ?? g.gear_name,
+        series_name: seriesOf(cardNames, g.gear_name),
         power: g.power,
         price: Number(g.price),
         news: (news.data ?? []).filter((n) => n.affects_gear === g.gear_name).map((n) => ({ headline: n.headline, delta: n.delta })),
@@ -125,7 +134,7 @@ export async function loadDossier(agencyId: string): Promise<DossierData> {
       news: power.data?.news_delta ?? 0,
       total: power.data?.power_level ?? 0,
     },
-    tip: t ? { id: t.id, headline: t.headline, affects: t.affects_gear, delta: t.delta } : null,
+    tip: t ? { id: t.id, headline: t.headline, affects: seriesOf(cardNames, t.affects_gear), delta: t.delta } : null,
     tipsWindow:
       st.data?.phase === 'round1' && st.data?.step === 'tips' && !st.data?.round1_locked_at && st.data?.tips_closes_at &&
       Date.parse(st.data.tips_closes_at) > Date.now()

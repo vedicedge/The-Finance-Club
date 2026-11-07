@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/card-art-manifest.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/card-art-manifest.mjs",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",

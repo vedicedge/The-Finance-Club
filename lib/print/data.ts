@@ -3,6 +3,7 @@ import { serviceDb } from '@/lib/db/server';
 import { EVENT } from '@/lib/config';
 import { parseSettings, type EventSettings } from '@/lib/settings';
 import { CATEGORIES, type Category } from '@/lib/round1/steps';
+import { loadCardNames, seriesOf } from '@/lib/cards';
 
 /**
  * Data for the printable backup sheets. Every sheet prints only what organisers can already see
@@ -23,7 +24,12 @@ export type PrintAgency = {
 export type PrintCard = {
   id: string;
   category: string;
+  /** The card's series key (not printed). */
   gear_name: string;
+  /** The card's own name (the series key before the 8 November database update). */
+  card_name: string;
+  /** Its series' display name. */
+  series_name: string;
   power: number;
   min_bid: number;
   phase: 'marquee' | 'secret' | 'jugaad';
@@ -123,7 +129,7 @@ export type AuctionPrint = {
 
 export async function loadAuctionPrint(): Promise<AuctionPrint> {
   const db = serviceDb();
-  const [cards, sales, tips, funds, power, starts] = await Promise.all([
+  const [cards, sales, tips, funds, power, starts, names] = await Promise.all([
     db.from('gear_cards').select('id, category, gear_name, power, min_bid, phase, lot_order').order('id'),
     db.from('sales').select('card_id, agency_id, category, price').is('voided_at', null),
     // Only whether a tip was bought: which news card it reveals is never read here.
@@ -131,9 +137,12 @@ export async function loadAuctionPrint(): Promise<AuctionPrint> {
     db.from('v_fund_left').select('agency_id, fund_left'),
     db.from('v_power_level').select('agency_id, power_level'),
     db.from('v_ledger').select('agency_id').eq('reason', 'start_fund').eq('voided', false),
+    loadCardNames(),
   ]);
   check(cards, sales, tips, funds, power, starts);
-  const list = (cards.data ?? []) as PrintCard[];
+  const list = (cards.data ?? []).map((c) => ({
+    ...c, card_name: names.card.get(c.id) ?? c.gear_name, series_name: seriesOf(names, c.gear_name),
+  })) as PrintCard[];
   const soldTo = new Map<string, { agency: string; price: number; slot: string }>();
   const held = new Map<string, Partial<Record<Category | 'Jugaad', Holding>>>();
   for (const s of sales.data ?? []) {

@@ -6,6 +6,8 @@ import { MISSION_STEPS, loadRound3 } from '@/lib/round3/server';
 import { AdminShell } from '@/components/admin/AdminShell';
 import { NextPhase } from '@/components/admin/NextPhase';
 import { AutoRefresh } from '@/components/admin/AutoRefresh';
+import { canAccess } from '@/lib/auth/roles';
+import { revealNextEnvelope } from '@/app/admin/actions';
 import { buyForceField, fine, makeChoice, saveDeal, saveEnvelopeMap, setMissionStep, setWinner, transfer, undoChoice } from './actions';
 
 export const metadata: Metadata = { title: 'Doomsday Vault console' };
@@ -37,8 +39,13 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
           <p className="eyebrow">Round 3 · 31 min</p>
           <h1 className="display mt-3 text-5xl">The Doomsday Vault</h1>
         </div>
-        <div className="flex gap-2">
-          <Link href="/screen/reveal" target="_blank" className="btn btn-ghost">Reveal screen ↗</Link>
+        <div className="flex flex-wrap gap-2">
+          {r3.phase === 'zero_hour' && canAccess(organiser.roles, 'reveal') && (
+            <form action={revealNextEnvelope.bind(null, '/admin/round3')}>
+              <button className="btn btn-primary">Open next envelope</button>
+            </form>
+          )}
+          <Link href="/projector" target="_blank" className="btn btn-ghost">Projector ↗</Link>
           {keeper && <Link href="/admin/ledger" className="btn btn-ghost">Fund Ledger</Link>}
         </div>
       </div>
