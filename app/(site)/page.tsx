@@ -25,10 +25,11 @@ export default async function Landing() {
     <>
       {/* ---------------------------------------------------------------- hero: Kalyug over Mahanagar */}
       <section className="relative isolate overflow-hidden">
-        {/* the poster's hooded figure, eclipse and skyline, widened for the screen */}
-        <div className="absolute inset-x-0 top-0 -z-20 h-[31rem] overflow-hidden sm:h-[38rem] md:h-[44rem] lg:inset-y-0 lg:h-auto" aria-hidden="true">
-          <HeroArt className="hero-drift object-cover object-[74%_35%] md:object-[70%_35%] lg:object-[68%_center]" />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(8_10_7/0.35),transparent_28%,rgb(8_10_7/0.55)_62%,var(--color-abyss))] lg:bg-[linear-gradient(90deg,var(--color-abyss)_0%,rgb(8_10_7/0.88)_30%,rgb(8_10_7/0.35)_58%,transparent_78%)]" />
+        {/* the poster's hooded figure, eclipse and skyline, widened for the screen. Below 1024 px the
+            title sits under the art, so the eclipse and the hood stay clear. */}
+        <div className="absolute inset-x-0 top-0 -z-20 h-[27rem] overflow-hidden sm:h-[36rem] md:h-[42rem] lg:inset-y-0 lg:h-auto" aria-hidden="true">
+          <HeroArt className="hero-drift object-cover object-[74%_center] sm:object-[79%_center] md:object-[82%_center] lg:object-[68%_center]" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(8_10_7/0.3),transparent_16%,transparent_74%,var(--color-abyss))] lg:bg-[linear-gradient(90deg,var(--color-abyss)_0%,rgb(8_10_7/0.88)_30%,rgb(8_10_7/0.35)_58%,transparent_78%)]" />
           <div className="absolute inset-x-0 bottom-0 hidden h-48 bg-gradient-to-b from-transparent to-abyss lg:block" />
         </div>
         <div className="streaks absolute inset-0 -z-10" aria-hidden="true" />
@@ -42,7 +43,7 @@ export default async function Landing() {
           <span className="absolute right-0 bottom-0">Threat · total</span>
         </div>
 
-        <div className="mx-auto flex max-w-7xl px-[var(--gutter)] pt-[17rem] pb-20 sm:pt-[21rem] md:pt-[26rem] lg:min-h-[min(54rem,calc(100svh-6.5rem))] lg:items-center lg:py-24">
+        <div className="mx-auto flex max-w-7xl px-[var(--gutter)] pt-[25rem] pb-20 sm:pt-[32rem] md:pt-[37rem] lg:min-h-[min(54rem,calc(100svh-6.5rem))] lg:items-center lg:py-24">
           <div className="mx-auto w-full max-w-xl text-center lg:mx-0 lg:text-left">
             <p className="eyebrow text-glow">Incoming transmission · {EVENT.city}</p>
             <h1 className="mt-5">
