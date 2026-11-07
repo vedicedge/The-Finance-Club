@@ -7,8 +7,8 @@ export function ResetPinButton({ agencyId }: { agencyId: string }) {
   const [state, action, pending] = useActionState<PinResetState>(resetPin.bind(null, agencyId), { kind: 'idle' });
   if (state.kind === 'done') {
     return (
-      <p className="transmission panel border-torch/50 px-3 py-2 text-sm">
-        New PIN for {agencyId}: <span className="num ml-1 text-2xl font-semibold tracking-[0.15em] text-torch">{state.pin}</span>
+      <p className="transmission panel border-glow/50 px-3 py-2 text-sm">
+        New PIN for {agencyId}: <span className="num ml-1 text-2xl font-semibold tracking-[0.15em] text-glow">{state.pin}</span>
         <span className="mt-1 block text-xs text-steel">Shown once. Their phones have been signed out.</span>
       </p>
     );
@@ -41,7 +41,7 @@ export function FounderEditor({ founder, locked }: { founder: Founder; locked: b
           {pending ? 'Saving' : 'Save'}
         </button>
       )}
-      {founder.is_captain && <span className="text-xs font-semibold tracking-[0.18em] text-torch uppercase sm:col-span-5">Captain</span>}
+      {founder.is_captain && <span className="text-xs font-semibold tracking-[0.18em] text-glow uppercase sm:col-span-5">Captain</span>}
       {state.kind === 'ok' && <span className="text-xs text-toxic sm:col-span-5">Saved.</span>}
       {state.kind === 'error' && <span className="text-xs text-ember sm:col-span-5">{state.message}</span>}
     </form>

@@ -58,7 +58,7 @@ export function AuctionProjector({ stateUrl = '/api/screen/auction' }: { stateUr
     <Stage>
       <div className="absolute inset-x-0 top-0 flex items-center justify-between border-b border-line px-[3cqw] py-[1.6cqh]">
         <p className="text-[1.25cqw] font-semibold tracking-[0.3em] text-steel uppercase">
-          {EVENT.name} · Round 1 · <span className="text-torch">{ROUNDS.round1}</span>
+          {EVENT.name} · Round 1 · <span className="text-glow">{ROUNDS.round1}</span>
         </p>
         {step && <p className="text-[1.25cqw] font-semibold tracking-[0.3em] text-steel uppercase">{STEP_LABEL[step] ?? step}</p>}
       </div>
@@ -98,7 +98,7 @@ function who(holders: { id: string; name: string }[]) {
 function RecapView({ recap }: { recap: NonNullable<S['recap']> }) {
   return (
     <div className="flex h-full flex-col px-[5cqw] pt-[9cqh] pb-[3cqh]">
-      <h1 className="display text-center text-[4.2cqw]">Breaking News · the full picture</h1>
+      <h1 className="display text-center text-[3.7cqw]">Breaking News · the full picture</h1>
       <div className="mt-[2.5cqh] grid min-h-0 flex-1 grid-cols-[1.5fr_1fr] gap-x-[4cqw]">
         <section className="min-w-0">
           <p className="text-[1.15cqw] font-semibold tracking-[0.3em] text-ember uppercase">Breaking News · {recap.news.length} headlines</p>
@@ -150,7 +150,7 @@ function TipsView({ s }: { s: S }) {
     <Center title="Insider Tips">
       {open && t?.closesAt ? (
         <>
-          <WindowClock closesAt={t.closesAt} serverNow={t.now} className="mt-[1cqh] block text-[13cqw] leading-none font-semibold text-torch" />
+          <WindowClock closesAt={t.closesAt} serverNow={t.now} className="mt-[1cqh] block text-[13cqw] leading-none font-semibold text-glow" />
           <p className="mt-[3cqh] text-[2.4cqw] text-bone">Buy now on your My Agency page · ₹2 Cr · one per agency</p>
           <p className="mt-[1cqh] text-[1.8cqw] text-steel">
             See one Breaking News headline before it is announced. <span className="num text-bone">{t.sold}</span> bought so far.
@@ -175,7 +175,7 @@ function TipsView({ s }: { s: S }) {
 function Center({ title, children }: { title: string; children?: React.ReactNode }) {
   return (
     <div className="flex h-full flex-col items-center justify-center px-[6cqw] text-center">
-      <p className="display text-[7cqw]">{title}</p>
+      <p className="display text-[6.2cqw]">{title}</p>
       {children}
     </div>
   );
@@ -189,16 +189,16 @@ function LotView({ s }: { s: S }) {
       <div className="flex flex-col justify-center">
         {lot ? (
           <>
-            <p className="text-[1.5cqw] font-semibold tracking-[0.3em] text-torch uppercase">
+            <p className="text-[1.5cqw] font-semibold tracking-[0.3em] text-glow uppercase">
               {s.step === 'marquee' && lot.lot_order ? `Marquee lot ${lot.lot_order} of ${s.marqueeTotal}` : s.step === 'last_call' ? 'Last Call' : 'Secret Identity Bid'}
               <span className="ml-[1.5cqw] text-steel">{lot.category}</span>
             </p>
             <p className="num mt-[2cqh] text-[3cqw] font-semibold text-steel">{lot.id}</p>
-            <h1 className="display mt-[1cqh] text-[6.4cqw] leading-[1]">{lot.gear_name}</h1>
+            <h1 className="display mt-[1cqh] text-[5.6cqw] leading-[1]">{lot.gear_name}</h1>
             <div className="mt-[5cqh] flex gap-[4cqw]">
               <div>
                 <p className="text-[1.2cqw] font-semibold tracking-[0.3em] text-steel uppercase">Power</p>
-                <p className="num text-[9cqw] leading-none font-semibold text-torch">{lot.power}</p>
+                <p className="num text-[9cqw] leading-none font-semibold text-glow">{lot.power}</p>
               </div>
               <div>
                 <p className="text-[1.2cqw] font-semibold tracking-[0.3em] text-steel uppercase">Minimum bid</p>
@@ -211,7 +211,7 @@ function LotView({ s }: { s: S }) {
             {lot.sold && <p className="stamp mt-[4cqh] self-start text-[2cqw] text-ember">Sold</p>}
           </>
         ) : (
-          <p className="display text-[5cqw] text-steel">Next lot coming up…</p>
+          <p className="display text-[4.4cqw] text-steel">Next lot coming up…</p>
         )}
       </div>
       <aside className="flex flex-col justify-center gap-[5cqh] border-l border-line pl-[3cqw]">
@@ -226,7 +226,7 @@ function LotView({ s }: { s: S }) {
             <p className="text-[1.2cqw] font-semibold tracking-[0.3em] text-steel uppercase">Last sale</p>
             <p className="stamp mt-[1.5cqh] text-[1.8cqw] text-toxic">Sold</p>
             <p className="mt-[1.5cqh] text-[2cqw] text-bone">
-              <span className="num font-semibold text-torch">{sale.card}</span> {sale.gear_name}
+              <span className="num font-semibold text-glow">{sale.card}</span> {sale.gear_name}
             </p>
             <p className="num mt-[0.5cqh] text-[2.2cqw]">
               → {sale.agency} <span className="text-steel">{sale.agencyName}</span> · <span className="font-semibold">{formatCrore(sale.price)}</span>
@@ -246,13 +246,13 @@ function NewsView({ s }: { s: S }) {
       {latest ? (
         <div key={latest.id} className="transmission">
           <p className="inline-block bg-ember px-[1cqw] py-[0.4cqh] text-[1.5cqw] font-bold tracking-[0.3em] text-abyss uppercase">Breaking News</p>
-          <h1 className="display mt-[3cqh] text-[5.4cqw] leading-[1.05]">{latest.headline}</h1>
+          <h1 className="display mt-[3cqh] text-[4.8cqw] leading-[1.05]">{latest.headline}</h1>
           <p className={`num mt-[2cqh] text-[3cqw] font-semibold ${latest.delta > 0 ? 'text-toxic' : 'text-ember'}`}>
             {latest.delta > 0 ? '+' : ''}{latest.delta} Power · {latest.affects}
           </p>
         </div>
       ) : (
-        <p className="display mt-[20cqh] text-center text-[6cqw]">Breaking News incoming…</p>
+        <p className="display mt-[20cqh] text-center text-[5.3cqw]">Breaking News incoming…</p>
       )}
       <div className="mt-auto grid grid-cols-2 gap-[4cqw]">
         <ul className="space-y-[1cqh] text-[1.6cqw] text-steel">
@@ -262,7 +262,7 @@ function NewsView({ s }: { s: S }) {
         </ul>
         {s.teamUps.length > 0 && (
           <div className="transmission">
-            <p className="text-[1.3cqw] font-semibold tracking-[0.3em] text-torch uppercase">Team-Ups · +3 Power each</p>
+            <p className="text-[1.3cqw] font-semibold tracking-[0.3em] text-glow uppercase">Team-Ups · +3 Power each</p>
             <ul className="mt-[1cqh] space-y-[0.8cqh] text-[1.8cqw] text-bone">
               {s.teamUps.map((t) => <li key={t.name}>{t.name}</li>)}
             </ul>
@@ -278,7 +278,7 @@ function BoardView({ s }: { s: S }) {
   const withFund = rows.some((r) => r.fund !== null);
   return (
     <div className="flex h-full flex-col px-[5cqw] pt-[10cqh] pb-[4cqh]">
-      <h1 className="display text-center text-[5cqw]">{s.locked ? 'Power Levels are final' : 'Ledger check'}</h1>
+      <h1 className="display text-center text-[4.4cqw]">{s.locked ? 'Power Levels are final' : 'Ledger check'}</h1>
       <BoardColumns
         className="mt-[4cqh]"
         rows={rows}
@@ -292,7 +292,7 @@ function BoardView({ s }: { s: S }) {
         }
         renderRow={(r) => (
           <li key={r.id} className="flex items-center gap-[1.4cqw] border-b border-line py-[1.25cqh] text-[2cqw]">
-            <span className="num w-[5cqw] font-semibold text-torch">{r.id}</span>
+            <span className="num w-[5cqw] font-semibold text-glow">{r.id}</span>
             <span className="min-w-0 flex-1 truncate">{r.name}</span>
             <span className="num w-[8cqw] text-right font-semibold">{r.power}</span>
             {withFund && <span className="num w-[10cqw] text-right text-steel">{r.fund !== null ? formatCrore(r.fund) : ''}</span>}

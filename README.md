@@ -6,7 +6,7 @@ and save the city.
 
 - **Spec (source of truth):** [`docs/event-spec.md`](docs/event-spec.md) — event secrets redacted, see below
 - **Choices where the spec is open:** [`docs/decisions.md`](docs/decisions.md)
-- **Look and feel:** [`docs/design-refs/README.md`](docs/design-refs/README.md)
+- **Look and feel:** [`docs/design-refs/README.md`](docs/design-refs/README.md) — built around the event poster; art in [`scripts/art/README.md`](scripts/art/README.md)
 
 Stack: Next.js 16 (App Router) + TypeScript + Tailwind 4, Supabase (Postgres, Auth, Realtime,
 Row Level Security), deployed on Vercel. The event name lives in one place: `lib/config.ts`.
@@ -132,6 +132,8 @@ app/                  pages and route handlers (App Router)
                       print/ (A4 backup sheets and the dry-run checklist)
   auth/confirm/       where organiser sign-in links land
 components/           shared UI (skyline, threat bar, countdown, dossier, admin shell, print sheets)
+  art/                the poster, Kalyug, wordmark and the scene art (see scripts/art/README.md)
+assets/art/           the poster and all site images (statically imported, optimised by Next)
 lib/
   config.ts           event name and round names (change the name here)
   scoring/            quiz, tower and hero maths (pure, unit-tested)
@@ -152,6 +154,7 @@ supabase/
   migrations/         schema, integrity rules, views, scoring functions, security, public seed
   private/            git-ignored event secrets (seed_secrets.sql)
 scripts/db/           local Postgres harness for the database tests
+scripts/art/          how the site art is made (poster fixes, skies, scene renders, optional AI art)
 tests/                unit/ and db/ tests
 docs/                 spec, decisions, dry-run checklist, design references
 ```

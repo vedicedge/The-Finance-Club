@@ -1,23 +1,37 @@
 import Link from 'next/link';
 import { EVENT } from '@/lib/config';
+import { Wordmark, StarRule } from '@/components/art/Poster';
+import { Skyline } from '@/components/Skyline';
 
 export function SiteFooter() {
   return (
-    <footer className="relative z-10 border-t border-line/60 bg-abyss/80">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-[var(--gutter)] py-10 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="display text-3xl">{EVENT.name}</p>
-          <p className="font-script mt-1 text-2xl text-torch">{EVENT.tagline}</p>
-          <p className="mt-3 text-sm text-steel">An intra-college event by {EVENT.club}. All money is virtual ₹ crore.</p>
+    <footer className="relative z-10 mt-10 overflow-hidden border-t border-line/60 bg-abyss">
+      <Skyline className="pointer-events-none block h-28 w-full sm:h-40" />
+      <div className="mx-auto max-w-6xl px-[var(--gutter)] pt-4 pb-12">
+        <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+          <div>
+            <Wordmark sizes="(min-width: 640px) 320px, 240px" className="h-auto w-60 sm:w-80" alt={EVENT.name} />
+            <p className="mt-3 font-serif text-xl text-silver italic">{EVENT.tagline}</p>
+          </div>
+          <nav aria-label="Footer" className="grid grid-cols-2 gap-x-10 gap-y-2.5 sm:grid-cols-3">
+            {[
+              ['/rounds', 'Rounds'],
+              ['/rules', 'Rules & FAQ'],
+              ['/schedule', 'Schedule'],
+              ['/leaderboard', 'Leaderboard'],
+              ['/login', 'Agency login'],
+              ['/admin/login', 'Crew'],
+            ].map(([href, label]) => (
+              <Link key={href} href={href} className="font-display text-[0.74rem] font-semibold tracking-[0.18em] text-steel uppercase hover:text-glow">
+                {label}
+              </Link>
+            ))}
+          </nav>
         </div>
-        <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-steel">
-          <Link href="/rounds" className="hover:text-torch">Rounds</Link>
-          <Link href="/rules" className="hover:text-torch">Rules &amp; FAQ</Link>
-          <Link href="/schedule" className="hover:text-torch">Schedule</Link>
-          <Link href="/leaderboard" className="hover:text-torch">Leaderboard</Link>
-          <Link href="/login" className="hover:text-torch">Agency login</Link>
-          <Link href="/admin/login" className="hover:text-torch">Crew</Link>
-        </nav>
+        <StarRule className="mt-10" />
+        <p className="mt-5 text-center text-xs tracking-[0.12em] text-steel/80 uppercase">
+          An intra-college event by {EVENT.club} · All money is virtual ₹ crore · Original artwork
+        </p>
       </div>
     </footer>
   );

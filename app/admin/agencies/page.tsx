@@ -22,7 +22,7 @@ type Row = {
 const STATUS_STYLE: Record<Row['status'], string> = {
   registered: 'text-steel border-line-strong',
   checked_in: 'text-toxic border-toxic/50',
-  active: 'text-torch border-torch/50',
+  active: 'text-glow border-glow/50',
   eliminated: 'text-ember border-ember/50',
 };
 
@@ -78,11 +78,11 @@ export default async function AgenciesPage({ searchParams }: { searchParams: Pro
           return (
             <li key={a.id} className="panel">
               <div className="flex flex-wrap items-center gap-x-5 gap-y-3 px-4 py-3">
-                <span className="num w-14 text-2xl font-semibold text-torch">{a.id}</span>
+                <span className="num w-14 text-2xl font-semibold text-glow">{a.id}</span>
                 <span className="min-w-40 flex-1">
                   <span className="block text-bone">
                     {a.name}
-                    {a.is_test && <span className="ml-2 rounded-sm bg-torch px-1.5 py-0.5 text-[0.6rem] font-bold tracking-[0.18em] text-abyss uppercase">Test</span>}
+                    {a.is_test && <span className="ml-2 rounded-sm bg-glow px-1.5 py-0.5 text-[0.6rem] font-bold tracking-[0.18em] text-abyss uppercase">Test</span>}
                   </span>
                   <span className="block text-xs text-steel">
                     Captain {captain?.name} · <span className="num">{captain?.phone}</span>

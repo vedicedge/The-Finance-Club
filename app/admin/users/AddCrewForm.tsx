@@ -6,7 +6,7 @@ import { addCrewMember, type CrewState } from './actions';
 
 const idle: CrewState = { kind: 'idle' };
 const field =
-  'mt-2 block w-full rounded-sm border border-line-strong bg-vault-2 px-3 py-2 text-bone focus:border-torch focus:outline-none';
+  'mt-2 block w-full rounded-sm border border-line-strong bg-vault-2 px-3 py-2 text-bone focus:border-glow focus:outline-none';
 
 export function AddCrewForm() {
   const [state, action, pending] = useActionState(addCrewMember, idle);
@@ -29,7 +29,7 @@ export function AddCrewForm() {
         <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2">
           {ROLES.map((r) => (
             <label key={r} className="flex items-center gap-2 text-sm">
-              <input type="checkbox" name="roles" value={r} className="accent-torch" /> {ROLE_LABELS[r]}
+              <input type="checkbox" name="roles" value={r} className="accent-glow" /> {ROLE_LABELS[r]}
             </label>
           ))}
         </div>
@@ -37,7 +37,7 @@ export function AddCrewForm() {
       <div className="flex flex-wrap items-center gap-4 sm:col-span-3">
         <button
           disabled={pending}
-          className="rounded-sm bg-torch px-4 py-2 text-sm font-semibold tracking-[0.14em] text-abyss uppercase disabled:opacity-60"
+          className="rounded-sm bg-glow px-4 py-2 text-sm font-semibold tracking-[0.14em] text-abyss uppercase disabled:opacity-60"
         >
           {pending ? 'Adding…' : 'Add to crew'}
         </button>

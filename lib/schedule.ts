@@ -44,3 +44,16 @@ const dateFmt = new Intl.DateTimeFormat('en-IN', {
 export function longDate(iso: string): string {
   return dateFmt.format(new Date(iso));
 }
+
+const dayMonthFmt = new Intl.DateTimeFormat('en-IN', { timeZone: EVENT.timeZone, day: 'numeric', month: 'long', year: 'numeric' });
+const shortFmt = new Intl.DateTimeFormat('en-IN', { timeZone: EVENT.timeZone, day: 'numeric', month: 'short' });
+
+/** "25 November 2026", as on the poster's date line. */
+export function posterDate(iso: string): string {
+  return dayMonthFmt.format(new Date(iso));
+}
+
+/** "25 Nov". */
+export function shortDate(iso: string): string {
+  return shortFmt.format(new Date(iso));
+}

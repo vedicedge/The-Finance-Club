@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+import wordmark from '@/assets/art/wordmark.webp';
 import { useEffect, useRef, useState } from 'react';
 import { EVENT, ROUNDS } from '@/lib/config';
 import { SEGMENTS, type QuizSegment } from '@/lib/scoring/quiz';
@@ -98,7 +100,7 @@ function TopBar({ s }: { s: ScreenState | null }) {
   return (
     <div className="absolute inset-x-0 top-0 flex items-center justify-between border-b border-line px-[3cqw] py-[1.6cqh]">
       <p className="text-[1.25cqw] font-semibold tracking-[0.3em] text-steel uppercase">
-        {EVENT.name} · Prelim · <span className="text-torch">{ROUNDS.prelim}</span>
+        {EVENT.name} · Prelim · <span className="text-glow">{ROUNDS.prelim}</span>
       </p>
       {s?.question?.number && s.mode === 'question' && (
         <p className="num text-[1.4cqw] font-semibold tracking-[0.2em] text-steel uppercase">
@@ -112,7 +114,7 @@ function TopBar({ s }: { s: ScreenState | null }) {
 function Center({ title, children }: { title: string; children?: React.ReactNode }) {
   return (
     <div className="flex h-full flex-col items-center justify-center px-[6cqw] text-center">
-      <p className="display text-[5cqw]">{title}</p>
+      <p className="display text-[4.4cqw]">{title}</p>
       {children}
     </div>
   );
@@ -122,10 +124,11 @@ function Lobby({ s }: { s: ScreenState }) {
   const host = typeof window === 'undefined' ? '' : window.location.host;
   return (
     <div className="flex h-full flex-col items-center justify-center text-center">
-      <p className="text-[1.4cqw] font-semibold tracking-[0.35em] text-steel uppercase">Incoming transmission</p>
-      <h1 className="display mt-[2cqh] text-[10cqw]">{ROUNDS.prelim}</h1>
+      <Image src={wordmark} alt={EVENT.name} sizes="40vw" className="h-auto w-[34cqw]" />
+      <p className="mt-[3cqh] text-[1.4cqw] font-semibold tracking-[0.35em] text-glow uppercase">Incoming transmission</p>
+      <h1 className="display metal mt-[1.5cqh] text-[8.8cqw]">{ROUNDS.prelim}</h1>
       <p className="mt-[3cqh] text-[2.4cqw] text-bone">
-        Captains: sign in at <span className="num font-semibold text-torch">{host}/login</span>
+        Captains: sign in at <span className="num font-semibold text-glow">{host}/login</span>
       </p>
       <p className="mt-[1.5cqh] text-[1.7cqw] text-steel">
         15 questions · answer on one phone · faster correct answers score more
@@ -148,13 +151,13 @@ function QuestionView({ s, offset }: { s: ScreenState; offset: number }) {
   return (
     <div className="grid h-full grid-cols-[1fr_22cqw] gap-[3cqw] px-[4cqw] pt-[11cqh] pb-[5cqh]">
       <div className="flex min-w-0 flex-col">
-        <p className="text-[1.4cqw] font-semibold tracking-[0.3em] text-torch uppercase">
+        <p className="text-[1.4cqw] font-semibold tracking-[0.3em] text-glow uppercase">
           {q.segment === 'sudden_death' ? 'Sudden death · 16th place' : seg.label}
           <span className="ml-[1cqw] text-steel">
             {q.timer_s} s{q.weight > 1 ? ` · ×${q.weight}` : ''}
           </span>
         </p>
-        <h1 className="font-display mt-[2.5cqh] text-[3.6cqw] leading-[1.15] text-bone">{q.prompt}</h1>
+        <h1 className="font-serif mt-[2.5cqh] text-[3.6cqw] leading-[1.15] text-bone">{q.prompt}</h1>
         <ol className={`mt-auto grid gap-[1.4cqw] ${q.options.length === 2 ? 'grid-cols-2' : 'grid-cols-2'}`}>
           {q.options.map((opt, i) => {
             const correct = q.revealed && q.correct_index === i;
@@ -197,7 +200,7 @@ function QuestionView({ s, offset }: { s: ScreenState; offset: number }) {
         ) : toStart > 0 ? (
           <>
             <p className="text-[1.3cqw] font-semibold tracking-[0.3em] text-steel uppercase">Read · clock starts in</p>
-            <p className="num mt-[1cqh] text-[13cqw] leading-none font-semibold text-torch">{Math.ceil(toStart)}</p>
+            <p className="num mt-[1cqh] text-[13cqw] leading-none font-semibold text-glow">{Math.ceil(toStart)}</p>
           </>
         ) : left > 0 ? (
           <>
@@ -207,13 +210,13 @@ function QuestionView({ s, offset }: { s: ScreenState; offset: number }) {
             </p>
             <div className="mt-[3cqh] h-[1.2cqh] w-full overflow-hidden rounded-full bg-vault-2">
               <div
-                className={`h-full origin-left ${left <= 3 ? 'bg-ember' : 'bg-torch'}`}
+                className={`h-full origin-left ${left <= 3 ? 'bg-ember' : 'bg-glow'}`}
                 style={{ transform: `scaleX(${Math.max(0, left / q.timer_s)})`, transition: 'transform 200ms linear' }}
               />
             </div>
           </>
         ) : (
-          <p className="display text-[4.4cqw] text-ember">Time&apos;s up</p>
+          <p className="display text-[3.9cqw] text-ember">Time&apos;s up</p>
         )}
         {q.segment !== 'sudden_death' && (
           <p className="num mt-[6cqh] text-[1.6cqw] text-steel">
@@ -230,7 +233,7 @@ function BoardView({ s }: { s: ScreenState }) {
   const rows = s.board!.rows.slice(0, 16);
   return (
     <div className="flex h-full flex-col px-[5cqw] pt-[10cqh] pb-[4cqh]">
-      <h1 className="display text-center text-[5cqw]">{s.published ? 'Final board' : 'Live board'}</h1>
+      <h1 className="display text-center text-[4.4cqw]">{s.published ? 'Final board' : 'Live board'}</h1>
       <p className="mt-[0.5cqh] text-center text-[1.4cqw] font-semibold tracking-[0.3em] text-steel uppercase">
         Top 16 → {ROUNDS.round1}
       </p>
@@ -253,7 +256,7 @@ function BoardView({ s }: { s: ScreenState }) {
         renderRow={(r) => (
           <li key={r.id} className="flex items-center gap-[1.4cqw] border-b border-line py-[1.25cqh] text-[2cqw]">
             <span className="num w-[3.4cqw] text-steel">{r.rank}</span>
-            <span className="num w-[5cqw] font-semibold text-torch">{r.id}</span>
+            <span className="num w-[5cqw] font-semibold text-glow">{r.id}</span>
             <span className="min-w-0 flex-1 truncate">{r.name}</span>
             <span className="num w-[9cqw] text-right font-semibold">{r.total.toLocaleString('en-IN')}</span>
           </li>

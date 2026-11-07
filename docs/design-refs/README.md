@@ -1,34 +1,50 @@
 # Design references
 
-The three reference images were shared in chat and are **not committed**. They are Marvel
-promotional and fan art (a cloaked figure before a tapestry, a metal mask half-buried in green
-sand with the Avengers: Doomsday logo, and a chessboard with toppled pieces). The website must
-never use them or any Marvel/DC imagery or logos (spec, tone rules). We take only the mood.
+**The event poster is the design's source** (`assets/art/poster.jpg`): a hooded figure,
+Professor Kalyug, before a black eclipse with a green corona, over a ruined city, with the
+DOOMSDAY title in cracked silver-green capitals. The site's colours, type and art all come from
+it, but the poster itself is not shown: its details (date, venue, club line) are still being
+finalised. The hero uses the club's character art of Professor Kalyug instead (hood to waist
+before the eclipse: `kalyug-wide.webp` on laptops, with the ruined city across the left behind
+the title, and `kalyug-character.webp` on phones) with the poster's DOOMSDAY lettering as the
+title.
 
-## What we take from them
+The other references (Pinterest boards shared in chat, not committed) set the layout language.
+Several are fan art or film/game key art; the website must never use their images or any
+Marvel/DC imagery or logos (spec, tone rules). We take only the composition ideas.
 
-| Ref | Mood we borrow | Where it shows up |
+| Reference | What we borrow | Where it shows up |
 |---|---|---|
-| Cloaked figure climbing stairs to a lit tapestry | A single warm light source from above; deep brown-black shadow; torchlight amber; a long climb toward something | Landing hero (light beam over the Mahanagar skyline), Zero Hour reveal spotlight |
-| Mask in green sand under a stormy sky | Verdigris and teal-green palette, a toxic green glow on the horizon, film grain, centred poster typography: small tracked caps ("SYNOPSIS", "RELEASE: …") under a large title | Colour tokens, landing layout, section labels, grain overlay |
-| Chessboard with toppled pieces and one standing piece | Strategy, elimination, one survivor; hard diagonal light and shadow | Leaderboard (eliminated agencies "toppled"), round dividers, the board screen |
+| The event poster | Palette, Cinzel-style capitals, the eclipse, the hooded figure, the thin rule with a star | Hero art and title, Kalyug, icon, colour tokens |
+| Stacked cinematic frames ("street stories" photo series, film-still strips) | Wide image panels stacked with black gutters, huge type laid over the picture | The five rounds as a film strip on the landing page; scene frames on /rounds |
+| Horror studio redesign (green UI, framed photo) | Viewfinder corner brackets, dark green UI, big tracked headings with one word highlighted | `.corners`, section titles ("Five stages. **One survivor.**") |
+| Sci-fi game site (thin vertical light lines, floating thumbnails) | Thin vertical streaks over art, small caps labels | `.streaks` over heroes and frames |
+| Survival game site (torn paper edges) | Ragged edges between sections | `.torn-top` / `.torn-bottom` utilities |
+| Editorial poster (scattered corner text) | Small notes in the corners of a frame | Landing hero corner notes on wide screens |
 
-## Palette (derived from the refs)
+## Palette (sampled from the poster)
 
 | Token | Hex | Use |
 |---|---|---|
-| `abyss` | `#050807` | Page background (near-black, green-tinted) |
-| `vault` | `#0b1513` | Panels |
-| `vault-2` | `#11201c` | Raised panels, inputs |
-| `verdigris` | `#2f7d66` | Primary fills (buttons, bars) |
-| `toxic` | `#62d6a8` | Green text and accents on dark; "correct" / "city saved" |
-| `torch` | `#e9b04e` | Torchlight amber: calls to action, money, highlights |
-| `steel` | `#a3b1ad` | Secondary text (the mask's metal) |
-| `bone` | `#ece6d8` | Primary text (the tapestry's lit cream) |
+| `abyss` | `#080a07` | Page background |
+| `vault` / `vault-2` / `moss` | `#0e130d` / `#151c13` / `#1f2a1b` | Panels, inputs, raised surfaces |
+| `glow` | `#a9cf6e` | The eclipse corona: primary buttons, links, money, agency IDs |
+| `glow-deep` | `#6e8f45` | Pressed/secondary glow |
+| `toxic` | `#6fdca6` | "Correct", "qualified", "city saved" |
+| `silver` | `#c6ceb2` | Metallic headings (the poster title) |
+| `bone` | `#ebe8da` | Primary text (the poster's date line) |
+| `steel` | `#9fa993` | Secondary text |
 | `ember` | `#e5574a` | Danger only: eliminations, errors, last seconds |
 
-## Type (same families as the Section E site)
+## Type
 
-- **Cormorant Garamond** — display and poster titles (heavier weights for the projector).
-- **Pinyon Script** — rare flourishes (tagline, Professor Kalyug's signature).
-- **Inter** — all UI copy and every number (tabular figures, includes ₹).
+- **Cinzel** — titles, buttons and navigation (the poster's Trajan-like capitals).
+- **Cinzel Decorative** — the wordmark in the header.
+- **Cormorant Garamond** — long-form serif, italic flourishes, quiz questions.
+- **Inter** — UI copy and every number (tabular figures, includes ₹).
+
+## Art
+
+See `scripts/art/README.md`: the poster and pieces cut from it, painted storm skies, and seven
+original silhouette scenes (quiz hall, auction, block tower, vault, clock eclipse, the three
+founders, the chessboard).

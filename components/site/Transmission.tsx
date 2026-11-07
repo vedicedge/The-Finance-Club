@@ -5,10 +5,10 @@ export function Transmission({
   children,
 }: {
   title?: string;
-  tone?: 'toxic' | 'torch' | 'ember';
+  tone?: 'toxic' | 'glow' | 'ember';
   children: React.ReactNode;
 }) {
-  const color = { toxic: 'text-toxic border-toxic/40', torch: 'text-torch border-torch/40', ember: 'text-ember border-ember/40' }[tone];
+  const color = { toxic: 'text-toxic border-toxic/40', glow: 'text-glow border-glow/40', ember: 'text-ember border-ember/40' }[tone];
   return (
     <section className={`transmission panel border ${color.split(' ')[1]}`} aria-live="polite">
       <header className={`flex items-center gap-3 border-b border-line px-5 py-3 ${color.split(' ')[0]}`}>

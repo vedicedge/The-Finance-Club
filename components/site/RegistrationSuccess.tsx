@@ -23,11 +23,11 @@ export function RegistrationSuccess({
           <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-sm border border-line bg-line">
             <div className="bg-vault-2 px-4 py-4">
               <dt className="eyebrow">Agency ID</dt>
-              <dd className="num mt-2 text-4xl font-semibold text-torch sm:text-5xl">{agencyId}</dd>
+              <dd className="num mt-2 text-4xl font-semibold text-glow sm:text-5xl">{agencyId}</dd>
             </div>
             <div className="bg-vault-2 px-4 py-4">
               <dt className="eyebrow">PIN</dt>
-              <dd className="num mt-2 text-4xl font-semibold tracking-[0.08em] text-torch sm:text-5xl">{pin}</dd>
+              <dd className="num mt-2 text-4xl font-semibold tracking-[0.08em] text-glow sm:text-5xl">{pin}</dd>
             </div>
           </dl>
           {dryRun ? (
@@ -38,7 +38,7 @@ export function RegistrationSuccess({
           ) : (
             <>
               <p className="mt-5 font-semibold text-bone">Screenshot this now. The PIN is shown only once.</p>
-              <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-bone/85 marker:text-torch">
+              <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-bone/85 marker:text-glow">
                 <li>{captain} (captain) logs in with this ID and PIN on the quiz phone on Doomsday.</li>
                 <li>Share the ID and PIN with your co-founders. Lost it? An organiser can reset it at the check-in desk.</li>
               </ul>

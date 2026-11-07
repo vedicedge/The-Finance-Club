@@ -34,14 +34,15 @@ export default async function RulesPage() {
 
   return (
     <>
-      <PageHero eyebrow="Protocol" title="Rules & FAQ">
+      <PageHero eyebrow="Protocol" title="Rules & FAQ" art="kalyug">
         The winner is the agency with the highest Hero Score at Zero Hour: a strong hero, luck and nerve in the Vault, and
         cash discipline throughout.
       </PageHero>
 
       <Section eyebrow="The formula" title="Hero Score">
-        <p className="font-display text-center text-[clamp(1.4rem,4vw,2.2rem)] leading-snug text-bone">
-          <span className="text-torch">Power Level</span> × <span className="text-toxic">Battle Outcome</span> + Fund left ÷ 2
+        <p className="display panel corners px-4 py-7 text-center text-[clamp(1.4rem,4vw,2.2rem)] leading-snug text-bone [--corner-inset:6px] [--corner-size:12px]">
+          <span className="whitespace-nowrap text-glow">Power Level</span> × <span className="whitespace-nowrap text-toxic">Battle Outcome</span> +{' '}
+          <span className="whitespace-nowrap">Fund left ÷ 2</span>
         </p>
         <Note>Example: Power Level 28, Battle Outcome ×1.5, fund left ₹18 Cr → 28 × 1.5 + 18 ÷ 2 = 42 + 9 = 51.</Note>
         <ul>
@@ -103,14 +104,19 @@ export default async function RulesPage() {
       </Section>
 
       <Section eyebrow="Questions" title="FAQ">
-        <dl className="divide-y divide-line/70 border-y border-line/70">
+        <div className="divide-y divide-line/70 border-y border-line/70">
           {faq.map(([q, a]) => (
-            <div key={q} className="py-5">
-              <dt className="font-display text-xl text-bone">{q}</dt>
-              <dd className="mt-2 text-bone/85">{a}</dd>
-            </div>
+            <details key={q} className="group py-1" open>
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 [&::-webkit-details-marker]:hidden">
+                <span className="font-display text-lg font-semibold tracking-[0.02em] text-bone">{q}</span>
+                <span className="font-display flex-none text-xl text-glow transition-transform group-open:rotate-45" aria-hidden="true">
+                  +
+                </span>
+              </summary>
+              <div className="pb-5 text-bone/85">{a}</div>
+            </details>
           ))}
-        </dl>
+        </div>
         <p className="text-sm text-steel">
           Anything else: ask an organiser from {EVENT.club}. The organisers&apos; decisions on scoring are final.
         </p>

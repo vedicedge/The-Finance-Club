@@ -35,9 +35,10 @@ export function LeaderboardView({ initial }: { initial: Leaderboard | null }) {
     <div className="space-y-10">
       {stale && <p className="text-xs font-semibold tracking-[0.16em] text-ember uppercase">Signal weak · showing the last update</p>}
       {nothing && (
-        <div className="panel px-5 py-8 text-center">
-          <p className="font-display text-2xl text-bone">The board lights up after the prelim.</p>
-          <p className="mt-2 text-steel">Fifteen questions decide who reaches {ROUNDS.round1}.</p>
+        <div className="panel corners px-5 py-10 text-center [--corner-inset:8px] [--corner-size:14px]">
+          <p className="eyebrow text-glow">Standing by</p>
+          <p className="display mt-3 text-2xl text-bone sm:text-3xl">The board lights up after the prelim.</p>
+          <p className="mt-3 text-steel">Fifteen questions decide who reaches {ROUNDS.round1}.</p>
         </div>
       )}
 
@@ -82,7 +83,7 @@ export function LeaderboardView({ initial }: { initial: Leaderboard | null }) {
                     <span className="text-steel">No winner</span>
                   ) : m.winner ? (
                     <>
-                      <span className="num font-semibold text-torch">{m.winner}</span> {m.winnerName}
+                      <span className="num font-semibold text-glow">{m.winner}</span> {m.winnerName}
                       {m.choice && <span className="text-steel"> · {CHOICE[m.choice]}{m.choice === 'swap' && m.swapTarget ? ` with ${m.swapTarget}` : ''}</span>}
                     </>
                   ) : (
@@ -145,8 +146,11 @@ export function LeaderboardView({ initial }: { initial: Leaderboard | null }) {
 function Block({ eyebrow, title, children }: { eyebrow: string; title: string; children: React.ReactNode }) {
   return (
     <section>
-      <p className="eyebrow">{eyebrow}</p>
-      <h2 className="display mt-2 text-[clamp(2rem,6vw,3rem)]">{title}</h2>
+      <p className="eyebrow flex items-center gap-3 text-glow">
+        <span className="h-px w-8 bg-glow/70" aria-hidden="true" />
+        {eyebrow}
+      </p>
+      <h2 className="display mt-3 text-[clamp(1.9rem,6vw,2.8rem)]">{title}</h2>
       <div className="mt-5">{children}</div>
     </section>
   );
@@ -156,11 +160,15 @@ function Row({ rank, id, name, right, note, tag, strong, dim }: {
   rank?: number; id: string; name: string; right: string; note?: string; tag?: string; strong?: boolean; dim?: boolean;
 }) {
   return (
-    <li className={`grid grid-cols-[2rem_3.4rem_1fr_auto] items-baseline gap-x-3 py-2.5 ${dim ? 'opacity-50' : ''}`}>
-      <span className="num text-steel">{rank ?? ''}</span>
-      <span className="num font-semibold text-torch">{id}</span>
+    <li
+      className={`grid grid-cols-[2rem_3.4rem_1fr_auto] items-baseline gap-x-3 py-2.5 ${dim ? 'opacity-50' : ''} ${
+        strong ? '-mx-3 bg-gradient-to-r from-glow/15 to-transparent px-3 shadow-[inset_2px_0_0_var(--color-glow)]' : ''
+      }`}
+    >
+      <span className={`num ${strong ? 'font-semibold text-glow' : 'text-steel'}`}>{rank ?? ''}</span>
+      <span className="num font-semibold text-glow">{id}</span>
       <span className="min-w-0">
-        <span className={`block truncate ${strong ? 'font-display text-xl text-bone' : 'text-bone'}`}>{name}</span>
+        <span className={`block truncate ${strong ? 'font-display text-xl font-semibold text-bone' : 'text-bone'}`}>{name}</span>
         {(note || tag) && (
           <span className="block truncate text-xs text-steel">
             {tag && <span className="mr-2 font-semibold tracking-[0.12em] text-toxic uppercase">{tag}</span>}
@@ -168,7 +176,7 @@ function Row({ rank, id, name, right, note, tag, strong, dim }: {
           </span>
         )}
       </span>
-      <span className={`num text-right font-semibold ${strong ? 'text-xl text-torch' : ''}`}>{right}</span>
+      <span className={`num text-right font-semibold ${strong ? 'text-xl text-glow' : ''}`}>{right}</span>
     </li>
   );
 }

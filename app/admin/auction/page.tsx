@@ -81,7 +81,7 @@ export default async function AuctionConsole({
       <NextPhase organiser={organiser} to="round1" />
       <NextPhase organiser={organiser} to="round2" />
       {r1.phase !== 'round1' && !r1.locked && (
-        <p className="mt-6 rounded-sm border border-torch/40 bg-torch/10 px-4 py-3 text-sm text-torch">
+        <p className="mt-6 rounded-sm border border-glow/40 bg-glow/10 px-4 py-3 text-sm text-glow">
           The event is not in Round 1 yet. Freeze the top 16 in the quiz console, then an admin starts Round 1 (button above, or
           the command centre).
           You can already enter the Breaking News draw below.
@@ -107,13 +107,13 @@ export default async function AuctionConsole({
       )}
 
       {r1.phase === 'round1' && !r1.locked && step === 'tips' && (
-        <section className={`mt-6 rounded-sm border px-5 py-4 ${tipsOpen ? 'border-torch bg-torch/10' : 'border-line bg-vault'}`}>
+        <section className={`mt-6 rounded-sm border px-5 py-4 ${tipsOpen ? 'border-glow bg-glow/10' : 'border-line bg-vault'}`}>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h2 className="eyebrow">Insider Tips · ₹2 Cr · bought by agencies on My Agency</h2>
               {tipsOpen ? (
                 <p className="mt-1 text-bone">
-                  Window open · <WindowClock closesAt={r1.tipsClosesAt!} serverNow={r1.now} refreshOnClose className="text-2xl font-semibold text-torch" /> left
+                  Window open · <WindowClock closesAt={r1.tipsClosesAt!} serverNow={r1.now} refreshOnClose className="text-2xl font-semibold text-glow" /> left
                   · <span className="num">{tipBuyers.length}</span> bought
                 </p>
               ) : (
@@ -155,7 +155,7 @@ export default async function AuctionConsole({
       )}
 
       {r1.phase === 'round1' && canMoney && !r1.fundsStarted && (
-        <form action={startFunds} className="panel mt-6 flex flex-wrap items-center justify-between gap-4 border-l-2 border-l-torch px-5 py-4">
+        <form action={startFunds} className="panel mt-6 flex flex-wrap items-center justify-between gap-4 border-l-2 border-l-glow px-5 py-4">
           <p className="text-bone">Start of Round 1: credit the starting fund to every agency in the game.</p>
           <button className="btn btn-primary">Credit ₹50 Cr to {active.length} agencies</button>
         </form>
@@ -172,11 +172,11 @@ export default async function AuctionConsole({
             {lot ? (
               <>
                 <p className="mt-3 flex items-baseline gap-3">
-                  <span className="num text-4xl font-semibold text-torch">{lot.id}</span>
+                  <span className="num text-4xl font-semibold text-glow">{lot.id}</span>
                   <span className="text-sm text-steel">{lot.category}</span>
                   {r1.sold.has(lot.id) && <span className="stamp text-ember">Sold</span>}
                 </p>
-                <p className="font-display mt-1 text-2xl">{lot.gear_name}</p>
+                <p className="font-serif mt-1 text-2xl">{lot.gear_name}</p>
                 <p className="num mt-1 text-steel">
                   Power <span className="text-bone">{lot.power}</span> · minimum <span className="text-bone">{formatCrore(lot.min_bid)}</span>
                 </p>
@@ -260,7 +260,7 @@ export default async function AuctionConsole({
           <ul className="mt-3 divide-y divide-line/60 text-sm">
             {r1.recent.map((s) => (
               <li key={s.sale_id} className="flex flex-wrap items-center gap-3 py-2">
-                <span className="num w-12 font-semibold text-torch">{s.card_id}</span>
+                <span className="num w-12 font-semibold text-glow">{s.card_id}</span>
                 <span className="min-w-40 flex-1">{s.gear_name}</span>
                 <span className="num w-12">{s.agency_id}</span>
                 <span className="num w-20 text-right">{formatCrore(s.price)}</span>
@@ -391,7 +391,7 @@ export default async function AuctionConsole({
               <ul className="text-sm">
                 {pendingClose.map((a) => (
                   <li key={a.id}>
-                    <span className="num font-semibold text-torch">{a.id}</span> missing {a.missing.join(', ')} ·{' '}
+                    <span className="num font-semibold text-glow">{a.id}</span> missing {a.missing.join(', ')} ·{' '}
                     {a.missing.length >= 2
                       ? <span className="text-ember">will be eliminated (2+ missing)</span>
                       : a.fund < 8
@@ -409,7 +409,7 @@ export default async function AuctionConsole({
           )}
           <form action={lockRound1} className="flex flex-wrap items-center gap-3 border-t border-line pt-4">
             <label className="flex items-center gap-2 text-sm text-steel">
-              <input type="checkbox" name="confirm" className="accent-torch" /> Ledger check done
+              <input type="checkbox" name="confirm" className="accent-glow" /> Ledger check done
             </label>
             <button disabled={pendingClose.length > 0} className="btn btn-primary">Lock Round 1</button>
             <span className="text-xs text-steel">Reveals any remaining headlines and the Team-Ups, then fixes Power Levels.</span>
@@ -434,7 +434,7 @@ export default async function AuctionConsole({
             {r1.agencies.map((a) => (
               <tr key={a.id} className={`border-b border-line/60 ${a.status !== 'active' ? 'text-steel/60' : ''}`}>
                 <td className="py-2 pr-3">
-                  <span className="num font-semibold text-torch">{a.id}</span> {a.name}
+                  <span className="num font-semibold text-glow">{a.id}</span> {a.name}
                   {a.status === 'eliminated' && <span className="ml-2 text-xs text-ember">eliminated</span>}
                 </td>
                 <td className="num py-2 pr-3 text-right">{formatCrore(a.fund)}</td>

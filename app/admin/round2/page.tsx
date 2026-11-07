@@ -34,7 +34,7 @@ export default async function Round2Console({ searchParams }: { searchParams: Pr
       <NextPhase organiser={organiser} to="round2" />
       <NextPhase organiser={organiser} to="round3" />
       {r2.phase !== 'round2' && !r2.published && (
-        <p className="mt-6 rounded-sm border border-torch/40 bg-torch/10 px-4 py-3 text-sm text-torch">
+        <p className="mt-6 rounded-sm border border-glow/40 bg-glow/10 px-4 py-3 text-sm text-glow">
           The event is not in Round 2. Lock Round 1 on the Power Bazaar console, then an admin starts Round 2 (the button
           appears here, or use the command centre).
         </p>
@@ -67,13 +67,13 @@ export default async function Round2Console({ searchParams }: { searchParams: Pr
               return (
                 <li key={d.id} className="py-2.5">
                   <form action={saveVotes.bind(null, d.id)} className="flex flex-wrap items-center gap-3 text-sm">
-                    <span className="min-w-48"><span className="num font-semibold text-torch">{d.agency_a}</span> {r2.names.get(d.agency_a)}</span>
+                    <span className="min-w-48"><span className="num font-semibold text-glow">{d.agency_a}</span> {r2.names.get(d.agency_a)}</span>
                     <input name="votes_a" type="number" min={0} defaultValue={va} disabled={!social || !live} className={num} aria-label={`Votes for ${d.agency_a}`} />
                     {d.agency_b ? (
                       <>
                         <span className="text-steel">vs</span>
                         <input name="votes_b" type="number" min={0} defaultValue={vb} disabled={!social || !live} className={num} aria-label={`Votes for ${d.agency_b}`} />
-                        <span className="min-w-48"><span className="num font-semibold text-torch">{d.agency_b}</span> {r2.names.get(d.agency_b)}</span>
+                        <span className="min-w-48"><span className="num font-semibold text-glow">{d.agency_b}</span> {r2.names.get(d.agency_b)}</span>
                         {/* Always offered: a tie can only be saved together with its rock-paper-scissors winner. */}
                         <select name="tiebreak" defaultValue={d.tiebreak_winner ?? ''} disabled={!social || !live} aria-label="Rock-paper-scissors winner, if tied" className="rounded-sm border border-line-strong bg-vault-2 px-2 py-1">
                           <option value="">If tied: RPS winner…</option>
@@ -125,7 +125,7 @@ export default async function Round2Console({ searchParams }: { searchParams: Pr
                 const s = scoreOf.get(a.id);
                 return (
                   <tr key={a.id} className="border-b border-line/60">
-                    <td className="py-2 pr-3"><span className="num font-semibold text-torch">{a.id}</span> {a.name}</td>
+                    <td className="py-2 pr-3"><span className="num font-semibold text-glow">{a.id}</span> {a.name}</td>
                     <td colSpan={4} className="py-2 pr-3">
                       <form action={saveTower.bind(null, a.id)} className="flex flex-wrap items-center gap-2">
                         <input name="correct" defaultValue={retry ? sp.correct : t?.correct_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Correct blocks" />
@@ -156,9 +156,9 @@ export default async function Round2Console({ searchParams }: { searchParams: Pr
           <h2 className="eyebrow">Top 8 → The Doomsday Vault</h2>
           <ol className="mt-3 text-sm">
             {r2.board.rows.map((r) => (
-              <li key={r.agencyId} className={`flex items-center gap-3 border-b border-line/60 py-1.5 ${r.position === 8 ? 'border-b-torch' : ''}`}>
+              <li key={r.agencyId} className={`flex items-center gap-3 border-b border-line/60 py-1.5 ${r.position === 8 ? 'border-b-glow' : ''}`}>
                 <span className="num w-6 text-steel">{r.rank}</span>
-                <span className="num w-12 font-semibold text-torch">{r.agencyId}</span>
+                <span className="num w-12 font-semibold text-glow">{r.agencyId}</span>
                 <span className="min-w-0 flex-1 truncate">{r.name}</span>
                 <span className="num">{r.score.toFixed(2)}</span>
                 <span className={`w-5 text-right ${r.qualified ? 'text-toxic' : r.qualified === null ? 'text-ember' : 'text-steel/40'}`}>
@@ -176,7 +176,7 @@ export default async function Round2Console({ searchParams }: { searchParams: Pr
               <p className="text-sm text-steel">Settle it by {/* open decision 8 */}the announced tie-break, then enter the order (1 = goes through first).</p>
               {r2.board.cutoffGroup.map((id) => (
                 <label key={id} className="flex items-center justify-between text-sm">
-                  <span><span className="num font-semibold text-torch">{id}</span> {r2.names.get(id)}</span>
+                  <span><span className="num font-semibold text-glow">{id}</span> {r2.names.get(id)}</span>
                   <input name={`rank_${id}`} type="number" min={1} max={r2.board.cutoffGroup.length} defaultValue={r2.raw.get(id)?.cutoff_rank ?? ''} className={num} />
                 </label>
               ))}
@@ -190,7 +190,7 @@ export default async function Round2Console({ searchParams }: { searchParams: Pr
                 Top 8 stay in the game; everyone else is eliminated in Round 2. +₹5 Cr goes to each duel winner or bye that made the top 8.
               </p>
               <label className="flex items-center gap-2 text-sm text-steel">
-                <input type="checkbox" name="confirm" className="accent-torch" /> All towers and votes are final
+                <input type="checkbox" name="confirm" className="accent-glow" /> All towers and votes are final
               </label>
               <button disabled={!r2.board.qualifiers} className="btn btn-primary w-full">Publish results</button>
             </form>

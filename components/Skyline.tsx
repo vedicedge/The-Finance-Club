@@ -35,18 +35,18 @@ export function Skyline({ className = '', lit = true }: { className?: string; li
     >
       <defs>
         <linearGradient id="sky-fill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#13261f" />
-          <stop offset="1" stopColor="#050807" />
+          <stop offset="0" stopColor="#0c110b" />
+          <stop offset="1" stopColor="#050605" />
         </linearGradient>
         <linearGradient id="sky-haze" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#62d6a8" stopOpacity="0" />
-          <stop offset="1" stopColor="#62d6a8" stopOpacity="0.18" />
+          <stop offset="0" stopColor="#a9cf6e" stopOpacity="0" />
+          <stop offset="1" stopColor="#a9cf6e" stopOpacity="0.24" />
         </linearGradient>
       </defs>
 
       <rect x="0" y="120" width="1200" height="100" fill="url(#sky-haze)" />
 
-      <g fill="url(#sky-fill)" stroke="#2f7d66" strokeOpacity="0.35" strokeWidth="1">
+      <g fill="url(#sky-fill)" stroke="#a9cf6e" strokeOpacity="0.16" strokeWidth="1">
         {towers.map((t) => (
           <rect key={t.x} x={t.x} y={220 - t.h} width={t.w} height={t.h} />
         ))}
@@ -63,7 +63,7 @@ export function Skyline({ className = '', lit = true }: { className?: string; li
 
         {/* Lotus Temple: layered petals */}
         <path d="M640 220 Q660 168 690 158 Q700 120 716 104 Q732 120 742 158 Q772 168 792 220 Z" />
-        <path d="M680 220 Q700 176 716 140 Q732 176 752 220 Z" fill="#0b1513" />
+        <path d="M680 220 Q700 176 716 140 Q732 176 752 220 Z" fill="#0e130d" />
 
         {/* Low city between landmarks */}
         <path d="M0 220 L0 196 L40 196 L40 184 L210 184 L210 200 L250 200 L250 220 Z" />
@@ -73,7 +73,7 @@ export function Skyline({ className = '', lit = true }: { className?: string; li
       </g>
 
       {/* Metro on its elevated line, with pillars and a train */}
-      <g fill="#0b1513" stroke="#62d6a8" strokeOpacity="0.4" strokeWidth="1">
+      <g fill="#060806" stroke="#a9cf6e" strokeOpacity="0.3" strokeWidth="1">
         <rect x="0" y="198" width="1200" height="5" />
         {Array.from({ length: 13 }, (_, i) => (
           <rect key={i} x={30 + i * 95} y="203" width="7" height="17" />
@@ -81,7 +81,7 @@ export function Skyline({ className = '', lit = true }: { className?: string; li
         <rect x="340" y="186" width="210" height="12" rx="5" />
       </g>
       {lit && (
-        <g fill="#e9b04e" opacity="0.7">
+        <g fill="#a9cf6e" opacity="0.7">
           {Array.from({ length: 12 }, (_, i) => (
             <rect key={i} x={350 + i * 16} y="189" width="8" height="4" rx="1" />
           ))}
@@ -89,7 +89,7 @@ export function Skyline({ className = '', lit = true }: { className?: string; li
       )}
 
       {lit && (
-        <g fill="#e9b04e">
+        <g fill="#a9cf6e">
           {windows.map((w, i) => (
             <rect key={i} x={w.x} y={w.y} width="5" height="7" opacity={0.35 + ((i * 37) % 50) / 100} />
           ))}

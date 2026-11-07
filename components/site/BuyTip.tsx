@@ -11,10 +11,10 @@ export function BuyTip({ closesAt, serverNow, fund }: { closesAt: string; server
   const short = fund < 2;
 
   return (
-    <section className="panel border-l-2 border-l-torch px-5 py-5 transmission">
+    <section className="panel border-l-2 border-l-glow px-5 py-5 transmission">
       <div className="flex items-baseline justify-between gap-3">
-        <p className="eyebrow text-torch">Insider Tips window</p>
-        <WindowClock closesAt={closesAt} serverNow={serverNow} refreshOnClose className="text-3xl font-semibold text-torch" />
+        <p className="eyebrow text-glow">Insider Tips window</p>
+        <WindowClock closesAt={closesAt} serverNow={serverNow} refreshOnClose className="text-3xl font-semibold text-glow" />
       </div>
       <p className="mt-2 text-sm text-bone/85">
         For ₹2 Cr, see one of the 6 Breaking News headlines before it is announced: which card it hits and by how much. The site

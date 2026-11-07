@@ -21,7 +21,7 @@ export function LoginForm() {
           type="email"
           autoComplete="email"
           required
-          className="mt-2 block w-full rounded-sm border border-line-strong bg-vault-2 px-4 py-3 text-base text-bone placeholder:text-steel/60 focus:border-torch focus:outline-none"
+          className="mt-2 block w-full rounded-sm border border-line-strong bg-vault-2 px-4 py-3 text-base text-bone placeholder:text-steel/60 focus:border-glow focus:outline-none"
           placeholder="you@example.com"
         />
       </label>
@@ -34,7 +34,7 @@ export function LoginForm() {
             type="password"
             autoComplete="current-password"
             required
-            className="mt-2 block w-full rounded-sm border border-line-strong bg-vault-2 px-4 py-3 text-base text-bone focus:border-torch focus:outline-none"
+            className="mt-2 block w-full rounded-sm border border-line-strong bg-vault-2 px-4 py-3 text-base text-bone focus:border-glow focus:outline-none"
           />
         </label>
       )}
@@ -42,7 +42,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-sm bg-torch px-4 py-3 text-sm font-semibold tracking-[0.18em] text-abyss uppercase transition-colors hover:bg-[#f3c46c] disabled:opacity-60"
+        className="btn btn-primary w-full"
       >
         {pending ? 'Establishing secure line…' : mode === 'link' ? 'Send sign-in link' : 'Enter command centre'}
       </button>

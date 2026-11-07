@@ -11,7 +11,7 @@ export function Paper({ children, note }: { children: React.ReactNode; note?: st
     <div className="paper">
       <div className="no-print sticky top-0 z-10 border-b border-line bg-vault text-bone">
         <div className="mx-auto flex max-w-[210mm] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 text-sm">
-          <Link href="/admin/print" className="text-steel hover:text-torch">
+          <Link href="/admin/print" className="text-steel hover:text-glow">
             ← All sheets
           </Link>
           <PrintButton />

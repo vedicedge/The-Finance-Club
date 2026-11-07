@@ -238,5 +238,12 @@ If the repository is made private, they can move into a normal migration.
 
 ## Visual direction
 
-Colours and mood from the reference images (`docs/design-refs/README.md`); type from the Section E
-site (Cormorant Garamond, Pinyon Script, Inter). The spec's comic-book styling is not used.
+Redesigned on 7 November around the club's event poster (`assets/art/poster.jpg`): green on
+near-black, Cinzel capitals, the eclipse and the hooded Professor Kalyug, cinematic film-strip
+frames and viewfinder corners from the Pinterest references. Details in
+`docs/design-refs/README.md` and `scripts/art/README.md`. The spec's comic-book styling is not
+used. All art is original or cut from the club's own poster; no Marvel/DC imagery. The poster
+itself is not shown on the site (its date, venue and club line are still being finalised); the
+hero uses the club's character art of Professor Kalyug (hood to waist) and the poster's
+lettering instead. The hero fits the first screen on phones and laptops: art, wordmark, clock
+and the register button, with no scrolling.

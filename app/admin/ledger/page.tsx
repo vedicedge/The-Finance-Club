@@ -67,7 +67,7 @@ export default async function LedgerPage({ searchParams }: { searchParams: Promi
           <input type="hidden" name="filter" value={filter} />
           {last ? (
             <p className="text-sm text-bone">
-              Will void <span className="num">#{last.id}</span> · <span className="num text-torch">{last.agency_id}</span> ·{' '}
+              Will void <span className="num">#{last.id}</span> · <span className="num text-glow">{last.agency_id}</span> ·{' '}
               {REASON_LABEL[last.reason] ?? last.reason}
               {last.ref ? ` (${last.ref})` : ''} · <span className="num">{formatCrore(Number(last.amount), { signed: true })}</span> ·{' '}
               <span className="num text-steel">{ledgerTime(last.created_at)}</span>
@@ -86,12 +86,12 @@ export default async function LedgerPage({ searchParams }: { searchParams: Promi
       </section>
 
       <nav aria-label="Filter by agency" className="mt-8 flex flex-wrap gap-2 text-sm">
-        <Link href="/admin/ledger" className={`rounded-sm border px-2.5 py-1 ${!filter ? 'border-torch text-torch' : 'border-line text-steel hover:text-bone'}`}>All</Link>
+        <Link href="/admin/ledger" className={`rounded-sm border px-2.5 py-1 ${!filter ? 'border-glow text-glow' : 'border-line text-steel hover:text-bone'}`}>All</Link>
         {withMoney.map((a) => (
           <Link
             key={a.id}
             href={`/admin/ledger?agency=${a.id}`}
-            className={`num rounded-sm border px-2.5 py-1 ${filter === a.id ? 'border-torch text-torch' : 'border-line text-steel hover:text-bone'}`}
+            className={`num rounded-sm border px-2.5 py-1 ${filter === a.id ? 'border-glow text-glow' : 'border-line text-steel hover:text-bone'}`}
           >
             {a.id} <span className="text-bone">{formatCrore(fundOf.get(a.id) ?? 0)}</span>
           </Link>
@@ -117,7 +117,7 @@ export default async function LedgerPage({ searchParams }: { searchParams: Promi
               <tr key={r.id} className={`border-b border-line/60 align-top ${r.voided ? 'text-steel/60 line-through decoration-ember/60' : ''}`}>
                 <td className="num py-2 pr-3 text-steel">{r.id}</td>
                 <td className="num py-2 pr-3">{ledgerTime(r.created_at)}</td>
-                <td className="num py-2 pr-3 font-semibold text-torch">{r.agency_id}</td>
+                <td className="num py-2 pr-3 font-semibold text-glow">{r.agency_id}</td>
                 <td className="py-2 pr-3">
                   {REASON_LABEL[r.reason] ?? r.reason}
                   {(r.note || r.ref) && <span className="block text-xs text-steel">{[r.ref, r.note].filter(Boolean).join(' · ')}</span>}

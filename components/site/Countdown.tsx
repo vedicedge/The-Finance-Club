@@ -35,13 +35,16 @@ export function Countdown({ target, after }: { target: string; after: React.Reac
     ['Sec', parts?.seconds ?? null],
   ];
   return (
-    <div role="timer" aria-label="Time until Doomsday" className="grid w-full max-w-md grid-cols-4 gap-px overflow-hidden rounded-sm border border-line bg-line">
+    <div role="timer" aria-label="Time until Doomsday" className="grid w-full max-w-md grid-cols-4 gap-2 sm:gap-3">
       {cells.map(([label, value]) => (
-        <div key={label} className="bg-vault/90 px-2 py-3 text-center">
-          <span className="num block text-[clamp(1.9rem,8vw,2.9rem)] leading-none font-semibold text-bone" aria-hidden={label === 'Sec'}>
+        <div
+          key={label}
+          className="corners border border-line bg-abyss/60 px-1 pt-2 pb-1.5 text-center backdrop-blur-sm [--corner-color:rgb(169_207_110/0.7)] [--corner-inset:-1px] [--corner-size:9px] sm:pt-3 sm:pb-2.5 lg:short:pt-2 lg:short:pb-2"
+        >
+          <span className="num block text-[clamp(1.7rem,7.5vw,2.2rem)] leading-none font-extralight text-bone sm:text-[2.6rem] lg:text-[3.1rem] lg:short:text-[2.5rem]" aria-hidden={label === 'Sec'}>
             {value === null ? '––' : String(value).padStart(2, '0')}
           </span>
-          <span className="mt-1.5 block text-[0.62rem] font-semibold tracking-[0.24em] text-steel uppercase">{label}</span>
+          <span className="font-display mt-1 block text-[0.6rem] font-semibold tracking-[0.28em] text-glow/90 uppercase sm:mt-2">{label}</span>
         </div>
       ))}
     </div>

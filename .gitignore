@@ -53,3 +53,7 @@ next-env.d.ts
 scripts/db/safeupdate/*.o
 scripts/db/safeupdate/*.so
 scripts/db/safeupdate/*.bc
+
+# python
+__pycache__/
+*.pyc

@@ -50,14 +50,14 @@ export default async function CrewPage() {
                       name="roles"
                       value={r}
                       defaultChecked={c.roles.filter(isRole).includes(r)}
-                      className="accent-torch"
+                      className="accent-glow"
                     />
                     {ROLE_LABELS[r]}
                   </label>
                 ))}
               </div>
               <label className="flex items-center gap-2 text-sm">
-                <input type="checkbox" name="active" defaultChecked={c.active} className="accent-torch" /> Active
+                <input type="checkbox" name="active" defaultChecked={c.active} className="accent-glow" /> Active
               </label>
               <input
                 name="password"
@@ -67,7 +67,7 @@ export default async function CrewPage() {
                 autoComplete="new-password"
                 className="w-40 rounded-sm border border-line-strong bg-vault-2 px-2 py-1.5 text-sm"
               />
-              <button className="rounded-sm border border-line-strong px-3 py-1.5 text-sm hover:border-torch hover:text-torch">
+              <button className="rounded-sm border border-line-strong px-3 py-1.5 text-sm hover:border-glow hover:text-glow">
                 Save
               </button>
             </form>
