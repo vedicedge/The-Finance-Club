@@ -404,6 +404,34 @@ body {
   to { opacity: 1; transform: none; }
 }
 
+/*
+ * The cursor: a small eclipse (public/cursors/eclipse.svg) and, over anything clickable, the
+ * eclipse with the poster's four-point star (target.svg). Mouse and trackpad only; text fields
+ * keep the typing cursor. The PNGs are fallbacks for browsers that can't use an SVG cursor.
+ */
+@layer base {
+  @media (pointer: fine) {
+    html {
+      cursor: url('/cursors/eclipse.svg') 16 16, url('/cursors/eclipse.png') 16 16, auto;
+    }
+    a[href],
+    button:not(:disabled),
+    summary,
+    select,
+    label:has(> input[type='checkbox']),
+    input[type='checkbox'],
+    input[type='radio'],
+    input[type='submit'],
+    [role='button'] {
+      cursor: url('/cursors/target.svg') 16 16, url('/cursors/target.png') 16 16, pointer;
+    }
+    input:not([type='checkbox'], [type='radio'], [type='submit']),
+    textarea {
+      cursor: text;
+    }
+  }
+}
+
 :focus-visible {
   outline: 2px solid var(--color-glow);
   outline-offset: 3px;

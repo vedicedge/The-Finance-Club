@@ -49,7 +49,7 @@ export function SiteHeader({ registrationOpen }: { registrationOpen: boolean }) 
           )}
         </nav>
         <details className="group relative ml-auto lg:hidden">
-          <summary className="btn btn-ghost !min-h-0 cursor-pointer list-none !px-3.5 !py-2 [&::-webkit-details-marker]:hidden">
+          <summary className="btn btn-ghost !min-h-0 list-none !px-3.5 !py-2 [&::-webkit-details-marker]:hidden">
             <span aria-hidden="true" className="flex flex-col gap-[3px]">
               <span className="block h-px w-4 bg-current" />
               <span className="block h-px w-4 bg-current" />

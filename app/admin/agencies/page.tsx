@@ -102,7 +102,7 @@ export default async function AgenciesPage({ searchParams }: { searchParams: Pro
                 <ResetPinButton agencyId={a.id} />
               </div>
               <details className="border-t border-line px-4">
-                <summary className="cursor-pointer py-2 text-sm text-steel hover:text-bone">Founders &amp; more</summary>
+                <summary className="py-2 text-sm text-steel hover:text-bone">Founders &amp; more</summary>
                 <div className="divide-y divide-line/60 pb-3">
                   {a.founders
                     .sort((x, y) => Number(y.is_captain) - Number(x.is_captain) || x.id - y.id)

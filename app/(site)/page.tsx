@@ -76,7 +76,7 @@ export default async function Landing() {
                     Register your agency
                   </Link>
                 ) : (
-                  <span className="btn btn-ghost flex-1 cursor-default text-steel">Registration closed</span>
+                  <span className="btn btn-ghost flex-1 text-steel">Registration closed</span>
                 )}
                 <Link href="/login" className="btn btn-ghost hidden flex-1 sm:flex">
                   Agency login
