@@ -1,8 +1,11 @@
 # Design references
 
-**The event poster is the centre of the design** (`assets/art/poster.jpg`): a hooded figure,
+**The event poster is the design's source** (`assets/art/poster.jpg`): a hooded figure,
 Professor Kalyug, before a black eclipse with a green corona, over a ruined city, with the
-DOOMSDAY title in cracked silver-green capitals. The site's colours, type and art all come from it.
+DOOMSDAY title in cracked silver-green capitals. The site's colours, type and art all come from
+it, but the poster itself is not shown: its details (date, venue, club line) are still being
+finalised. The hero is composed from its pieces instead: the figure, eclipse and skyline widened
+to the screen (`hero.jpg`) and the DOOMSDAY lettering as the title.
 
 The other references (Pinterest boards shared in chat, not committed) set the layout language.
 Several are fan art or film/game key art; the website must never use their images or any
@@ -10,7 +13,7 @@ Marvel/DC imagery or logos (spec, tone rules). We take only the composition idea
 
 | Reference | What we borrow | Where it shows up |
 |---|---|---|
-| The event poster | Palette, Cinzel-style capitals, the eclipse, the hooded figure, the thin rule with a star, the date/venue line with icons | Everywhere: hero, wordmark, Kalyug, icon, colour tokens |
+| The event poster | Palette, Cinzel-style capitals, the eclipse, the hooded figure, the thin rule with a star | Hero art and title, Kalyug, icon, colour tokens |
 | Stacked cinematic frames ("street stories" photo series, film-still strips) | Wide image panels stacked with black gutters, huge type laid over the picture | The five rounds as a film strip on the landing page; scene frames on /rounds |
 | Horror studio redesign (green UI, framed photo) | Viewfinder corner brackets, dark green UI, big tracked headings with one word highlighted | `.corners`, section titles ("Five stages. **One survivor.**") |
 | Sci-fi game site (thin vertical light lines, floating thumbnails) | Thin vertical streaks over art, small caps labels | `.streaks` over heroes and frames |

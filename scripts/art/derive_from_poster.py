@@ -3,8 +3,9 @@ Cut the site's art out of the event poster.
 
     python3 scripts/art/derive_from_poster.py assets/art/poster.jpg assets/art /tmp
 
-Writes poster.jpg (re-saved), kalyug.jpg (the hooded figure and eclipse), ambient.jpg (a
-blurred haze) and wordmark.webp (the DOOMSDAY lettering keyed onto transparency).
+Writes poster.jpg (re-saved), kalyug.jpg (the hooded figure and eclipse), kalyug-hood.jpg (a
+close-up of the hood), ambient.jpg (a blurred haze) and wordmark.webp (the DOOMSDAY lettering
+keyed onto transparency).
 """
 import sys, os
 from PIL import Image, ImageFilter, ImageEnhance, ImageChops
@@ -17,6 +18,13 @@ P.save(os.path.join(outdir, 'poster.jpg'), quality=88, optimize=True, progressiv
 # Professor Kalyug: the hooded figure and the eclipse, without the title
 k = P.crop((140, 170, 940, 842))
 k.save(os.path.join(outdir, 'kalyug.jpg'), quality=88, optimize=True, progressive=True)
+
+# A close-up of the hood, for the synopsis "dossier photo" (upscaled with fresh grain)
+from PIL import ImageChops
+hood = P.crop((380, 330, 860, 810)).resize((960, 960), Image.LANCZOS).filter(ImageFilter.UnsharpMask(radius=2, percent=70, threshold=3))
+grain = Image.effect_noise(hood.size, 30).convert('RGB')
+hood = ImageChops.blend(hood, ImageChops.overlay(hood, grain), 0.2)
+hood.save(os.path.join(outdir, 'kalyug-hood.jpg'), quality=84, optimize=True, progressive=True)
 
 # Ambient backdrop: the poster blurred into a wide haze (used behind the hero on wide screens)
 amb = P.resize((960, int(960 * H / W)))

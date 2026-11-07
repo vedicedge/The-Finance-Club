@@ -242,4 +242,6 @@ Redesigned on 7 November around the club's event poster (`assets/art/poster.jpg`
 near-black, Cinzel capitals, the eclipse and the hooded Professor Kalyug, cinematic film-strip
 frames and viewfinder corners from the Pinterest references. Details in
 `docs/design-refs/README.md` and `scripts/art/README.md`. The spec's comic-book styling is not
-used. All art is original or cut from the club's own poster; no Marvel/DC imagery.
+used. All art is original or cut from the club's own poster; no Marvel/DC imagery. The poster
+itself is not shown on the site (its date, venue and club line are still being finalised); the
+hero is built from its figure, eclipse, skyline and lettering instead.

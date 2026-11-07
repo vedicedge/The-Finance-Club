@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { EVENT, ROUNDS } from '@/lib/config';
 import { getEventState, registrationStatus } from '@/lib/event-state';
-import { longDate, posterDate, shortDate, wallClock } from '@/lib/schedule';
+import { longDate, posterDate, shortDate } from '@/lib/schedule';
 import { Countdown } from '@/components/site/Countdown';
-import { Ambient, CalendarIcon, KalyugImage, PinIcon, PosterImage, Star, StarRule } from '@/components/art/Poster';
+import { HeroArt, KalyugCloseUp, Star, StarRule, Wordmark } from '@/components/art/Poster';
 import { Scene, type SceneName } from '@/components/art/Scene';
 import { GearIcon } from '@/components/art/silhouettes';
 
@@ -23,72 +23,50 @@ export default async function Landing() {
 
   return (
     <>
-      {/* ---------------------------------------------------------------- hero: the poster */}
+      {/* ---------------------------------------------------------------- hero: Kalyug over Mahanagar */}
       <section className="relative isolate overflow-hidden">
-        <Ambient className="-z-30 opacity-70" />
-        <div className="absolute inset-0 -z-20 bg-[radial-gradient(70%_60%_at_50%_40%,transparent,rgb(8_10_7/0.85))]" aria-hidden="true" />
+        {/* the poster's hooded figure, eclipse and skyline, widened for the screen */}
+        <div className="absolute inset-x-0 top-0 -z-20 h-[31rem] overflow-hidden sm:h-[38rem] md:h-[44rem] lg:inset-y-0 lg:h-auto" aria-hidden="true">
+          <HeroArt className="hero-drift object-cover object-[74%_35%] md:object-[70%_35%] lg:object-[68%_center]" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(8_10_7/0.35),transparent_28%,rgb(8_10_7/0.55)_62%,var(--color-abyss))] lg:bg-[linear-gradient(90deg,var(--color-abyss)_0%,rgb(8_10_7/0.88)_30%,rgb(8_10_7/0.35)_58%,transparent_78%)]" />
+          <div className="absolute inset-x-0 bottom-0 hidden h-48 bg-gradient-to-b from-transparent to-abyss lg:block" />
+        </div>
         <div className="streaks absolute inset-0 -z-10" aria-hidden="true" />
         <div className="fog absolute inset-0 -z-10" aria-hidden="true" />
-        <div className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-b from-transparent to-abyss" aria-hidden="true" />
 
         {/* viewfinder notes in the corners, on wide screens */}
         <div className="pointer-events-none absolute inset-6 hidden text-[0.62rem] font-semibold tracking-[0.3em] text-steel/80 uppercase xl:block" aria-hidden="true">
           <span className="absolute top-0 left-0">{EVENT.city} · Sector zero</span>
-          <span className="absolute top-0 right-0">Strike · {posterDate(event.startsAt)}</span>
+          <span className="absolute top-0 right-0">Transmission · live</span>
           <span className="absolute bottom-0 left-0">Scroll · mission briefing ↓</span>
-          <span className="absolute right-0 bottom-0">{EVENT.club}</span>
+          <span className="absolute right-0 bottom-0">Threat · total</span>
         </div>
 
-        <h1 className="sr-only">
-          {EVENT.club} presents {EVENT.name}. {EVENT.tagline}
-        </h1>
-
-        <div className="mx-auto grid max-w-7xl items-center gap-x-12 gap-y-10 px-[var(--gutter)] pt-8 pb-20 md:grid-cols-[minmax(0,21rem)_1fr] md:[grid-template-areas:'poster_a'_'poster_b'] md:pt-14 lg:grid-cols-[1fr_minmax(0,25rem)_1fr] lg:[grid-template-areas:'a_poster_b'] lg:pb-28">
-          {/* the poster */}
-          <div className="relative mx-auto w-full max-w-[25rem] md:row-span-2 md:[grid-area:poster] lg:w-[min(25rem,calc((100svh-10rem)*0.707))]">
-            <div className="absolute -inset-10 -z-10 rounded-full bg-glow/15 blur-3xl" aria-hidden="true" />
-            <div className="corners frame !rounded-[6px] [--corner-color:rgb(169_207_110/0.85)] [--corner-inset:-14px] [--corner-size:22px]">
-              <PosterImage sizes="(min-width: 1024px) 400px, (min-width: 768px) 336px, 92vw" preload className="block h-auto w-full" />
-            </div>
-          </div>
-
-          {/* left: the clock */}
-          <div className="text-center md:text-left md:[grid-area:a] lg:text-right">
-            <p className="eyebrow text-glow">Incoming transmission</p>
-            <p className="display metal mt-4 text-[clamp(2.1rem,5vw,3.3rem)] leading-[1.02]">
-              {EVENT.city} falls in
-            </p>
-            <div className="mt-6 flex justify-center md:justify-start lg:justify-end">
-              <Countdown target={event.startsAt} after={<p className="display text-4xl text-ember">Doomsday is here.</p>} />
-            </div>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 md:justify-start lg:justify-end">
-              <span className="font-display flex items-center gap-2 text-[0.82rem] font-semibold tracking-[0.16em] text-bone uppercase">
-                <CalendarIcon className="size-5 text-glow" />
-                {posterDate(event.startsAt)} · {wallClock(event.startsAt, 0)}
-              </span>
-              <span className="hidden h-5 w-px bg-line-strong sm:block" aria-hidden="true" />
-              <span className="font-display flex items-center gap-2 text-[0.82rem] font-semibold tracking-[0.16em] text-bone uppercase">
-                <PinIcon className="size-5 text-glow" />
-                {event.venue}
-              </span>
-            </div>
-          </div>
-
-          {/* right: the call */}
-          <div className="text-center md:text-left md:[grid-area:b]">
-            <p className="font-serif text-[clamp(1.5rem,3vw,2rem)] leading-snug text-silver italic">{EVENT.tagline}</p>
-            <p className="mx-auto mt-4 max-w-sm text-[0.95rem] leading-relaxed text-steel md:mx-0">
+        <div className="mx-auto flex max-w-7xl px-[var(--gutter)] pt-[17rem] pb-20 sm:pt-[21rem] md:pt-[26rem] lg:min-h-[min(54rem,calc(100svh-6.5rem))] lg:items-center lg:py-24">
+          <div className="mx-auto w-full max-w-xl text-center lg:mx-0 lg:text-left">
+            <p className="eyebrow text-glow">Incoming transmission · {EVENT.city}</p>
+            <h1 className="mt-5">
+              <Wordmark sizes="(min-width: 640px) 560px, 90vw" preload className="mx-auto h-auto w-[min(100%,35rem)] lg:mx-0 lg:-ml-2" />
+            </h1>
+            <p className="mt-4 font-serif text-[clamp(1.45rem,3vw,1.95rem)] leading-snug text-silver italic">{EVENT.tagline}</p>
+            <p className="mx-auto mt-4 max-w-md text-[0.95rem] leading-relaxed text-steel lg:mx-0">
               {EVENT.villain} has announced a doomsday attack on {EVENT.city}. Three founders, ₹50 crore, one evening to build a hero.
             </p>
-            <div className="mx-auto mt-7 flex w-full max-w-sm flex-col gap-3 md:mx-0">
+
+            <p className="eyebrow mt-9">{EVENT.villain} strikes in</p>
+            <div className="mt-3 flex justify-center lg:justify-start">
+              <Countdown target={event.startsAt} after={<p className="display text-4xl text-ember">Doomsday is here.</p>} />
+            </div>
+
+            <div className="mx-auto mt-9 flex w-full max-w-md flex-col gap-3 sm:flex-row lg:mx-0">
               {reg.open ? (
-                <Link href="/register" className="btn btn-primary">
+                <Link href="/register" className="btn btn-primary flex-1">
                   Register your agency
                 </Link>
               ) : (
-                <span className="btn btn-ghost cursor-default text-steel">Registration closed</span>
+                <span className="btn btn-ghost flex-1 cursor-default text-steel">Registration closed</span>
               )}
-              <Link href="/login" className="btn btn-ghost">
+              <Link href="/login" className="btn btn-ghost flex-1">
                 Agency login
               </Link>
             </div>
@@ -107,7 +85,7 @@ export default async function Landing() {
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-[var(--gutter)] py-20 md:grid-cols-[1.05fr_1fr] md:py-28">
           <figure className="rise relative">
             <div className="frame corners [--corner-inset:14px]">
-              <KalyugImage sizes="(min-width: 768px) 560px, 92vw" className="block h-auto w-full" />
+              <KalyugCloseUp sizes="(min-width: 768px) 560px, 92vw" className="block h-auto w-full" />
               <div className="streaks absolute inset-0" aria-hidden="true" />
               <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/80 to-transparent" aria-hidden="true" />
               <figcaption className="absolute right-5 bottom-5 left-5 flex flex-wrap items-end justify-between gap-3 sm:right-6 sm:left-6">

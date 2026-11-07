@@ -364,6 +364,16 @@ body {
   mask-repeat: no-repeat;
 }
 
+/* A slow push-in on the hero art, like a film's opening shot. */
+.hero-drift {
+  transform-origin: 70% 40%;
+  animation: hero-drift 38s ease-in-out infinite alternate;
+}
+@keyframes hero-drift {
+  from { transform: scale(1); }
+  to { transform: scale(1.07); }
+}
+
 /* Slow drifting fog over the art. */
 .fog {
   pointer-events: none;

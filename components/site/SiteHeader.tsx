@@ -33,7 +33,7 @@ export function SiteHeader({ registrationOpen }: { registrationOpen: boolean }) 
           <EclipseMark />
           <span className="font-deco metal text-[1.45rem] leading-none tracking-[0.06em] sm:text-[1.6rem]">{EVENT.name}</span>
         </Link>
-        <nav aria-label="Main" className="ml-auto hidden items-center gap-7 md:flex">
+        <nav aria-label="Main" className="ml-auto hidden items-center gap-7 lg:flex">
           {LINKS.map((l) => (
             <Link key={l.href} href={l.href} className="font-display text-[0.78rem] font-semibold tracking-[0.2em] text-steel uppercase transition-colors hover:text-glow">
               {l.label}
@@ -48,7 +48,7 @@ export function SiteHeader({ registrationOpen }: { registrationOpen: boolean }) 
             </Link>
           )}
         </nav>
-        <details className="group relative ml-auto md:hidden">
+        <details className="group relative ml-auto lg:hidden">
           <summary className="btn btn-ghost !min-h-0 cursor-pointer list-none !px-3.5 !py-2 [&::-webkit-details-marker]:hidden">
             <span aria-hidden="true" className="flex flex-col gap-[3px]">
               <span className="block h-px w-4 bg-current" />

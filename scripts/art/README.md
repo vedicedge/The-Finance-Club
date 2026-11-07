@@ -5,13 +5,15 @@ real people (spec, tone rules).
 
 | File (`assets/art/`) | What it is | Made by |
 |---|---|---|
-| `poster.jpg` | The event poster: the key art for the whole site | Supplied by the club; `fix_poster.py` corrects "PRESENCES" → "PRESENTS" |
+| `poster.jpg` | The event poster: the **source** for the art below. It is not shown on the site (its details are still being finalised) | Supplied by the club; `fix_poster.py` corrects "PRESENCES" → "PRESENTS" |
+| `hero.jpg` | The landing hero: the poster's hooded figure, eclipse and skyline widened to 2.2 : 1, with no lettering, date or venue | `hero_from_poster.py` |
 | `kalyug.jpg` | Professor Kalyug: the hooded figure and eclipse, cropped from the poster | `derive_from_poster.py` |
+| `kalyug-hood.jpg` | A close-up of the hood (the synopsis "dossier photo") | `derive_from_poster.py` |
 | `wordmark.webp` | The DOOMSDAY lettering, keyed onto transparency | `derive_from_poster.py` |
-| `ambient.jpg` | The poster blurred into a green haze (hero and projector backdrops) | `derive_from_poster.py` |
+| `ambient.jpg` | The poster blurred into a green haze (page banners, projector and crew sign-in backdrops) | `derive_from_poster.py` |
 | `sky-*.jpg` | Painted storm skies with the green eclipse | `sky.py` |
 | `scene-*.jpg` | The seven scenes shown on the site (rounds, founders, leaderboard) | `render-scenes.cjs`, or `generate-ai-art.py` |
-| `app/opengraph-image.jpg` | The link preview (WhatsApp, Instagram DMs): the poster on its own haze | one-off from the poster |
+| `app/opengraph-image.jpg` | The link preview (WhatsApp, Instagram DMs): the hero art, wordmark and tagline (no date or venue) | `og_image.py` |
 
 ## Scenes
 

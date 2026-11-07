@@ -1,24 +1,30 @@
 import Image from 'next/image';
-import poster from '@/assets/art/poster.jpg';
+import hero from '@/assets/art/hero.jpg';
 import kalyug from '@/assets/art/kalyug.jpg';
+import kalyugHood from '@/assets/art/kalyug-hood.jpg';
 import wordmark from '@/assets/art/wordmark.webp';
 import ambient from '@/assets/art/ambient.jpg';
 import { EVENT } from '@/lib/config';
 
 /**
- * The event poster and the pieces cut from it. The poster is the key art for the whole site:
- * the hooded figure is Professor Kalyug, the eclipse is the doomsday sky, and the DOOMSDAY
- * lettering is the wordmark.
+ * Pieces cut from the event poster (assets/art/poster.jpg). The poster itself is not shown on
+ * the site; its hooded figure (Professor Kalyug), eclipse, skyline and DOOMSDAY lettering are.
+ * None of these pieces carry the poster's date, venue or club line.
  */
 
-export function PosterImage({ className = '', sizes, preload = false }: { className?: string; sizes: string; preload?: boolean }) {
+/** The landing hero: the poster's figure, eclipse and skyline, widened to 2.2 : 1. */
+export function HeroArt({ className = '' }: { className?: string }) {
+  return <Image src={hero} alt="" fill sizes="100vw" preload placeholder="blur" className={className} aria-hidden="true" />;
+}
+
+/** A close-up of Professor Kalyug's hood, for the synopsis dossier photo. */
+export function KalyugCloseUp({ className = '', sizes }: { className?: string; sizes: string }) {
   return (
     <Image
-      src={poster}
-      alt={`${EVENT.club} presents ${EVENT.name}: a hooded figure before a black eclipse over a ruined city. 25 November 2026, Auditorium.`}
+      src={kalyugHood}
+      alt={`${EVENT.villain}: a faceless hood in a dark cloak, fastened with a round clasp.`}
       sizes={sizes}
       placeholder="blur"
-      preload={preload}
       className={className}
     />
   );
@@ -65,24 +71,6 @@ export function Star({ className = '' }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={`inline-block size-[0.7em] text-glow ${className}`} aria-hidden="true">
       <path d="M12 0 L13.4 10.6 L24 12 L13.4 13.4 L12 24 L10.6 13.4 L0 12 L10.6 10.6 Z" fill="currentColor" />
-    </svg>
-  );
-}
-
-/** The poster's calendar and location pins. */
-export function CalendarIcon({ className = '' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
-      <path d="M3.5 10 H20.5 M8 3 V7 M16 3 V7" />
-      <path d="M7.5 13.5 H8.5 M11.5 13.5 H12.5 M15.5 13.5 H16.5 M7.5 17 H8.5 M11.5 17 H12.5" strokeWidth="2.2" />
-    </svg>
-  );
-}
-export function PinIcon({ className = '' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} aria-hidden="true" fill="currentColor">
-      <path d="M12 2 C7.6 2 4.5 5.3 4.5 9.4 C4.5 14.6 12 22 12 22 S19.5 14.6 19.5 9.4 C19.5 5.3 16.4 2 12 2 Z M12 12.4 A3 3 0 1 1 12 6.4 A3 3 0 0 1 12 12.4 Z" />
     </svg>
   );
 }
