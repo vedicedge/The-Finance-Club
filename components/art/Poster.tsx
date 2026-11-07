@@ -1,5 +1,6 @@
-import Image from 'next/image';
+import Image, { getImageProps } from 'next/image';
 import hero from '@/assets/art/hero.jpg';
+import heroDesktop from '@/assets/art/hero-desktop.jpg';
 import kalyug from '@/assets/art/kalyug.jpg';
 import kalyugHood from '@/assets/art/kalyug-hood.jpg';
 import wordmark from '@/assets/art/wordmark.webp';
@@ -7,14 +8,28 @@ import ambient from '@/assets/art/ambient.jpg';
 import { EVENT } from '@/lib/config';
 
 /**
- * Pieces cut from the event poster (assets/art/poster.jpg). The poster itself is not shown on
- * the site; its hooded figure (Professor Kalyug), eclipse, skyline and DOOMSDAY lettering are.
- * None of these pieces carry the poster's date, venue or club line.
+ * The event's key art. The poster itself (assets/art/poster.jpg) is not shown on the site; its
+ * DOOMSDAY lettering, a close-up of the hood and a blurred haze are cut from it, and the hero uses
+ * the club's character art of Professor Kalyug. None of these carry the poster's date, venue or
+ * club line.
  */
 
-/** The landing hero: the poster's figure, eclipse and skyline, widened to 2.2 : 1. */
+/**
+ * The landing hero: Professor Kalyug from the hood to the waist, before the eclipse (the club's
+ * character art, see scripts/art/hero_art.py). Phones and tablets get the portrait; screens
+ * 1024 px and wider get it widened to 2.2 : 1 with dark fog on the left for the title. The
+ * browser downloads only the one it shows.
+ */
 export function HeroArt({ className = '' }: { className?: string }) {
-  return <Image src={hero} alt="" fill sizes="100vw" preload placeholder="blur" className={className} aria-hidden="true" />;
+  const common = { alt: '', fill: true, sizes: '100vw', fetchPriority: 'high', loading: 'eager' } as const;
+  const { props: { srcSet: desktop } } = getImageProps({ ...common, src: heroDesktop });
+  const { props: mobile } = getImageProps({ ...common, src: hero, placeholder: 'blur' });
+  return (
+    <picture>
+      <source media="(min-width: 1024px)" srcSet={desktop} sizes="100vw" />
+      <img {...mobile} className={className} aria-hidden="true" />
+    </picture>
+  );
 }
 
 /** A close-up of Professor Kalyug's hood, for the synopsis dossier photo. */

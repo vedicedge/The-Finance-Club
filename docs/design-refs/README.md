@@ -4,8 +4,9 @@
 Professor Kalyug, before a black eclipse with a green corona, over a ruined city, with the
 DOOMSDAY title in cracked silver-green capitals. The site's colours, type and art all come from
 it, but the poster itself is not shown: its details (date, venue, club line) are still being
-finalised. The hero is composed from its pieces instead: the figure, eclipse and skyline widened
-to the screen (`hero.jpg`) and the DOOMSDAY lettering as the title.
+finalised. The hero uses the club's character art of Professor Kalyug instead
+(`kalyug-character.webp`, hood to waist before the eclipse) with the poster's DOOMSDAY lettering
+as the title.
 
 The other references (Pinterest boards shared in chat, not committed) set the layout language.
 Several are fan art or film/game key art; the website must never use their images or any

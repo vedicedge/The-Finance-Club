@@ -41,11 +41,11 @@ export default async function Landing() {
         </div>
 
         <div className="flex min-h-[calc(100svh-6.25rem)] flex-col lg:block lg:min-h-0">
-          {/* the poster's hooded figure, eclipse and skyline, widened for the screen */}
+          {/* Professor Kalyug before the eclipse: the portrait on phones, widened on laptops */}
           <div className="relative -z-20 min-h-[13rem] flex-1 overflow-hidden lg:absolute lg:inset-0" aria-hidden="true">
-            <HeroArt className="hero-drift object-cover object-[84%_center] md:object-[78%_center] lg:object-[68%_center]" />
+            <HeroArt className="hero-drift object-cover object-[center_22%] lg:object-[72%_25%]" />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(8_10_7/0.3),transparent_14%,transparent_62%,var(--color-abyss))] lg:bg-[linear-gradient(90deg,var(--color-abyss)_0%,rgb(8_10_7/0.88)_30%,rgb(8_10_7/0.35)_58%,transparent_78%)]" />
-            <div className="absolute inset-x-0 bottom-0 hidden h-48 bg-gradient-to-b from-transparent to-abyss lg:block" />
+            <div className="absolute inset-x-0 bottom-0 hidden h-28 bg-gradient-to-b from-transparent to-abyss lg:block" />
           </div>
 
           <div className="relative mx-auto w-full max-w-7xl px-[var(--gutter)] pb-5 sm:pb-8 lg:flex lg:min-h-[min(54rem,calc(100svh-6.25rem))] lg:items-center lg:py-20 lg:short:py-8">

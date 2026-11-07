@@ -244,4 +244,6 @@ frames and viewfinder corners from the Pinterest references. Details in
 `docs/design-refs/README.md` and `scripts/art/README.md`. The spec's comic-book styling is not
 used. All art is original or cut from the club's own poster; no Marvel/DC imagery. The poster
 itself is not shown on the site (its date, venue and club line are still being finalised); the
-hero is built from its figure, eclipse, skyline and lettering instead.
+hero uses the club's character art of Professor Kalyug (hood to waist) and the poster's
+lettering instead. The hero fits the first screen on phones and laptops: art, wordmark, clock
+and the register button, with no scrolling.

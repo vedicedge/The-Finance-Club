@@ -5,15 +5,17 @@ real people (spec, tone rules).
 
 | File (`assets/art/`) | What it is | Made by |
 |---|---|---|
-| `poster.jpg` | The event poster: the **source** for the art below. It is not shown on the site (its details are still being finalised) | Supplied by the club; `fix_poster.py` corrects "PRESENCES" → "PRESENTS" |
-| `hero.jpg` | The landing hero: the poster's hooded figure, eclipse and skyline widened to 2.2 : 1, with no lettering, date or venue | `hero_from_poster.py` |
+| `poster.jpg` | The event poster: the source of the wordmark, hood close-up and haze below. It is not shown on the site (its details are still being finalised) | Supplied by the club; `fix_poster.py` corrects "PRESENCES" → "PRESENTS" |
+| `kalyug-character.webp` | The club's character art: Professor Kalyug from hood to waist before the eclipse (no lettering). Source for the hero | Supplied by the club |
+| `hero.jpg` | The landing hero on phones and tablets: the character art as it is (2 : 3) | `hero_art.py` |
+| `hero-desktop.jpg` | The landing hero on laptops and desktops: the character art from eclipse to waist, widened to 2.2 : 1 with dark fog on the left for the title | `hero_art.py` |
 | `kalyug.jpg` | Professor Kalyug: the hooded figure and eclipse, cropped from the poster | `derive_from_poster.py` |
 | `kalyug-hood.jpg` | A close-up of the hood (the synopsis "dossier photo") | `derive_from_poster.py` |
 | `wordmark.webp` | The DOOMSDAY lettering, keyed onto transparency | `derive_from_poster.py` |
 | `ambient.jpg` | The poster blurred into a green haze (page banners, projector and crew sign-in backdrops) | `derive_from_poster.py` |
 | `sky-*.jpg` | Painted storm skies with the green eclipse | `sky.py` |
 | `scene-*.jpg` | The seven scenes shown on the site (rounds, founders, leaderboard) | `render-scenes.cjs`, or `generate-ai-art.py` |
-| `app/opengraph-image.jpg` | The link preview (WhatsApp, Instagram DMs): the hero art, wordmark and tagline (no date or venue) | `og_image.py` |
+| `app/opengraph-image.jpg` | The link preview (WhatsApp, Instagram DMs): the desktop hero art, wordmark and tagline (no date or venue) | `og_image.py` |
 
 ## Scenes
 

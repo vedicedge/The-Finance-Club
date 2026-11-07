@@ -1,6 +1,6 @@
 """
-The link preview (WhatsApp, Instagram DMs): the hero art with the DOOMSDAY wordmark and the
-tagline. No date or venue, so it never goes stale.
+The link preview (WhatsApp, Instagram DMs): the desktop hero art (Professor Kalyug) with the
+DOOMSDAY wordmark and the tagline. No date or venue, so it never goes stale.
 
     python3 scripts/art/og_image.py assets/art app/opengraph-image.jpg CormorantGaramond-Italic[wght].ttf
 """
@@ -9,7 +9,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 art, out, font_path = sys.argv[1:4]
 W, H = 1200, 630
-hero = Image.open(os.path.join(art, 'hero.jpg')).convert('RGB')
+hero = Image.open(os.path.join(art, 'hero-desktop.jpg')).convert('RGB')
 scale = H / hero.height
 hero = hero.resize((round(hero.width * scale), H), Image.LANCZOS)
 x0 = hero.width - W  # keep the figure on the right
