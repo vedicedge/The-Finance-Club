@@ -45,6 +45,10 @@ Marvel/DC imagery or logos (spec, tone rules). We take only the composition idea
 
 ## Art
 
-See `scripts/art/README.md`: the poster and pieces cut from it, painted storm skies, and seven
-original silhouette scenes (quiz hall, auction, block tower, vault, clock eclipse, the three
-founders, the chessboard).
+See `scripts/art/README.md`: the club's Professor Kalyug art for the hero, pieces cut from the
+poster (wordmark, hood close-up, haze), and the club's seven scene pictures (the five rounds,
+the three founders, the leaderboard chessboard).
+
+**Rule: text never sits on a picture.** Round cards put the words beside the picture, page
+banners give the picture the right half (above the title on phones), captions go under their
+pictures, and the projectors use a round's picture only as a dim backdrop.

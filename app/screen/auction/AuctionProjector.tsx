@@ -55,7 +55,7 @@ export function AuctionProjector({ stateUrl = '/api/screen/auction' }: { stateUr
 
   const step = s?.step ?? null;
   return (
-    <Stage>
+    <Stage art="bazaar">
       <div className="absolute inset-x-0 top-0 flex items-center justify-between border-b border-line px-[3cqw] py-[1.6cqh]">
         <p className="text-[1.25cqw] font-semibold tracking-[0.3em] text-steel uppercase">
           {EVENT.name} · Round 1 · <span className="text-glow">{ROUNDS.round1}</span>
