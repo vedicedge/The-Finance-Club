@@ -6,9 +6,10 @@ real people (spec, tone rules).
 | File (`assets/art/`) | What it is | Made by |
 |---|---|---|
 | `poster.jpg` | The event poster: the source of the wordmark, hood close-up and haze below. It is not shown on the site (its details are still being finalised) | Supplied by the club; `fix_poster.py` corrects "PRESENCES" → "PRESENTS" |
-| `kalyug-character.webp` | The club's character art: Professor Kalyug from hood to waist before the eclipse (no lettering). Source for the hero | Supplied by the club |
-| `hero.jpg` | The landing hero on phones and tablets: the character art as it is (2 : 3) | `hero_art.py` |
-| `hero-desktop.jpg` | The landing hero on laptops and desktops: the character art from eclipse to waist, widened to 2.2 : 1 with dark fog on the left for the title | `hero_art.py` |
+| `kalyug-character.webp` | The club's character art, portrait: Professor Kalyug from hood to waist before the eclipse (no lettering) | Supplied by the club |
+| `kalyug-wide.webp` | The same scene, 21 : 9: the figure on the right, the ruined city across the left for the title | Supplied by the club |
+| `hero.jpg` | The landing hero on phones and tablets: the portrait, with grain | `hero_art.py` |
+| `hero-desktop.jpg` | The landing hero on laptops and desktops: the wide scene, upscaled to 2880 px, with grain | `hero_art.py` |
 | `kalyug.jpg` | Professor Kalyug: the hooded figure and eclipse, cropped from the poster | `derive_from_poster.py` |
 | `kalyug-hood.jpg` | A close-up of the hood (the synopsis "dossier photo") | `derive_from_poster.py` |
 | `wordmark.webp` | The DOOMSDAY lettering, keyed onto transparency | `derive_from_poster.py` |

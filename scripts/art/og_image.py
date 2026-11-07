@@ -12,13 +12,14 @@ W, H = 1200, 630
 hero = Image.open(os.path.join(art, 'hero-desktop.jpg')).convert('RGB')
 scale = H / hero.height
 hero = hero.resize((round(hero.width * scale), H), Image.LANCZOS)
-x0 = hero.width - W  # keep the figure on the right
+ECLIPSE = 0.616  # the eclipse's centre across hero-desktop.jpg
+x0 = max(0, min(hero.width - W, round(ECLIPSE * hero.width - 0.72 * W)))  # eclipse ~72% across
 canvas = hero.crop((x0, 0, x0 + W, H))
 
 # darken the left for the lettering
 shade = Image.new('L', (W, H))
 for x in range(W):
-    v = int(235 * max(0.0, 1 - x / (W * 0.62)))
+    v = int(200 * max(0.0, 1 - x / (W * 0.6)))
     shade.paste(v, (x, 0, x + 1, H))
 canvas = Image.composite(Image.new('RGB', (W, H), (8, 10, 7)), canvas, shade)
 

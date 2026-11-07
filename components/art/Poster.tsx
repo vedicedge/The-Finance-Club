@@ -15,10 +15,10 @@ import { EVENT } from '@/lib/config';
  */
 
 /**
- * The landing hero: Professor Kalyug from the hood to the waist, before the eclipse (the club's
- * character art, see scripts/art/hero_art.py). Phones and tablets get the portrait; screens
- * 1024 px and wider get it widened to 2.2 : 1 with dark fog on the left for the title. The
- * browser downloads only the one it shows.
+ * The landing hero: Professor Kalyug before the eclipse, from the club's character art (see
+ * scripts/art/hero_art.py). Phones and tablets get the portrait (hood to waist); screens 1024 px
+ * and wider get the wide scene, with the ruined city across the left for the title. The browser
+ * downloads only the one it shows.
  */
 export function HeroArt({ className = '' }: { className?: string }) {
   const common = { alt: '', fill: true, sizes: '100vw', fetchPriority: 'high', loading: 'eager' } as const;
