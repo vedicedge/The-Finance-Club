@@ -30,7 +30,7 @@ export async function registerAgency(_prev: RegisterState, formData: FormData): 
     };
   }
 
-  const checked = validateRegistration(values, state.settings.registration.emailDomain);
+  const checked = validateRegistration(values, state.settings.registration.emailDomain, state.settings.registration.smallTeams);
   if (!checked.ok) return { kind: 'error', errors: checked.errors, message: 'Some details need fixing.', values };
 
   const pin = generatePin();

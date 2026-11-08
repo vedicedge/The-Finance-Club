@@ -39,6 +39,7 @@ export function SettingsForm({ settings: s, closesLocal, startsLocal, tiebreakKe
     <form action={action} className="space-y-6">
       <Group title="Registration (open decision 1)">
         <Check name="registration_open" label="Registration open" checked={s.registration.open} />
+        <Check name="small_teams" label="Allow teams of 1 or 2 (on-the-spot registrations); off = exactly 3 founders" checked={s.registration.smallTeams} />
         <Text name="closes_at" label="Closes (India time)" type="datetime-local" value={closesLocal} required />
         <Text name="max_agencies" label="Maximum agencies" type="number" min={1} max={999} value={s.registration.maxAgencies} required />
         <Text name="eligibility" label="Eligibility" value={s.registration.eligibility} />

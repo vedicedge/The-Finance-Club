@@ -26,6 +26,13 @@ describe.skipIf(!hasDb)('register_agency', () => {
     expect(sqlError(`update event_state set phase = 'checkin'; ${register('Late', '1')}`)).toMatch(/registration_closed/);
   });
 
+  it('takes a team of 1 or 2 only while small teams are allowed', () => {
+    const solo = `'[{"name": "Solo One", "section": "E", "phone": "9800000001", "email": "solo@imi.edu", "is_captain": true}]'::jsonb`;
+    expect(sqlError(`select register_agency('Solo', ${solo}, 'scrypt$hash');`)).toMatch(/founders_count/);
+    expect(sql(`update event_state set settings = jsonb_set(settings, '{registration,small_teams}', 'true') where id;
+      select register_agency('Solo', ${solo}, 'scrypt$hash');`)).toEqual(['A01']);
+  });
+
   it('refuses once the cap is reached', () => {
     expect(sqlError(`update event_state set settings = jsonb_set(settings, '{registration,max_agencies}', '2');
       ${register('One', '1')} ${register('Two', '2')} ${register('Three', '3')}`)).toMatch(/registration_full/);

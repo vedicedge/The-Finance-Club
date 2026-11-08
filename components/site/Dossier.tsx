@@ -17,7 +17,7 @@ const ROUND_LABEL: Record<string, string> = { prelim: 'Prelim', round1: 'Round 1
 export function statusStamp(a: AgencySession): { text: string; className: string; note: string } {
   switch (a.status) {
     case 'registered':
-      return { text: 'Registered', className: 'text-glow', note: 'All three founders check in at the desk on Doomsday.' };
+      return { text: 'Registered', className: 'text-glow', note: 'All founders check in at the desk on Doomsday.' };
     case 'checked_in':
       return { text: 'Checked in', className: 'text-toxic', note: 'You are cleared for the prelim. Captain: keep the quiz phone charged.' };
     case 'active':

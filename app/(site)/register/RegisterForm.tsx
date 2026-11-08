@@ -34,7 +34,7 @@ function Field({
   );
 }
 
-export function RegisterForm({ emailDomain, emailHint }: { emailDomain: string | null; emailHint: string }) {
+export function RegisterForm({ emailDomain, emailHint, smallTeams = false }: { emailDomain: string | null; emailHint: string; smallTeams?: boolean }) {
   const [state, action, pending] = useActionState(registerAgency, idle);
 
   if (state.kind === 'done') return <RegistrationSuccess {...state} />;
@@ -57,18 +57,19 @@ export function RegisterForm({ emailDomain, emailHint }: { emailDomain: string |
           <legend className="eyebrow -ml-1 px-1">
             Founder {i + 1}
             {i === 0 && <span className="ml-2 text-glow">· Captain</span>}
+            {i > 0 && smallTeams && <span className="ml-2 text-steel">· Optional</span>}
           </legend>
           {i === 0 && <p className="text-sm text-steel">The captain logs in on the quiz phone on Doomsday.</p>}
-          <Field name={`f${i}_name`} label="Full name" state={state} required maxLength={60} autoComplete={i === 0 ? 'name' : 'off'} />
+          <Field name={`f${i}_name`} label="Full name" state={state} required={i === 0 || !smallTeams} maxLength={60} autoComplete={i === 0 ? 'name' : 'off'} />
           <div className="grid gap-4 sm:grid-cols-[8rem_1fr]">
-            <Field name={`f${i}_section`} label="Section" state={state} required maxLength={20} placeholder="e.g. E" autoComplete="off" />
-            <Field name={`f${i}_phone`} label="Mobile number" state={state} required type="tel" inputMode="tel" placeholder="10-digit mobile" autoComplete={i === 0 ? 'tel-national' : 'off'} />
+            <Field name={`f${i}_section`} label="Section" state={state} required={i === 0 || !smallTeams} maxLength={20} placeholder="e.g. E" autoComplete="off" />
+            <Field name={`f${i}_phone`} label="Mobile number" state={state} required={i === 0 || !smallTeams} type="tel" inputMode="tel" placeholder="10-digit mobile" autoComplete={i === 0 ? 'tel-national' : 'off'} />
           </div>
           <Field
             name={`f${i}_email`}
             label={emailDomain ? `IMI email ID (@${emailDomain})` : 'Email'}
             state={state}
-            required
+            required={i === 0 || !smallTeams}
             type="email"
             inputMode="email"
             autoCapitalize="none"
@@ -96,7 +97,7 @@ export function RegisterForm({ emailDomain, emailHint }: { emailDomain: string |
         {pending ? 'Transmitting…' : 'Register agency'}
       </button>
       <p className="text-center text-xs text-steel">
-        By registering you confirm all three founders agree to take part. Spotted a typo later? An organiser can correct founder details until registration closes.
+        By registering you confirm all founders agree to take part. Spotted a typo later? An organiser can correct founder details until registration closes.
       </p>
     </form>
   );

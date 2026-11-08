@@ -1,7 +1,7 @@
 /**
  * Registration input checks (spec: Agency rules; amendment A3: @imi.edu emails only).
  * Pure functions, used by the server action and the unit tests. The database enforces the
- * same rules again (exactly 3 founders, 1 captain, unique email/phone, email domain).
+ * same rules again (3 founders, or 1–3 when small teams are allowed; 1 captain, unique email/phone, email domain).
  */
 
 export type FounderInput = { name: string; section: string; phone: string; email: string; isCaptain: boolean };
@@ -50,13 +50,17 @@ const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
  * Validates the register form. Field names: agency_name and f{0,1,2}_{name,section,phone,email}.
  * Founder 1 (index 0) is the captain.
  */
-export function validateRegistration(form: Record<string, string>, emailDomain: string | null): RegistrationResult {
+export function validateRegistration(form: Record<string, string>, emailDomain: string | null, smallTeams = false): RegistrationResult {
   const errors: Record<string, string> = {};
   const agencyName = collapse(form.agency_name ?? '');
   if (agencyName.length < 2 || agencyName.length > 40) errors.agency_name = 'Agency name must be 2–40 characters.';
   else if (!AGENCY_NAME.test(agencyName)) errors.agency_name = 'Use letters, numbers, spaces and & \' . - ! only.';
 
-  const founders: FounderInput[] = FOUNDER_SLOTS.map((i) => {
+  // With small teams allowed, founders 2 and 3 may be left blank (a team of 1 or 2).
+  const slots = FOUNDER_SLOTS.filter(
+    (i) => i === 0 || !smallTeams || ['name', 'section', 'phone', 'email'].some((k) => (form[`f${i}_${k}`] ?? '').trim() !== ''),
+  );
+  const founders: FounderInput[] = slots.map((i) => {
     const name = collapse(form[`f${i}_name`] ?? '');
     const section = collapse(form[`f${i}_section`] ?? '');
     const phoneRaw = form[`f${i}_phone`] ?? '';
@@ -73,11 +77,12 @@ export function validateRegistration(form: Record<string, string>, emailDomain: 
   });
 
   // The same person cannot be two founders.
-  FOUNDER_SLOTS.forEach((i) => {
-    FOUNDER_SLOTS.forEach((j) => {
-      if (j <= i) return;
-      if (founders[i].email && founders[i].email === founders[j].email) errors[`f${j}_email`] = 'Each founder needs their own email.';
-      if (founders[i].phone && founders[i].phone === founders[j].phone) errors[`f${j}_phone`] = 'Each founder needs their own phone number.';
+  founders.forEach((a, x) => {
+    founders.forEach((b, y) => {
+      if (y <= x) return;
+      const j = slots[y];
+      if (a.email && a.email === b.email) errors[`f${j}_email`] = 'Each founder needs their own email.';
+      if (a.phone && a.phone === b.phone) errors[`f${j}_phone`] = 'Each founder needs their own phone number.';
     });
   });
 

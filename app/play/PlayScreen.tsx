@@ -170,7 +170,7 @@ function Body({
   if (!s.eligible) {
     return (
       <Centered eyebrow="Access pending" title="Report to the check-in desk." tone="ember">
-        <p className="mt-3 text-steel">All three founders check in at the desk before your agency can answer.</p>
+        <p className="mt-3 text-steel">All founders check in at the desk before your agency can answer.</p>
       </Centered>
     );
   }

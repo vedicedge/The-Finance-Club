@@ -2,15 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { agency, hasDb, sql, sqlError } from './helpers';
 
 describe.skipIf(!hasDb)('agencies and founders', () => {
-  it('accepts an agency of exactly 3 founders with 1 captain', () => {
+  it('accepts an agency of 3 founders with 1 captain', () => {
     expect(sql(`${agency('A01')} set constraints all immediate; select count(*) from founders;`)).toEqual(['3']);
   });
 
-  it('rejects an agency with 2 founders', () => {
-    expect(sqlError(`insert into agencies (id, name) values ('A01', 'Short');
+  it('accepts 2 founders (a team registered when small teams were allowed), but not none', () => {
+    expect(sql(`insert into agencies (id, name) values ('A01', 'Short');
       insert into founders (agency_id, name, section, phone, email, is_captain) values
         ('A01', 'One', 'E', '9100000001', 'one@imi.edu', true), ('A01', 'Two', 'E', '9100000002', 'two@imi.edu', false);
-      set constraints all immediate;`)).toMatch(/exactly 3 founders/);
+      set constraints all immediate; select count(*) from founders;`)).toEqual(['2']);
+    expect(sqlError(`insert into agencies (id, name) values ('A01', 'Empty'); set constraints all immediate;`)).toMatch(/1 to 3 founders/);
   });
 
   it('rejects an agency with no captain', () => {
