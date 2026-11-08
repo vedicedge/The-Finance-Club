@@ -3,14 +3,14 @@ Prepares the club's gear-card pictures for the site: public/cards/<ID>.webp.
 
     python3 scripts/art/card_art.py path/to/card_images public/cards
 
-The source set (62 files named H01.webp … K15.webp, JK.webp, back.webp) came with three kinds of
-fault, fixed here:
+The source set (62 files named H01.webp … K15.webp, JK.webp, back.webp, plus S11-v2, K14-v2 and
+K15-v2.webp, made later for the three cards it lacked) came with three kinds of fault, fixed here:
 
 1. Mislabelled files. S11–S14 hold the pictures for S12–S15, and S15 holds a jetpack, which is
-   used for G01 (whose own file is broken, see 2). No picture came for S11, the Monsoon Gumboot
-   Suit: it keeps the site's icon placeholder until one is added (as do K14 and K15, see 2).
+   used for G01 (whose own file is broken, see 2). S11, K14 and K15 use the -v2 files.
 2. Bad cuts. The pictures were cut from one long sheet and the cuts drifted, so K09 and K12–K15,
-   JK and back each show part of the next picture after a thin white line, and G01 has part of a
+   JK and back each show part of the next picture after a thin white line (the goat and cat of
+   K14 and K15 were split across two files and could not be joined), and G01 has part of a
    kite pasted below the jetpack. Each is cut out again from the right piece of the right file
    (PIECES below); G01 uses the clean jetpack from the S15 file.
 3. Made-up lettering on a few pictures (jerseys, a stall's signboard, a badge, a toolbox label):
@@ -30,11 +30,8 @@ from PIL import Image, ImageChops, ImageDraw, ImageFilter
 W, H = 768, 1024
 
 # Output card → source file, where they differ (point 1).
-RELABEL = {'S12': 'S11', 'S13': 'S12', 'S14': 'S13', 'S15': 'S14', 'G01': 'S15'}
-# No usable picture: S11 never came; the goat (K14) and the cat (K15) were split across two files
-# that were rendered separately, so their halves don't meet (the head shows a step). These keep the
-# site's icon placeholder until new pictures are added.
-NO_PICTURE = {'S11', 'K14', 'K15'}
+RELABEL = {'S12': 'S11', 'S13': 'S12', 'S14': 'S13', 'S15': 'S14', 'G01': 'S15',
+           'S11': 'S11-v2', 'K14': 'K14-v2', 'K15': 'K15-v2'}
 
 # Point 2: pictures cut from the wrong place. Each is rebuilt from pieces of the source files,
 # (file, x from, x to inclusive, vertical shift), white lines excluded. Neighbouring files meet
@@ -45,8 +42,6 @@ PIECES = {
     'K11': [('K11', 0, 767, 0)],                           # Momo-Stall Informant
     'K12': [('K12', 0, 680, 0)],                           # Cousin Bunty
     'K13': [('K13', 0, 517, 0)],                           # Turbo the Tortoise
-    'K14': [('K13', 528, 767, 0), ('K14', 0, 393, 0)],     # Stray Goat with Attitude
-    'K15': [('K14', 402, 767, 0), ('K15', 0, 180, 0)],     # Billu the Sleepy Cat
     'JK': [('K15', 202, 767, 0)],                          # Jugaad Kit (toolbox)
     'back': [('back', 0, 759, 0)],                         # card back (eclipse; mirrored, see symmetric_back)
 }
@@ -55,7 +50,7 @@ SEAM = 6  # px either side of a join that are softened
 # Where to centre the 3:4 crop, as fractions of the picture (x, y). Default: the middle.
 FOCUS = {
     'K09': (0.45, 0.32), 'K10': (0.55, 0.45), 'K11': (0.5, 0.45), 'K12': (0.45, 0.35),
-    'K13': (0.42, 0.55), 'K14': (0.5, 0.45), 'K15': (0.6, 0.55), 'JK': (0.42, 0.5), 'back': (0.5, 0.5),
+    'K13': (0.42, 0.55), 'JK': (0.42, 0.5), 'back': (0.5, 0.5),
 }
 
 # Point 3: regions with made-up lettering, in the cropped 768 × 1024 card, painted out.
@@ -187,14 +182,6 @@ def main():
 
     ids = [f'{c}{i:02d}' for c in 'HSGK' for i in range(1, 16)] + ['JK', 'back']
     for seed, card in enumerate(ids):
-        if card in NO_PICTURE:
-            # remove any stale picture so the site shows the placeholder
-            for ext in ('webp', 'jpg', 'jpeg', 'png', 'avif'):
-                p = os.path.join(dst, f'{card}.{ext}')
-                if os.path.exists(p):
-                    os.remove(p)
-            print(f'{card}: no picture (placeholder)')
-            continue
         if card in PIECES:
             im = rebuild(PIECES[card])
             if card == 'back':

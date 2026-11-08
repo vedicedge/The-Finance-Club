@@ -19,7 +19,7 @@ export const CHECKLIST: ChecklistSection[] = [
       {
         items: [
           'Merge the latest pull request on GitHub and wait until Vercel shows the new deployment as **Ready**.',
-          'In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (17 files; the last is `20261107001700_schema_version.sql`).',
+          'In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (19 files; the last is `20261108001900_jugaad_every_missing_category.sql`).',
           'If the secret seed has never been run, run `supabase/private/seed_secrets.sql` once.',
           'Command centre: **Database updates** says “Up to date”, and Seed data says **OK** on every row.',
           'Every crew member with a website job signs in once at `/admin/login`; an admin gives each their role in Crew & roles (quiz host, 2 ledger keepers, auctioneer, 2 scorers, social-media lead, anchor, 2 floaters).',
@@ -36,7 +36,7 @@ export const CHECKLIST: ChecklistSection[] = [
     groups: [
       {
         items: [
-          'Projector laptop on the auditorium Wi-Fi: open `/screen/quiz`, `/screen/auction`, `/screen/board` and `/screen/reveal` in four tabs, full screen (F11). The 16:9 frame fills the screen and reads from the back row.',
+          'Projector laptop on the auditorium Wi-Fi: sign in with the **Projector (view only)** account, open `/projector` and press F for full screen. It follows the event stage by itself and reads from the back row. From the command centre’s **Projector** panel, practise pinning a screen, **Back shortly** and **Blackout**, then set it back to **Automatic**.',
           'Host laptop signed in on `/admin/quiz`; ledger keepers on `/admin/auction` and `/admin/ledger`; scorers and social-media lead on `/admin/round2` and `/admin/round3`.',
           'Phone hotspot charged and switched on as the backup network.',
           'Command centre → **Start dry run mode**. Every page shows the DRY RUN strip.',
@@ -59,7 +59,7 @@ export const CHECKLIST: ChecklistSection[] = [
           'Practise: void a question and bring in a spare; reload a phone mid-question; put a phone in airplane mode for 10 s and back.',
           'Sign one test agency in on a second phone after question 1: it gets in, and the first phone is signed out (one phone per agency during the prelim). The login page warns about this.',
           'Type a wrong PIN 5 times on the login page: that ID locks for 60 s.',
-          'Every live question must be revealed or voided before publishing. Publish the board, check `/leaderboard` and `/screen/board`, export the CSV, then freeze the top 16 (with 16 or fewer testers, everyone goes through).',
+          'Every live question must be revealed or voided before publishing. Publish the board, check `/leaderboard` and the projector, export the CSV, then freeze the top 16 (with 16 or fewer testers, everyone goes through).',
         ],
       },
       {
@@ -71,7 +71,7 @@ export const CHECKLIST: ChecklistSection[] = [
           'Marquee and Secret Identity Bids: record sales; the projector moves to the next lot. Try sales the site must refuse: below the minimum, above the fund left, not a ₹0.5 Cr step, a second card in the same category.',
           'Undo the last entry, and void a sale with a reason: the card returns to the auction and the money to the fund.',
           'Last Call, then Breaking News: reveal the headlines one at a time, then the Team-Ups.',
-          '**Apply Jugaad Kits & eliminations**, then **Lock Round 1**. Press **Show all news & Team-Ups on the projector**: every headline and Team-Up, with who holds each card. Testers check gear, Power Level and fund left on My Agency, as at the real ledger check; then **Back to the normal view**.',
+          '**Apply Jugaad Kits & eliminations** (one kit at ₹8 Cr for each missing category; a team that cannot pay for all its kits is eliminated), then **Lock Round 1**. Press **Show all news & Team-Ups on the projector**: every headline and Team-Up, with who holds each card. Testers check gear, Power Level and fund left on My Agency, as at the real ledger check; then **Back to the normal view**.',
         ],
       },
       {
@@ -96,7 +96,7 @@ export const CHECKLIST: ChecklistSection[] = [
         title: 'Zero Hour',
         items: [
           'Once Mission 4’s result is in, press **Start Zero Hour →**. Record Mission 4’s choice before the first envelope opens.',
-          'Anchor on `/screen/reveal`: **Next envelope** (or →). Envelopes open in ascending Power Level, ties by agency ID. Work one Hero Score by hand on the Zero Hour sheet and compare.',
+          'Anchor: **Open next envelope** in the command centre or the Vault console. Envelopes open in ascending Power Level, ties by agency ID. Work one Hero Score by hand on the Zero Hour sheet and compare.',
           'After the eighth, the final ranking shows; a tie for 1st or 2nd that survives fund left and Power Level shows a coin-toss call.',
           'Phase **Event over**.',
         ],
@@ -110,7 +110,7 @@ export const CHECKLIST: ChecklistSection[] = [
         items: [
           'Site down mid-auction: for 5 minutes the auctioneer keeps calling lots; ledger keeper 1 writes each sale on the lot tally and the backup ledger, keeper 2 updates the fund tracker. Then enter every line on the site and tick "On site": the site’s fund left must match the paper.',
           'Wi-Fi down: move the projector laptop and a few phones to the hotspot. Pages recover by themselves (they poll every 1–5 s).',
-          'Projector laptop restarts: reopen the `/screen/…` tab; it picks up the current state.',
+          'Projector laptop restarts: reopen `/projector`; it picks up the current state.',
           'A phone dies mid-prelim: the captain signs in on another phone with ID + PIN.',
           'Lost PIN: Agencies & check-in → reset PIN; the new PIN shows once.',
           'Time each segment against the run-sheet (prelim 15 min, Round 1 50, Round 2 35, Round 3 31, Zero Hour 20) and note where you ran over.',
@@ -141,7 +141,7 @@ export const CHECKLIST: ChecklistSection[] = [
           'Floaters check agencies in on Agencies & check-in; the printed check-in sheet is the backup.',
           'Before Round 3, one admin enters the real multiplier map from the filled envelopes. No screen shows it until each envelope opens.',
           'Breaking News: the 6 drawn and sealed in order, and entered on the console before the first tip.',
-          'Projector tabs, consoles, chargers and hotspot set up as in the rehearsal.',
+          'Projector (`/projector`, Automatic), consoles, chargers and hotspot set up as in the rehearsal.',
           'A fresh set of backup sheets printed, with pens and clipboards for the ledger keepers and scorers.',
         ],
       },
