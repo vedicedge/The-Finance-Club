@@ -11,10 +11,13 @@
 -- 2. A 'projector' crew role: can view the projector screens and nothing else.
 -- 3. event_state.projector: what /projector shows. 'auto' follows the event phase; any other
 --    value pins a screen (or a "back shortly" slide, or blackout) until it is set back.
+--
+-- Safe to run more than once: every step checks or overwrites, so running it again after it
+-- has worked (or after a run that stopped part-way) finishes the job without errors.
 
 -- ---------------------------------------------------------------- 1. card names
 
-alter table public.gear_cards add column card_name text;
+alter table public.gear_cards add column if not exists card_name text;
 
 update public.gear_cards g
    set card_name = v.card_name
@@ -86,10 +89,10 @@ update public.gear_cards g
 update public.gear_cards set card_name = gear_name where card_name is null;
 
 alter table public.gear_cards alter column card_name set not null;
-create unique index gear_cards_card_name_key on public.gear_cards (card_name) where phase <> 'jugaad';
+create unique index if not exists gear_cards_card_name_key on public.gear_cards (card_name) where phase <> 'jugaad';
 
 -- Series display names, keyed by the series' internal key (gear_name).
-alter table public.gear_cards add column series_name text;
+alter table public.gear_cards add column if not exists series_name text;
 
 update public.gear_cards g
    set series_name = v.series_name
@@ -150,14 +153,14 @@ select s.agency_id,
 
 -- ---------------------------------------------------------------- 2. the projector role
 
-alter table public.organisers drop constraint organisers_roles_check;
+alter table public.organisers drop constraint if exists organisers_roles_check;
 alter table public.organisers add constraint organisers_roles_check
   check (roles <@ array['admin', 'quiz_host', 'ledger_keeper', 'scorer', 'social_lead',
                         'anchor', 'auctioneer', 'floater', 'projector']::text[]);
 
 -- ---------------------------------------------------------------- 3. what the projector shows
 
-alter table public.event_state add column projector text not null default 'auto'
+alter table public.event_state add column if not exists projector text not null default 'auto'
   check (projector in ('auto', 'welcome', 'quiz', 'auction', 'board', 'reveal', 'holding', 'blank'));
 
 comment on column public.event_state.projector is
