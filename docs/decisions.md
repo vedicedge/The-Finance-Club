@@ -128,8 +128,8 @@ My Agency in a 1-minute window.
   Mission 4 decided), its console and the command centre show *Start <next round> →* to admins.
   It moves only forward, one round at a time; the command centre's phase switcher remains for
   anything else.
-- **Close Round 1** is two buttons: *Apply Jugaad Kits & eliminations* (missing one category and
-  ₹8 Cr in the fund → the next free Jugaad Kit row; missing two or more, or short of ₹8 Cr →
+- **Close Round 1** is two buttons: *Apply Jugaad Kits & eliminations* (each missing category →
+  the next free Jugaad Kit row at ₹8 Cr, from 8 November; short of ₹8 Cr × the missing categories →
   eliminated in Round 1), then *Lock Round 1*, which refuses while anyone in the game still
   lacks a category.
 - **After the lock**, Round 1 purchases (gear, Jugaad Kits, tips) can no longer be voided:

@@ -403,11 +403,15 @@ export default async function AuctionConsole({
                 {pendingClose.map((a) => (
                   <li key={a.id}>
                     <span className="num font-semibold text-glow">{a.id}</span> missing {a.missing.join(', ')} ·{' '}
-                    {a.missing.length >= 2
-                      ? <span className="text-ember">will be eliminated (2+ missing)</span>
-                      : a.fund < 8
-                        ? <span className="text-ember">will be eliminated (cannot pay ₹8 Cr)</span>
-                        : <span className="text-toxic">gets the Jugaad Kit for ₹8 Cr</span>}
+                    {a.fund < 8 * a.missing.length ? (
+                      <span className="text-ember">
+                        will be eliminated (needs ₹{8 * a.missing.length} Cr, has {formatCrore(a.fund)})
+                      </span>
+                    ) : (
+                      <span className="text-toxic">
+                        gets {a.missing.length === 1 ? 'a Jugaad Kit' : `${a.missing.length} Jugaad Kits`} for ₹{8 * a.missing.length} Cr
+                      </span>
+                    )}
                   </li>
                 ))}
               </ul>

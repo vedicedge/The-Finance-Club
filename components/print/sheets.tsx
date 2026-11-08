@@ -232,7 +232,7 @@ export function AuctionSheets({ base, auction }: { base: Base; auction: AuctionP
             {lots.filter((c) => c.phase === 'marquee').map(lotRow)}
             <Divider cols={9}>Secret Identity Bids · on slates: show 5 s, write 10 s, unmask</Divider>
             {lots.filter((c) => c.phase === 'secret').map(lotRow)}
-            <Divider cols={9}>Jugaad Kits · Power 2 for ₹8 Cr, only for an agency missing exactly one category (write the slot it fills)</Divider>
+            <Divider cols={9}>Jugaad Kits · Power 2 for ₹8 Cr each, one for every category an agency still misses (write the slot it fills)</Divider>
             {kits.map((c) => {
               const s = auction.soldTo.get(c.id);
               return (
@@ -307,7 +307,7 @@ export function AuctionSheets({ base, auction }: { base: Base; auction: AuctionP
                     );
                   })}
                   <td className="num">
-                    {held.Jugaad ? `${held.Jugaad.card_id} · ${held.Jugaad.slot ?? ''}` : ''}
+                    {(held.Jugaad ?? []).map((k) => `${k.card_id} · ${k.slot ?? ''}`).join(', ')}
                   </td>
                   <td className="num font-bold">{started ? cr(auction.fund.get(a.id) ?? 0) : ''}</td>
                   <td className="num font-bold">{started ? (auction.power.get(a.id) ?? 0) : ''}</td>
@@ -324,8 +324,8 @@ export function AuctionSheets({ base, auction }: { base: Base; auction: AuctionP
             Team-Ups (+3 each) ± Breaking News, once revealed.
           </p>
           <p>
-            After Last Call: missing exactly one category and ₹8 Cr in the fund → the next Jugaad Kit (JK1, JK2 …). Missing two or
-            more categories, or short of ₹8 Cr → eliminated in Round 1.
+            After Last Call: every category an agency still misses → the next Jugaad Kit (JK1, JK2 …), ₹8 Cr each. Short of ₹8 Cr
+            × the missing categories → eliminated in Round 1.
           </p>
         </Rules>
       </Sheet>

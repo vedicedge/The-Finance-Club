@@ -102,8 +102,8 @@ export default async function RoundsPage() {
           <li>One card per category. Winning bids are final and come off your fund at once.</li>
           <li>Tie for the highest bid: the tied agencies re-bid once on slates; still tied, a coin toss.</li>
           <li>
-            Missing exactly one category after Last Call: you must take the <strong>Jugaad Kit</strong> (Power 2) for ₹8 Cr.
-            Missing two or more, or unable to pay for the Jugaad Kit: eliminated.
+            Still missing a category after Last Call: you must take a <strong>Jugaad Kit</strong> (Power 2) for ₹8 Cr for
+            each missing category (two missing: two kits, ₹16 Cr). Unable to pay for all of them: eliminated.
           </li>
         </ul>
         <p>Round 1 fixes your Power Level and your fund left. Fund left counts half in the Hero Score, so spend with care.</p>

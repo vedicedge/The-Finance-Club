@@ -86,7 +86,7 @@ export function AuctionProjector({ stateUrl = '/api/screen/auction' }: { stateUr
           <ul className="mt-[4cqh] space-y-[1.2cqh] text-[2cqw] text-bone">
             <li>₹50 Cr each · sign one HQ, one Suit, one Gadget, one Sidekick</li>
             <li>Bids in ₹0.5 Cr steps · never more than your fund left</li>
-            <li>Missing one category after Last Call: the Jugaad Kit, ₹8 Cr</li>
+            <li>Still missing a category after Last Call: a Jugaad Kit for each, ₹8 Cr apiece</li>
             <li className="text-steel">Fund left counts half in the Hero Score</li>
           </ul>
         </Center>

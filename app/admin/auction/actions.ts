@@ -134,9 +134,11 @@ export async function setNewsDraw(formData: FormData) {
 export async function applyJugaad() {
   const me = await requireOrganiser('ledger');
   await act('ledger', 'r1.jugaad', {}, () => serviceDb().rpc('r1_apply_jugaad', { p_actor: me.userId }), (rows) => {
-    const list = (rows as { agency: string; action: string }[] | null) ?? [];
+    const list = (rows as { agency: string; action: string; category?: string; card?: string }[] | null) ?? [];
     if (list.length === 0) return 'Every agency holds all four categories. Nothing to do.';
-    return list.map((r) => `${r.agency}: ${r.action === 'jugaad_kit' ? 'Jugaad Kit' : 'eliminated'}`).join(' · ');
+    return list
+      .map((r) => (r.action === 'jugaad_kit' ? `${r.agency}: ${r.card} Jugaad Kit for ${r.category}` : `${r.agency}: eliminated`))
+      .join(' · ');
   });
 }
 
