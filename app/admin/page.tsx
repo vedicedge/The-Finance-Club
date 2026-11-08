@@ -5,7 +5,10 @@ import { PHASES, PHASE_INFO, isPhase } from '@/lib/phases';
 import { setAlert, setDryRun, setPhase } from './actions';
 import { parseSettings } from '@/lib/settings';
 import { serviceDb } from '@/lib/db/server';
-import { AdminShell } from '@/components/admin/AdminShell';
+import { AdminShell, isSimpleMode } from '@/components/admin/AdminShell';
+import { Guide } from '@/components/admin/Guide';
+import { buildGuide } from '@/lib/guide';
+import { loadGuideSnapshot } from '@/lib/guide-server';
 import { loadSchemaStatus } from '@/lib/schema-version-server';
 import { NextPhase } from '@/components/admin/NextPhase';
 import { ProjectorPanel } from '@/components/admin/ProjectorPanel';
@@ -33,6 +36,20 @@ async function count(table: string): Promise<number | null> {
 export default async function CommandCentre({ searchParams }: { searchParams: Promise<{ denied?: string; error?: string; ok?: string }> }) {
   const organiser = await requireOrganiser('dashboard');
   const { denied, error, ok } = await searchParams;
+
+  // Simple mode: one step at a time instead of every panel.
+  if (await isSimpleMode()) {
+    const snap = await loadGuideSnapshot({ withAnswers: canAccess(organiser.roles, 'quiz') }).catch(() => null);
+    if (snap) {
+      return (
+        <AdminShell organiser={organiser} guideHome>
+          {error && <p role="alert" className="mx-auto mb-6 max-w-3xl rounded-sm border border-ember/40 bg-ember/10 px-4 py-3 text-sm text-ember">{error}</p>}
+          {ok && <p role="status" className="mx-auto mb-6 max-w-3xl rounded-sm border border-toxic/40 bg-toxic/10 px-4 py-3 text-sm text-toxic">{ok}</p>}
+          <Guide guide={buildGuide(snap)} snap={snap} organiser={organiser} />
+        </AdminShell>
+      );
+    }
+  }
 
   const db = serviceDb();
   const [state, projectorRow, counts, agencyRows, crew, schema] = await Promise.all([

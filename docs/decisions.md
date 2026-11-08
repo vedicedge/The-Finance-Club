@@ -229,6 +229,23 @@ found these; all are fixed and re-tested:
   reveal screen and the public leaderboard say a coin toss is coming and name both agencies; no
   winner or runner-up is shown before it. The anchor announces the result of the toss.
 
+## Simple mode (requested 8 Nov 2026)
+
+- **Simple mode** (header switch, remembered on that device): the command centre shows only the
+  next step for where the event is, in plain words, with one button: check-in, each quiz question
+  (open → live countdown → reveal), publish and freeze, each Power Bazaar step and lot (a small
+  sale form: team and price), news and Team-Ups, Jugaad Kits and the lock, Round 2, each Round 3
+  mission (Force Field → puzzle → winner → choice → Chai Pe Charcha), Zero Hour's envelopes and
+  the end. A done / now / later list shows where the round is.
+- The buttons do exactly what the full console's buttons do, with the same roles. A crew member
+  without the role sees the step and who presses it. Each button acts only if its step is still
+  the current one, so a double tap or two people pressing at once cannot do a step twice.
+- Typing-heavy or rare work stays in the full console, linked from the step: the check-in list,
+  Round 2 votes and towers, the multiplier map and the deal, sudden death and cutoff ties, voids,
+  fines and cash deals. Console pages show "Back to the next step" while Simple mode is on.
+- In Last Call (or any bidding step) the guide moves on once no unsold lot can be bought by a team
+  that still needs it, and "No sale: next lot" skips lots nobody can buy.
+
 ## Secrets and the public repository
 
 The repository `vedicedge/The-Finance-Club` is public. The spec's Appendix A (questions and
