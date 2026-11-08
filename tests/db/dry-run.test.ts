@@ -22,10 +22,9 @@ describe.skipIf(!hasDb)('dry run mode', () => {
     expect(sqlError(`${on} ${test('Anagh')} ${test('anagh')}`)).toMatch(/agencies_name_key/);
   });
 
-  it('real agencies still need 3 founders and IMI emails while the dry run is on', () => {
+  it('real agencies still need founders and IMI emails while the dry run is on', () => {
     expect(sqlError(`${on} insert into agencies (id, name) values ('A01', 'Real one');
-      insert into founders (agency_id, name, section, phone, email, is_captain) values ('A01', 'Solo', 'E', '9100000001', 'solo@imi.edu', true);
-      set constraints all immediate;`)).toMatch(/exactly 3 founders/);
+      set constraints all immediate;`)).toMatch(/1 to 3 founders/);
     expect(sqlError(`${on} insert into agencies (id, name) values ('A01', 'Real one');
       insert into founders (agency_id, name, section, phone, email, is_captain) values ('A01', 'Solo', 'E', '9100000001', 'solo@gmail.com', true);`))
       .toMatch(/must be @imi.edu/);

@@ -14,6 +14,15 @@ const valid = (): Record<string, string> => ({
 });
 
 describe('registration form', () => {
+  it('teams of 1 or 2 only when small teams are allowed', () => {
+    const duo = { ...valid(), f2_name: '', f2_section: '', f2_phone: '', f2_email: '' };
+    expect(validateRegistration(duo, 'imi.edu').ok).toBe(false);
+    const r = validateRegistration(duo, 'imi.edu', true);
+    expect(r.ok && r.value.founders.length).toBe(2);
+    const half = validateRegistration({ ...duo, f2_name: 'Zoya' }, 'imi.edu', true);
+    expect(!half.ok && half.errors.f2_phone).toBeTruthy();
+  });
+
   it('accepts a valid agency and normalises phones and emails; founder 1 is captain', () => {
     const r = validateRegistration(valid(), 'imi.edu');
     expect(r.ok).toBe(true);

@@ -22,6 +22,8 @@ export type EventSettings = {
     fee: string;
     closesAt: string; // ISO timestamp
     maxAgencies: number;
+    /** Teams of 1 or 2 may register (e.g. on-the-spot entries on the day); off = exactly 3. */
+    smallTeams: boolean;
   };
   event: { startsAt: string; venue: string };
   prelim: { requiresCheckin: boolean; leadInSeconds: number };
@@ -43,6 +45,7 @@ export const DEFAULT_SETTINGS: EventSettings = {
     fee: 'Free',
     closesAt: '2026-11-23T23:59:00+05:30',
     maxAgencies: 60,
+    smallTeams: false,
   },
   event: { startsAt: '2026-11-25T17:30:00+05:30', venue: 'Auditorium' },
   prelim: { requiresCheckin: true, leadInSeconds: 3 },
@@ -89,6 +92,7 @@ export function parseSettings(raw: unknown): EventSettings {
       fee: str(reg.fee, d.registration.fee),
       closesAt: isoTime(reg.closes_at, d.registration.closesAt),
       maxAgencies: int(reg.max_agencies, d.registration.maxAgencies, 1, 999),
+      smallTeams: bool(reg.small_teams, d.registration.smallTeams),
     },
     event: { startsAt: isoTime(ev.starts_at, d.event.startsAt), venue: str(ev.venue, d.event.venue) },
     prelim: {
@@ -124,6 +128,7 @@ export function serializeSettings(s: EventSettings): Json {
       fee: s.registration.fee,
       closes_at: s.registration.closesAt,
       max_agencies: s.registration.maxAgencies,
+      small_teams: s.registration.smallTeams,
     },
     event: { starts_at: s.event.startsAt, venue: s.event.venue },
     prelim: { requires_checkin: s.prelim.requiresCheckin, lead_in_seconds: s.prelim.leadInSeconds },

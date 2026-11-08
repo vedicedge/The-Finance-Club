@@ -38,6 +38,7 @@ export async function saveSettings(_prev: SettingsState, formData: FormData): Pr
       fee: text('fee') || DEFAULT_SETTINGS.registration.fee,
       closesAt,
       maxAgencies,
+      smallTeams: on('small_teams'),
     },
     event: { startsAt, venue: text('venue') || DEFAULT_SETTINGS.event.venue },
     prelim: { requiresCheckin: on('requires_checkin'), leadInSeconds: leadIn },

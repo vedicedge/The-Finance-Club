@@ -50,12 +50,12 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
       {status.open ? (
         <>
           <p className="mt-4 text-steel">
-            Three founders, one name. You&apos;ll get an agency ID and a 4-digit PIN.{' '}
+            {r.smallTeams ? 'One to three founders' : 'Three founders'}, one name. You&apos;ll get an agency ID and a 4-digit PIN.{' '}
             <span className="num text-bone">{Math.max(0, r.maxAgencies - state.agencyCount)}</span> slots left · closes{' '}
             {longDate(r.closesAt)}.
           </p>
           <div className="mt-8">
-            <RegisterForm emailDomain={r.emailDomain} emailHint={r.emailHint} />
+            <RegisterForm emailDomain={r.emailDomain} emailHint={r.emailHint} smallTeams={r.smallTeams} />
           </div>
         </>
       ) : (
