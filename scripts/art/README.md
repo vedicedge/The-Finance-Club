@@ -45,3 +45,21 @@ those two designs.
 Wherever a scene appears, text sits beside or below it, never on it: round cards put the words
 beside the picture, page banners put the picture in the right half (above the title on phones),
 and the projectors show the round's picture only as a dim backdrop.
+
+## Gear cards
+
+`public/cards/<card ID>.webp` (plus `JK.webp` and `back.webp`), shown by `<GearCard>` on the
+auction projector, My Agency and the auction console. The club's 62 source pictures (keep them on
+the club drive) are prepared by `card_art.py`:
+
+```bash
+python3 scripts/art/card_art.py path/to/card_images public/cards
+```
+
+It fixes the source set's faults (mislabelled S11–S15, pictures cut across two files, made-up
+lettering), crops each to 3:4 and grades it to the site's green. Three cards have no usable
+picture yet and show the category icon: **S11** Monsoon Gumboot Suit (never came), **K14** Stray
+Goat with Attitude and **K15** Billu the Sleepy Cat (their source pictures were split between two
+renders). To add one, put a portrait 3:4 picture in the source folder under its ID, remove the ID
+from `NO_PICTURE` in `card_art.py` (and from `PIECES` for K14/K15), and run it again.
+
