@@ -50,8 +50,9 @@ const prelim = `
 
 /**
  * Round 1: start funds, news draw, one tip, Marquee (8 lots to the first 8 agencies), secret
- * bids at the minimum until each category runs out. The 3rd agency passes on Sidekicks (→ Jugaad
- * Kit); with 16 agencies the cards run out for the last one (→ eliminated).
+ * bids at the minimum until each category runs out. The 3rd agency passes on Sidekicks (→ one
+ * Jugaad Kit); with 16 agencies the HQ, Suit and Gadget cards run out for the last one (→ three
+ * Jugaad Kits, ₹24 Cr). Nobody is eliminated in Round 1, and the four kits are all used.
  */
 const round1 = `
   update event_state set phase = 'round1', step = 'rules';
@@ -226,9 +227,9 @@ describe.skipIf(!hasDb || !hasSecrets)('the whole evening: dry run, reset, real 
       'chk reset catalogue|0|0|0|0|0',
       'chk real ids|18|A01|A18',
       'chk real after prelim|16|2',
-      'chk real after round 1|15|1|1',
-      'chk real after round 2|8|7',
-      'chk real statuses|active:8,eliminated/prelim:2,eliminated/round1:1,eliminated/round2:7',
+      'chk real after round 1|16|0|4',
+      'chk real after round 2|8|8',
+      'chk real statuses|active:8,eliminated/prelim:2,eliminated/round2:8',
       'chk real finalists hold 4 categories|t',
       'chk real envelopes|8|8',
       'chk real reveals|8',

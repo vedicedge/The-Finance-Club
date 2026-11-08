@@ -120,7 +120,8 @@ export type AuctionPrint = {
   cards: PrintCard[];
   shuffled: boolean;
   soldTo: Map<string, { agency: string; price: number; slot: string }>;
-  held: Map<string, Partial<Record<Category | 'Jugaad', Holding>>>;
+  /** Per agency: the card in each category, and every Jugaad Kit it took (one per missing category). */
+  held: Map<string, Partial<Record<Category, Holding>> & { Jugaad?: Holding[] }>;
   tipBought: Set<string>;
   fund: Map<string, number>;
   power: Map<string, number>;
@@ -144,12 +145,13 @@ export async function loadAuctionPrint(): Promise<AuctionPrint> {
     ...c, card_name: names.card.get(c.id) ?? c.gear_name, series_name: seriesOf(names, c.gear_name),
   })) as PrintCard[];
   const soldTo = new Map<string, { agency: string; price: number; slot: string }>();
-  const held = new Map<string, Partial<Record<Category | 'Jugaad', Holding>>>();
+  const held = new Map<string, Partial<Record<Category, Holding>> & { Jugaad?: Holding[] }>();
   for (const s of sales.data ?? []) {
     soldTo.set(s.card_id, { agency: s.agency_id, price: Number(s.price), slot: s.category });
     const m = held.get(s.agency_id) ?? {};
-    const slot = String(s.card_id).startsWith('JK') ? 'Jugaad' : (s.category as Category);
-    m[slot] = { card_id: s.card_id, price: Number(s.price), slot: s.category };
+    const h = { card_id: s.card_id, price: Number(s.price), slot: s.category };
+    if (String(s.card_id).startsWith('JK')) m.Jugaad = [...(m.Jugaad ?? []), h];
+    else m[s.category as Category] = h;
     held.set(s.agency_id, m);
   }
   return {

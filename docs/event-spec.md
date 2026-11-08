@@ -32,7 +32,7 @@ what the in-house website must build.
 | Stage | Format | Cut |
 |---|---|---|
 | **Prelim · Hero Ya Zero?** | 15 min · website quiz · 50+ agencies → top 16. Speed + correct answers; 7 of 15 questions are finance | top 16 |
-| **Round 1 · Power Bazaar** | 50 min · physical auction + website ledger · 16 agencies. Start ₹50 Cr · win 4 gear cards → Power Level + fund left | survivors (0–2 out) |
+| **Round 1 · Power Bazaar** | 50 min · physical auction + website ledger · 16 agencies. Start ₹50 Cr · win 4 gear cards → Power Level + fund left | survivors (normally all 16; only an agency that cannot pay for its Jugaad Kits is out) |
 | **Round 2 · Operation: Skyline** | 35 min · handmade posters + tower and slingshot → top 8. Poster duel winner +₹5 Cr only if it reaches the top 8 | top 8 |
 | **Round 3 · The Doomsday Vault** | 31 min · 4 paper puzzle races · 8 sealed Mission File envelopes. Force Field −₹5 Cr · mission winner: Swap, X-Ray or +₹6 Cr | 8 finalists |
 | **Zero Hour · one Hero Agency** | 20 min · envelopes opened in ascending Power Level. Hero Score = Power Level × Battle Outcome + Fund left ÷ 2 | 1 winner |
@@ -102,7 +102,7 @@ Example: Power Level 28, Battle Outcome ×1.5, Fund left ₹18 Cr → 28 × 1.5 
 | Round 1 start | +₹50 Cr | Starting fund for every qualified agency |
 | Round 1 | −₹2 Cr | Optional sealed Insider Tip |
 | Round 1 | −winning bid | Each gear card won |
-| Round 1 | −₹8 Cr | Forced Jugaad Kit (Power 2) if missing exactly one category |
+| Round 1 | −₹8 Cr each | Forced Jugaad Kit (Power 2) for every category still missing after Last Call |
 | Round 2 | +₹5 Cr | Poster duel winner, only if it also reaches the top 8 in the tower game (also applies to a bye) |
 | Round 3 | −₹5 Cr | Force Field for one mission |
 | Round 3 | +₹6 Cr | Mission winner's cash option, instead of Swap or X-Ray |
@@ -211,8 +211,9 @@ Marquee lots. Full list in Appendix B.
 - Tie for highest: tied agencies re-bid once on slates; still tied, coin toss.
 - No valid bid: the card goes unsold to Last Call. Cards run one category at a time, in a
   shuffled order.
-- Missing exactly one category after Last Call: the agency must take the Jugaad Kit (Power 2) for ₹8 Cr.
-- Missing two or more categories, or unable to pay for the Jugaad Kit: eliminated. Expect 0–2 agencies out.
+- Still missing a category after Last Call: the agency must take a Jugaad Kit (Power 2) for ₹8 Cr for
+  each missing category (two missing: two kits, ₹16 Cr). Unable to pay for all of them: eliminated.
+  Normally all 16 agencies reach Round 2. There are 4 Jugaad Kit cards (JK1–JK4).
 
 **Participant side**
 
@@ -614,7 +615,7 @@ wrong → 0; t 10.0 on a 10 s question → 500; t 10.1 → 0.
 |---|---|---|
 | Record sale | Card unsold; agency active and holds no card in that category; price ≥ min bid, ≤ fund left, multiple of 0.5 | `sales` row + ledger −price, one transaction |
 | Insider tip | Tips phase; one per agency; fund ≥ 2 | Ledger −2; tip linked to a drawn news card |
-| Close Round 1 | After Last Call | Missing 1 category → Jugaad Kit sale + ledger −8 (eliminate if fund < 8); missing 2+ → eliminate; reveal news; lock |
+| Close Round 1 | After Last Call | Each missing category → a Jugaad Kit sale + ledger −8 (eliminate if fund < 8 × missing categories); reveal news; lock |
 | Publish Round 2 | All tower rows entered; cutoff ties resolved by organiser | Top 8 → active, rest → fan_club; +5 to qualified duel winners and byes |
 | Force Field | Window open for this mission; fund ≥ 5 | `force_fields` row + ledger −5 |
 | Winner's choice | Mission has a winner | Swap: target has no Force Field this mission → swap holders + log. X-Ray: secret log. Cash: ledger +6 |
