@@ -36,3 +36,23 @@ export function rankHero(input: HeroInput[], tiebreak: HeroTiebreak[]): HeroRow[
   }
   return rows;
 }
+
+/** The anchor announces the podium one place at a time: 3rd, then 2nd, then 1st. */
+export const PODIUM_STEPS = ['top3', 'top2', 'top1'] as const;
+
+/** How many podium places are announced: 0 to 3. Every place is out once the event is over. */
+export function placesAnnounced(phase: string, step: string | null | undefined): number {
+  if (phase === 'ended') return 3;
+  if (phase !== 'zero_hour') return 0;
+  return (PODIUM_STEPS as readonly string[]).indexOf(step ?? '') + 1;
+}
+
+/** The podium so far, 1st first: 3rd alone, then 2nd and 3rd, then all three. */
+export function podium(final: HeroRow[] | null, announced: number): (HeroRow & { place: number })[] {
+  if (!final || announced <= 0) return [];
+  return [...final]
+    .sort((a, b) => a.rank - b.rank)
+    .slice(0, 3)
+    .map((r, i) => ({ ...r, place: i + 1 }))
+    .filter((r) => r.place > 3 - announced);
+}

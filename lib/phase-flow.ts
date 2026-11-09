@@ -6,8 +6,8 @@ export type FlowState = {
   prelimFrozen: boolean;
   round1Locked: boolean;
   round2Published: boolean;
-  /** Mission 4 has a winner, or was recorded as "no winner". */
-  mission4Decided: boolean;
+  /** Every finalist holds a recorded envelope and the multiplier map is entered. */
+  envelopesRecorded: boolean;
 };
 
 /**
@@ -18,7 +18,7 @@ export const NEXT_PHASE = {
   round1: { from: 'prelim', done: 'The top 16 are frozen.', href: '/admin/auction', ready: (s: FlowState) => s.prelimFrozen },
   round2: { from: 'round1', done: 'Round 1 is locked.', href: '/admin/round2', ready: (s: FlowState) => s.round1Locked },
   round3: { from: 'round2', done: 'Round 2 is published.', href: '/admin/round3', ready: (s: FlowState) => s.round2Published },
-  zero_hour: { from: 'round3', done: 'Mission 4’s result is in.', href: '/admin/round3', ready: (s: FlowState) => s.mission4Decided },
+  zero_hour: { from: 'round3', done: 'Every finalist’s envelope is recorded and the multiplier map is entered.', href: '/admin/results', ready: (s: FlowState) => s.envelopesRecorded },
 } as const satisfies Partial<Record<Phase, { from: Phase; done: string; href: string; ready: (s: FlowState) => boolean }>>;
 
 export type NextPhase = keyof typeof NEXT_PHASE;

@@ -11,7 +11,7 @@ describe('projector', () => {
       'quiz', // prelim
       'auction', // round 1
       'board', // round 2
-      'board', // round 3
+      'cover', // round 3: runs offline
       'reveal', // zero hour
       'reveal', // ended: the winner stays up
     ]);
@@ -24,7 +24,7 @@ describe('projector', () => {
   });
 
   it('accepts only the modes the database allows', () => {
-    expect(PROJECTOR_MODES).toEqual(['auto', 'welcome', 'quiz', 'auction', 'board', 'reveal', 'holding', 'blank']);
+    expect(PROJECTOR_MODES).toEqual(['auto', 'welcome', 'quiz', 'auction', 'board', 'cover', 'reveal', 'holding', 'blank']);
     expect(isProjectorMode('board')).toBe(true);
     expect(isProjectorMode('party')).toBe(false);
     expect(isProjectorMode(null)).toBe(false);

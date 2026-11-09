@@ -100,13 +100,14 @@ describe.skipIf(!hasDb)('Round 3', () => {
       select r3_choose(4, 'cash', null, '${K}'); ${fund('A06')}`)).toEqual(['26.0']);
   });
 
-  it('Chai Pe Charcha transfers: window, ₹0.5 steps, payer fund — two entries, one transaction', () => {
+  it('Chai Pe Charcha transfers: any time in Round 3, ₹0.5 steps, payer fund — two entries, one transaction', () => {
     const chai = `${r3} select r3_set_mission(2, 'chai');`;
     expect(sql(`${chai} select 1 from (select r3_transfer('A01', 'A02', 7.5, 'info deal', '${K}')) x; ${fund('A01')} ${fund('A02')}
       select count(distinct txn_id) from ledger_entries where reason = 'transfer';`)).toEqual(['1', '12.5', '27.5', '1']);
     expect(sqlError(`${chai} select r3_transfer('A01', 'A02', 20.5, '', '${K}');`)).toMatch(/insufficient_fund/);
     expect(sqlError(`${chai} select r3_transfer('A01', 'A02', 0.3, '', '${K}');`)).toMatch(/bad_step/);
-    expect(sqlError(`${r3} select r3_set_mission(2, 'play'); select r3_transfer('A01', 'A02', 1, '', '${K}');`)).toMatch(/window_closed/);
+    expect(sql(`${r3} select 1 from (select r3_transfer('A01', 'A02', 1, '', '${K}')) x; ${fund('A01')}`)).toEqual(['1', '19.0']);
+    expect(sqlError(`${r3} update event_state set phase = 'zero_hour' where id; select r3_transfer('A01', 'A02', 1, '', '${K}');`)).toMatch(/window_closed/);
   });
 
   it('a fine always applies, even below zero', () => {

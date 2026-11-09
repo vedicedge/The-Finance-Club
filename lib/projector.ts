@@ -5,7 +5,7 @@
  */
 import type { Phase } from '@/lib/phases';
 
-export const PROJECTOR_SCREENS = ['welcome', 'quiz', 'auction', 'board', 'reveal', 'holding', 'blank'] as const;
+export const PROJECTOR_SCREENS = ['welcome', 'quiz', 'auction', 'board', 'cover', 'reveal', 'holding', 'blank'] as const;
 export type ProjectorScreen = (typeof PROJECTOR_SCREENS)[number];
 
 export const PROJECTOR_MODES = ['auto', ...PROJECTOR_SCREENS] as const;
@@ -20,7 +20,8 @@ export const SCREEN_LABEL: Record<ProjectorScreen, string> = {
   quiz: 'Prelim quiz',
   auction: 'Power Bazaar',
   board: 'Leaderboard',
-  reveal: 'Zero Hour reveal',
+  cover: 'Round 3 cover',
+  reveal: 'Zero Hour results',
   holding: 'Back shortly',
   blank: 'Blackout',
 };
@@ -32,9 +33,9 @@ export const AUTO_SCREEN: Record<Phase, ProjectorScreen> = {
   prelim: 'quiz',
   round1: 'auction',
   round2: 'board',
-  round3: 'board',
+  round3: 'cover', // Round 3 runs offline: the cover only
   zero_hour: 'reveal',
-  ended: 'reveal', // the winner stays up after the last envelope
+  ended: 'reveal', // the podium stays up
 };
 
 /** The screen to show now: the pinned one, or the phase's own on auto. */

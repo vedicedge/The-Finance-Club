@@ -4,9 +4,11 @@ import type { FlowState } from '@/lib/phase-flow';
 
 export async function loadFlowState(): Promise<FlowState> {
   const db = serviceDb();
-  const [st, m4] = await Promise.all([
+  const [st, active, held, map] = await Promise.all([
     db.from('event_state').select('phase, prelim_frozen_at, round1_locked_at, round2_published_at').single(),
-    db.from('missions').select('winner_agency_id, choice').eq('no', 4).maybeSingle(),
+    db.from('agencies').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+    db.from('v_envelope_holders').select('envelope_id', { count: 'exact', head: true }).not('holder_agency_id', 'is', null),
+    db.from('envelope_contents').select('envelope_id', { count: 'exact', head: true }),
   ]);
   if (st.error) throw st.error;
   return {
@@ -14,6 +16,6 @@ export async function loadFlowState(): Promise<FlowState> {
     prelimFrozen: Boolean(st.data.prelim_frozen_at),
     round1Locked: Boolean(st.data.round1_locked_at),
     round2Published: Boolean(st.data.round2_published_at),
-    mission4Decided: Boolean(m4.data?.winner_agency_id) || m4.data?.choice === 'none',
+    envelopesRecorded: (active.count ?? 0) > 0 && held.count === active.count && map.count === 8,
   };
 }

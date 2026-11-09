@@ -3,7 +3,7 @@ import { canAccess } from '@/lib/auth/roles';
 import type { Organiser } from '@/lib/auth/organiser';
 import { AUTO_SCREEN, PROJECTOR_SCREENS, SCREEN_LABEL, projectorScreen, type ProjectorMode } from '@/lib/projector';
 import { PHASE_INFO, type Phase } from '@/lib/phases';
-import { revealNextEnvelope, setProjector } from '@/app/admin/actions';
+import { setProjector } from '@/app/admin/actions';
 
 /**
  * The command centre's projector control: what the auditorium sees now (with a live preview),
@@ -66,15 +66,13 @@ export function ProjectorPanel({
           ))}
         </div>
         <p className="mt-3 text-xs text-steel">
-          Automatic: Welcome before the prelim, then the quiz, Power Bazaar, the leaderboard for Rounds 2 and 3, and the
-          Zero Hour reveal. Pin a screen for breaks or announcements; Blackout shows nothing. Now on automatic it would show{' '}
+          Automatic: Welcome before the prelim, then the quiz, Power Bazaar, the leaderboard for Round 2, the Round 3 cover,
+          and the Zero Hour results (3rd, 2nd, then 1st). Pin a screen for breaks or announcements; Blackout shows nothing. Now on automatic it would show{' '}
           {SCREEN_LABEL[AUTO_SCREEN[phase]]}.
         </p>
 
         {screen === 'reveal' && canReveal && (
-          <form action={revealNextEnvelope.bind(null, '/admin')} className="mt-5">
-            <button className="btn btn-primary">Open next envelope</button>
-          </form>
+          <Link href="/admin/results" className="btn btn-primary mt-5">Final leaderboard →</Link>
         )}
       </div>
 

@@ -88,30 +88,23 @@ describe('Simple mode: the next step', () => {
     expect(actions(r({ published: true }))).toEqual(['start-round3']);
   });
 
-  it('Round 3: map, deal, then each mission through its Chai Pe Charcha; mission 4 waits for Zero Hour', () => {
-    const r = (r3: Partial<GuideSnapshot['r3']>, step: string | null = null) => snap({ phase: 'round3', step, r3: { ...snap().r3, ...r3 } });
+  it('Round 3 runs offline: map, then the console until the envelopes are recorded, then Zero Hour', () => {
+    const r = (r3: Partial<GuideSnapshot['r3']>) => snap({ phase: 'round3', r3: { ...snap().r3, ...r3 } });
     expect(now(r({ multipliersEntered: false })).key).toBe('r3-map');
-    expect(now(r({ dealt: false })).key).toBe('r3-deal');
-    expect(actions(r({}))).toEqual(['r3-ff-window:1']);
-    expect(now(r({ mission: 1 }, 'force_field')).form).toBe('force-fields');
-    expect(actions(r({ mission: 1 }, 'play'))).toEqual(['r3-results:1']);
-    expect(now(r({ mission: 1 }, 'results')).form).toBe('winner');
-    expect(actions(r({ mission: 1, missions: missions({ 1: { winner: 'A01' } }) }, 'results'))).toEqual(['r3-choice-window:1']);
-    expect(now(r({ mission: 1, missions: missions({ 1: { winner: 'A01' } }) }, 'choice')).form).toBe('choice');
-    expect(actions(r({ mission: 1, missions: missions({ 1: { winner: 'A01', choice: 'cash' } }) }, 'choice'))).toEqual(['r3-chai:1']);
-    expect(actions(r({ mission: 1, missions: missions({ 1: { winner: 'A01', choice: 'cash' } }) }, 'chai'))).toEqual(['r3-next-mission:1']);
-    // no correct sheet: straight to Chai Pe Charcha
-    expect(actions(r({ mission: 2, missions: missions({ 1: { winner: 'A01', choice: 'cash' }, 2: { choice: 'none' } }) }, 'results'))).toEqual(['r3-chai:2']);
-    const m4won = missions({ 1: { winner: 'A01', choice: 'cash' }, 2: { choice: 'none' }, 3: { winner: 'A01', choice: 'swap' }, 4: { winner: 'A01' } });
-    expect(actions(r({ mission: 4, missions: m4won }, 'results'))).toEqual(['start-zero-hour']);
+    const offline = now(r({ dealt: false }));
+    expect(offline.key).toBe('r3-offline');
+    expect(offline.link?.href).toBe('/admin/round3');
+    expect(actions(r({}))).toEqual(['start-zero-hour']);
   });
 
-  it('Zero Hour: mission 4’s choice, then the envelopes, then the end', () => {
-    const m4won = missions({ 1: { choice: 'none' }, 2: { choice: 'none' }, 3: { choice: 'none' }, 4: { winner: 'A01' } });
-    expect(now(snap({ phase: 'zero_hour', r3: { ...snap().r3, missions: m4won } })).form).toBe('choice');
-    const chosen = missions({ 4: { winner: 'A01', choice: 'cash' } });
-    expect(actions(snap({ phase: 'zero_hour', r3: { ...snap().r3, missions: chosen }, zh: { opened: 3, total: 8 } }))).toEqual(['zh-next']);
-    expect(actions(snap({ phase: 'zero_hour', r3: { ...snap().r3, missions: chosen }, zh: { opened: 8, total: 8 } }))).toEqual(['end-event']);
+  it('Zero Hour: calculate, announce 3rd, 2nd, 1st, then end', () => {
+    const z = (step: string | null, opened = 8) => snap({ phase: 'zero_hour', step, zh: { opened, total: 8 } });
+    expect(now(z(null, 0)).key).toBe('zh-calc');
+    expect(now(z(null, 0)).link?.href).toBe('/admin/results');
+    expect(now(z(null)).title).toBe('Announce 3rd place');
+    expect(now(z('top3')).title).toBe('Announce 2nd place');
+    expect(now(z('top2')).title).toBe('Announce 1st place');
+    expect(actions(z('top1'))).toEqual(['end-event']);
     expect(actions(snap({ phase: 'ended' }))).toEqual([]);
   });
 

@@ -4,6 +4,7 @@ import { parseSettings } from '@/lib/settings';
 import { loadBoard } from '@/lib/quiz/server';
 import { loadRound2, bestPoster } from '@/lib/round2/server';
 import { loadReveal } from '@/lib/zero-hour-server';
+import { placesAnnounced } from '@/lib/zero-hour';
 
 /**
  * The public leaderboard (spec: "What everyone sees on the public leaderboard"). Only public
@@ -16,7 +17,7 @@ export async function loadLeaderboard() {
   const db = serviceDb();
   const { data: st, error } = await db
     .from('event_state')
-    .select('phase, prelim_published_at, prelim_frozen_at, round1_locked_at, round2_published_at, settings')
+    .select('phase, step, prelim_published_at, prelim_frozen_at, round1_locked_at, round2_published_at, settings')
     .single();
   if (error || !st) throw error;
   const settings = parseSettings(st.settings);
@@ -87,7 +88,8 @@ export async function loadLeaderboard() {
   }
 
   let zeroHour = null;
-  if (['zero_hour', 'ended'].includes(phase)) {
+  // Nothing from Zero Hour is public until the anchor has announced 1st place.
+  if (placesAnnounced(phase, st.step as string | null) === 3) {
     const rv = await loadReveal();
     zeroHour = {
       opened: rv.slots.filter((s) => s.revealed).map((s) => ({

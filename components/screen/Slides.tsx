@@ -93,3 +93,54 @@ function BigCountdown({ target, serverNow }: { target: string; serverNow: string
     </div>
   );
 }
+
+/** Round 3 runs offline: the projector shows only this cover. */
+export function CoverScreen() {
+  return (
+    <Stage art="zerohour">
+      <div className="flex h-full flex-col items-center justify-center text-center">
+        <p className="text-[1.4cqw] font-semibold tracking-[0.35em] text-glow uppercase">Round 3</p>
+        <h1 className="display metal mt-[2cqh] text-[7.5cqw] leading-none">The Doomsday Vault</h1>
+        <p className="mt-[3cqh] font-serif text-[2.2cqw] text-silver italic">Eight sealed Mission Files. Only one agency saves {EVENT.city}.</p>
+      </div>
+    </Stage>
+  );
+}
+
+type Place = { place: number; id: string; name: string; coinToss: boolean };
+const PLACE = ['1st', '2nd', '3rd'];
+
+/** Zero Hour: a cover until the anchor announces 3rd place, then 2nd, then 1st. */
+export function PodiumScreen({ places }: { places: Place[] }) {
+  const first = places.find((p) => p.place === 1) ?? null;
+  return (
+    <Stage art="zerohour">
+      <div className="flex h-full flex-col items-center justify-center text-center">
+        <p className="text-[1.4cqw] font-semibold tracking-[0.35em] text-glow uppercase">Zero Hour · The results</p>
+        {places.length === 0 ? (
+          <>
+            <h1 className="display metal mt-[2cqh] text-[7.5cqw] leading-none">Who saved {EVENT.city}?</h1>
+            <p className="mt-[3cqh] font-serif text-[2.2cqw] text-silver italic">The envelopes are open. The results are coming.</p>
+          </>
+        ) : (
+          <ol className="mt-[4cqh] flex w-[70cqw] flex-col gap-[2.5cqh]">
+            {places.map((p) => {
+              const top = p === first;
+              return (
+                <li key={p.id} className={`projector-fade flex items-baseline justify-between border px-[3cqw] py-[2.5cqh] ${top ? 'border-glow bg-glow/10' : 'border-line bg-abyss/60'}`}>
+                  <span className={`display ${top ? 'text-[4cqw] text-glow' : 'text-[3cqw] text-steel'}`}>{PLACE[p.place - 1]}</span>
+                  <span className={`text-right ${top ? 'text-[4.4cqw] text-bone' : 'text-[3.2cqw] text-bone'}`}>
+                    <span className="num mr-[1.5cqw] font-semibold text-glow">{p.id}</span>
+                    {p.name}
+                    {p.coinToss && <span className="block text-[1.4cqw] text-ember">Tied: coin toss on stage</span>}
+                  </span>
+                </li>
+              );
+            })}
+          </ol>
+        )}
+        {first && <p className="mt-[4cqh] font-serif text-[2.4cqw] text-silver italic">{first.name} saved {EVENT.city}.</p>}
+      </div>
+    </Stage>
+  );
+}
