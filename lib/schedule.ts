@@ -9,7 +9,7 @@ export const RUN_SHEET: RunSheetItem[] = [
   { offsetMin: 25, lengthMin: 10, segment: 'Top 16 announced; break and auction setup' },
   { offsetMin: 35, lengthMin: 50, segment: `Round 1: ${ROUNDS.round1}`, detail: 'Insider Tips, Marquee Auction, Secret Identity Bids, Last Call, Breaking News' },
   { offsetMin: 85, lengthMin: 35, segment: `Round 2: ${ROUNDS.round2}`, detail: 'Posters 5 min + tower and slingshot challenge 30 min' },
-  { offsetMin: 120, lengthMin: 9, segment: 'Break: top 8 seated; envelopes dealt' },
+  { offsetMin: 120, lengthMin: 9, segment: 'Break: top 8 seated; cards dealt' },
   { offsetMin: 129, lengthMin: 31, segment: `Round 3: ${ROUNDS.round3}`, detail: 'Four 7-minute mission cycles' },
   { offsetMin: 160, lengthMin: 20, segment: `${ROUNDS.zeroHour}: last choice, reveal and prizes` },
   { offsetMin: 180, lengthMin: 0, segment: 'Event ends' },

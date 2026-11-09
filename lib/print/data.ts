@@ -221,7 +221,7 @@ export async function loadRound3Print() {
 }
 
 /**
- * The 8 finalists: the envelope holders once dealt, otherwise the agencies still in the game
+ * The 8 finalists: the card holders once dealt, otherwise the agencies still in the game
  * after Round 2 is published, otherwise nobody yet (the sheet prints blank rows).
  */
 export function finalists(agencies: PrintAgency[], envelopeOf: Map<string, string>, round2Published: boolean) {

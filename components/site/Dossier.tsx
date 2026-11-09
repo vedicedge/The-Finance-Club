@@ -363,11 +363,11 @@ export function Dossier({
                 {data.hero.outcome} · Hero Score <span className="num text-2xl font-semibold text-glow">{Number.isInteger(data.hero.hero) ? data.hero.hero : data.hero.hero.toFixed(2)}</span>
               </p>
             ) : (
-              <p className="mt-3 text-xs text-steel">The Battle Outcome stays classified until your envelope opens at Zero Hour.</p>
+              <p className="mt-3 text-xs text-steel">The Battle Outcome stays classified until your card opens at Zero Hour.</p>
             )}
           </section>
         ) : (
-          <Sealed eyebrow={`Round 3 · ${ROUNDS.round3}`} title="Mission File and Force Fields" unlocks="the envelopes are dealt" />
+          <Sealed eyebrow={`Round 3 · ${ROUNDS.round3}`} title="Mission File and Force Fields" unlocks="the cards are dealt" />
         )}
       </div>
 

@@ -98,9 +98,9 @@ export async function setProjector(mode: string): Promise<void> {
   revalidatePath('/admin');
 }
 
-/** "Open next envelope" at Zero Hour, from the admin laptop (the projector laptop is view only). */
+/** "Open next card" at Zero Hour, from the admin laptop (the projector laptop is view only). */
 export async function revealNextEnvelope(back: string): Promise<void> {
   const r = await nextReveal();
   const to = back === '/admin/round3' ? back : '/admin';
-  redirect(`${to}?${r.ok ? 'ok=' + encodeURIComponent(`Envelope ${r.envelope} opened on the projector.`) : 'error=' + encodeURIComponent(r.error)}`);
+  redirect(`${to}?${r.ok ? 'ok=' + encodeURIComponent(`Card ${r.envelope} opened on the projector.`) : 'error=' + encodeURIComponent(r.error)}`);
 }

@@ -5,8 +5,8 @@ export const SHEETS = {
   auction: { title: 'Power Bazaar · lot tally & fund tracker', when: 'Round 1. Every lot in running order, and each agency’s fund and gear.' },
   ledger: { title: 'Backup Fund Ledger', when: 'Any round, only while the site is down. Re-enter every line afterwards.' },
   round2: { title: 'Operation: Skyline · duels & tower scores', when: 'Round 2. Story-vote counts and the tower measurements, with the formula.' },
-  round3: { title: 'The Doomsday Vault · deal, missions, transfers & fines', when: 'Round 3. Who holds which envelope and what each mission winner chose.' },
-  'zero-hour': { title: 'Zero Hour · Hero Scores', when: 'Zero Hour. Work the Hero Scores by hand as the envelopes open.' },
+  round3: { title: 'The Doomsday Vault · deal, missions, transfers & fines', when: 'Round 3. Who holds which card and what each mission winner chose.' },
+  'zero-hour': { title: 'Zero Hour · Hero Scores', when: 'Zero Hour. Work the Hero Scores by hand as the cards open.' },
   all: { title: 'Full set of backup sheets', when: 'Everything above except the checklist, in one print.' },
 } as const;
 

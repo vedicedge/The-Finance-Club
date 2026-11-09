@@ -9,7 +9,7 @@ import { RESULT_BUTTON, resultStage } from '@/lib/zero-hour';
 
 /**
  * The command centre's projector control: what the auditorium sees now (with a live preview),
- * automatic or pinned, and the Zero Hour "next envelope" button, so nobody touches the
+ * automatic or pinned, and the Zero Hour "next card" button, so nobody touches the
  * projector laptop during the event.
  */
 export function ProjectorPanel({

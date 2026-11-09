@@ -39,7 +39,7 @@ export default async function Results({ searchParams }: { searchParams: Promise<
 
       {!zh && phase !== 'ended' && (
         <p className="mt-6 rounded-sm border border-glow/40 bg-glow/10 px-4 py-3 text-sm text-glow">
-          Opens at Zero Hour. First record who holds which envelope on the{' '}
+          Opens at Zero Hour. First record who holds which card on the{' '}
           <Link href="/admin/round3" className="underline underline-offset-4">Round 3 console</Link>.
         </p>
       )}
@@ -49,8 +49,8 @@ export default async function Results({ searchParams }: { searchParams: Promise<
           <>
             <h2 className="eyebrow">Step 1 · Calculate</h2>
             <p className="mt-2 text-sm text-steel">
-              Uses the envelopes recorded on the Round 3 console and the multiplier map. Nothing appears on the projector or on
-              participants’ phones. {rv.slots.length} finalists hold an envelope.
+              Uses the cards recorded on the Round 3 console and the multiplier map. Nothing appears on the projector or on
+              participants’ phones. {rv.slots.length} finalists hold a card.
             </p>
             <form action={calculateResults} className="mt-4">
               <button disabled={!zh} className="btn btn-primary !min-h-14 !px-6">Calculate the results</button>
@@ -88,7 +88,7 @@ export default async function Results({ searchParams }: { searchParams: Promise<
               <tr className="border-b border-line-strong text-steel">
                 <th className="py-1.5 font-medium">Rank</th>
                 <th className="py-1.5 font-medium">Agency</th>
-                <th className="py-1.5 font-medium">Envelope</th>
+                <th className="py-1.5 font-medium">Card</th>
                 <th className="num py-1.5 text-right font-medium">Power</th>
                 <th className="num py-1.5 text-right font-medium">Fund</th>
                 <th className="num py-1.5 text-right font-medium">Hero Score</th>

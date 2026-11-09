@@ -535,7 +535,7 @@ export function Round3Sheets({ base, r3 }: { base: Base; r3: R3 }) {
   return (
     <>
       <Sheet title={`${ROUNDS.round3} · deal & missions`} {...sheetProps(base)}>
-        <h2>Finalists and envelopes</h2>
+        <h2>Finalists and cards</h2>
         <table>
           <colgroup>
             <col style={{ width: '8%' }} />
@@ -549,8 +549,8 @@ export function Round3Sheets({ base, r3 }: { base: Base; r3: R3 }) {
               <th>ID</th>
               <th>Agency</th>
               <th>Power</th>
-              <th>Envelope</th>
-              <th>Envelope moves (mission · swapped with)</th>
+              <th>Card</th>
+              <th>Card moves (mission · swapped with)</th>
             </tr>
           </thead>
           <tbody>
@@ -612,12 +612,12 @@ export function Round3Sheets({ base, r3 }: { base: Base; r3: R3 }) {
         <Rules>
           <p className="!mt-0">
             Cycle: Force Field 30 s → Play 4 min → Results 1 min → Winner’s choice 30 s → Chai Pe Charcha 1 min. A Force Field blocks
-            swaps on that envelope until the mission’s winner has chosen; Mission 4’s choice and Force Fields carry to the start of
+            swaps on that card until the mission’s winner has chosen; Mission 4’s choice and Force Fields carry to the start of
             Zero Hour.
           </p>
           <p>
             First fully correct sheet in arrival order wins; a wrong sheet is final; no correct sheet = no winner. Only the anchor
-            moves envelopes. Opening another agency’s envelope = ₹5 Cr fine.
+            moves cards. Opening another agency’s card = ₹5 Cr fine.
           </p>
         </Rules>
       </Sheet>
@@ -650,7 +650,7 @@ export function Round3Sheets({ base, r3 }: { base: Base; r3: R3 }) {
           </tbody>
         </table>
 
-        <h2>Fines (₹5 Cr: opening another agency’s envelope)</h2>
+        <h2>Fines (₹5 Cr: opening another agency’s card)</h2>
         <table>
           <colgroup>
             <col style={{ width: '9%' }} />
@@ -696,11 +696,11 @@ export function ZeroHourSheet({ base, r3 }: { base: Base; r3: R3 }) {
             <strong>Hero Score = Power Level × Battle Outcome multiplier + Fund left ÷ 2.</strong> Example: 28 × 1.5 + 18 ÷ 2 = 51.
           </p>
           <p>
-            Envelopes open in ascending Power Level, ties by agency ID. Highest Hero Score wins; a tie for 1st or 2nd goes to{' '}
+            Cards open in ascending Power Level, ties by agency ID. Highest Hero Score wins; a tie for 1st or 2nd goes to{' '}
             {tiebreak}.
           </p>
           <p>
-            Mission 4’s winner makes the last choice before the first envelope opens. Winner: {prize(base.settings.prizes.winner)} ·
+            Mission 4’s winner makes the last choice before the first card opens. Winner: {prize(base.settings.prizes.winner)} ·
             Runner-up: {prize(base.settings.prizes.runnerUp)}.
           </p>
         </Rules>
@@ -783,7 +783,7 @@ export function ZeroHourSheet({ base, r3 }: { base: Base; r3: R3 }) {
         </tbody>
       </table>
       <p className="muted !mt-2">
-        Envelope and fund left are written in at Zero Hour (Mission 4’s choice can still change them). Multipliers are never printed
+        Card and fund left are written in at Zero Hour (Mission 4’s choice can still change them). Multipliers are never printed
         in advance.
       </p>
       <p className="!mt-6">Winner: ______________________ Hero Score ________ · Runner-up: ______________________ Hero Score ________</p>

@@ -16,6 +16,6 @@ export const PHASE_INFO: Record<Phase, { label: string; threat: string; tone: Th
   round1: { label: 'Round 1 · Power Bazaar', threat: 'High', tone: 'warn', status: 'Power Bazaar in session' },
   round2: { label: 'Round 2 · Operation: Skyline', threat: 'Severe', tone: 'danger', status: 'Operation: Skyline under way' },
   round3: { label: 'Round 3 · The Doomsday Vault', threat: 'Severe', tone: 'danger', status: 'The Doomsday Vault is open' },
-  zero_hour: { label: 'Zero Hour', threat: 'Critical', tone: 'critical', status: 'Zero Hour: envelopes opening' },
+  zero_hour: { label: 'Zero Hour', threat: 'Critical', tone: 'critical', status: 'Zero Hour: cards opening' },
   ended: { label: 'Event over', threat: 'All clear', tone: 'clear', status: 'Mahanagar stands' },
 };

@@ -4,7 +4,7 @@ import { publicEnv } from '@/lib/env';
 
 /**
  * The service-role client. It bypasses Row Level Security and can read the secret tables
- * (answer keys, envelope multipliers, X-Ray log, unrevealed news, tips, PIN hashes), so:
+ * (answer keys, card multipliers, X-Ray log, unrevealed news, tips, PIN hashes), so:
  *   - it exists only in server code (`server-only` makes a client import fail the build);
  *   - nothing it returns is passed to a browser without picking safe fields first.
  */

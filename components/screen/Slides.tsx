@@ -123,7 +123,7 @@ export function PodiumScreen({ places, final = false }: { places: Place[]; final
         {places.length === 0 ? (
           <>
             <h1 className="display metal mt-[2cqh] text-[7.5cqw] leading-none">Who saved {EVENT.city}?</h1>
-            <p className="mt-[3cqh] font-serif text-[2.2cqw] text-silver italic">The envelopes are open. The results are coming.</p>
+            <p className="mt-[3cqh] font-serif text-[2.2cqw] text-silver italic">The cards are open. The results are coming.</p>
           </>
         ) : (
           <ol className="mt-[4cqh] flex w-[70cqw] flex-col gap-[2.5cqh]">

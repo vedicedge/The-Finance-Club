@@ -51,7 +51,7 @@ export default async function RulesPage() {
             fixed after Round 1.
           </li>
           <li>
-            <strong>Battle Outcome</strong> = the multiplier inside the Mission File envelope you hold when the envelopes open.
+            <strong>Battle Outcome</strong> = the multiplier inside the Mission File card you hold when the cards open.
           </li>
           <li>
             <strong>Fund left</strong> = Round 1 leftover + poster bonus + mission cash + net Chai Pe Charcha deals − Force

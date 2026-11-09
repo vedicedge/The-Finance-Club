@@ -20,7 +20,7 @@ async function run(roles: Role[], action: string, payload: Record<string, unknow
   back({ ok });
 }
 
-/** Admin only: the secret multiplier map from the filled envelopes. */
+/** Admin only: the secret multiplier map from the filled cards. */
 export async function saveEnvelopeMap(formData: FormData) {
   const map = Object.fromEntries(
     Array.from({ length: 10 }, (_, i) => [`E${i + 1}`, String(formData.get(`E${i + 1}`) ?? '')]).filter(([, v]) => v), // E9–E10 only with 10 finalists
@@ -71,7 +71,7 @@ export async function makeChoice(mission: number, choice: 'swap' | 'xray' | 'cas
   const target = String(formData.get('target') ?? '') || null;
   await run(['ledger_keeper'], 'r3.choice', { mission, choice, target }, (actor) =>
     serviceDb().rpc('r3_choose', { p_mission: mission, p_choice: choice, p_target: target, p_actor: actor }),
-  choice === 'swap' ? `Swapped with ${target}.` : choice === 'xray' ? `X-Ray logged (secret). The marshal shows ${target}'s envelope.` : 'Cash: +₹6 Cr.');
+  choice === 'swap' ? `Swapped with ${target}.` : choice === 'xray' ? `X-Ray logged (secret). The marshal shows ${target}'s card.` : 'Cash: +₹6 Cr.');
 }
 
 export async function undoChoice(mission: number) {

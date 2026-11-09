@@ -119,7 +119,7 @@ export function RevealProjector({ canDrive, stateUrl = '/api/screen/reveal' }: {
         <div className="absolute right-[2cqw] bottom-[1.6cqh] flex items-center gap-[1cqw]">
           {error && <span className="text-[1.1cqw] text-ember">{error}</span>}
           <button onClick={next} disabled={pending} className="btn btn-primary !min-h-0 !px-[1.4cqw] !py-[0.8cqh] !text-[1cqw]">
-            {pending ? 'Opening…' : 'Next envelope ▸'}
+            {pending ? 'Opening…' : 'Next card ▸'}
           </button>
         </div>
       )}
