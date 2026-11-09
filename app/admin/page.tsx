@@ -132,7 +132,7 @@ export default async function CommandCentre({ searchParams }: { searchParams: Pr
         </div>
       </dl>
 
-      {connected && <ProjectorPanel organiser={organiser} phase={phase} mode={projectorMode} available={!projectorRow.error} />}
+      {connected && <ProjectorPanel organiser={organiser} phase={phase} step={(state.data?.step as string | null) ?? null} mode={projectorMode} available={!projectorRow.error} />}
 
       {isAdmin && connected && (
         <section
