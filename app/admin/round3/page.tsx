@@ -57,9 +57,9 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
             <details>
               <summary className="text-sm text-glow">Show / edit the map</summary>
               <div className="mt-3 grid grid-cols-2 gap-2">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
                   <label key={i} className="text-sm">
-                    <span className="num text-steel">E{i}</span>
+                    <span className="num text-steel">E{i}{i > 8 && " · 10 teams only"}</span>
                     <select name={`E${i}`} defaultValue={r3.multiplierMap?.get(`E${i}`) ?? ''} className={`${sel} mt-1 w-full`}>
                       <option value="">—</option>
                       {r3.outcomes.map((o) => <option key={o.label} value={o.label}>×{Number(o.multiplier)} · {o.label}</option>)}
@@ -85,7 +85,7 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
                   <span><span className="num font-semibold text-glow">{f.id}</span> {f.name}</span>
                   <select name={`deal_${f.id}`} defaultValue={f.envelope ?? ''} disabled={!keeper || !recordable} className={sel}>
                     <option value="">—</option>
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => <option key={i} value={`E${i}`}>E{i}</option>)}
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => <option key={i} value={`E${i}`}>E{i}</option>)}
                   </select>
                 </label>
               ))}

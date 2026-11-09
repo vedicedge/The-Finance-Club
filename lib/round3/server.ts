@@ -59,7 +59,7 @@ export async function loadRound3({ withMultipliers = false } = {}) {
     missions: (missions.data ?? []) as Mission[],
     swaps: (moves.data ?? []) as { envelope_id: string; mission: number; from_agency: string; to_agency: string }[],
     xrays: (xrays.data ?? []) as { mission: number; agency_id: string; target_agency_id: string }[],
-    multipliersEntered: withMultipliers ? (contents.data?.length ?? 0) === 8 : (contents.count ?? 0) === 8,
+    multipliersEntered: withMultipliers ? (contents.data?.length ?? 0) >= 8 : (contents.count ?? 0) >= 8,
     multiplierMap: withMultipliers ? new Map(((contents.data ?? []) as { envelope_id: string; outcome_label: string }[]).map((c) => [c.envelope_id, c.outcome_label])) : null,
     outcomes: (outcomes.data ?? []) as { label: string; multiplier: number; envelopes: number }[],
   };
