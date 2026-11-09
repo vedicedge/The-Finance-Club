@@ -1,5 +1,6 @@
 'use client';
 
+import { pollFetch } from '@/lib/poll';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 import { EVENT, ROUNDS } from '@/lib/config';
 import { formatCrore } from '@/lib/money';
@@ -20,7 +21,7 @@ export function RevealProjector({ canDrive, stateUrl = '/api/screen/reveal' }: {
 
   const load = useCallback(async () => {
     try {
-      const res = await fetch(stateUrl, { cache: 'no-store' });
+      const res = await pollFetch(stateUrl);
       if (res.status === 401) setError('Sign in at /admin/login on this laptop.');
       else setS((await res.json()) as S);
     } catch {

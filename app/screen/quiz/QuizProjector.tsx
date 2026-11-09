@@ -1,5 +1,6 @@
 'use client';
 
+import { pollFetch } from '@/lib/poll';
 import Image from 'next/image';
 import wordmark from '@/assets/art/wordmark.webp';
 import { useEffect, useRef, useState } from 'react';
@@ -51,7 +52,7 @@ export function QuizProjector({ stateUrl = '/api/screen/quiz' }: { stateUrl?: st
     const loop = async () => {
       const t0 = Date.now();
       try {
-        const res = await fetch(stateUrl, { cache: 'no-store' });
+        const res = await pollFetch(stateUrl);
         const t1 = Date.now();
         if (res.status === 401) setError('Sign in at /admin/login on this laptop to drive the projector.');
         else {

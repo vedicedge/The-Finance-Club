@@ -1,5 +1,6 @@
 'use client';
 
+import { pollFetch } from '@/lib/poll';
 import { useEffect, useState } from 'react';
 import { EVENT, ROUNDS } from '@/lib/config';
 import { formatCrore } from '@/lib/money';
@@ -47,7 +48,7 @@ export function AuctionProjector({ stateUrl = '/api/screen/auction' }: { stateUr
     let t: number;
     const loop = async () => {
       try {
-        const res = await fetch(stateUrl, { cache: 'no-store' });
+        const res = await pollFetch(stateUrl);
         if (res.status === 401) setError('Sign in at /admin/login on this laptop to drive the projector.');
         else { setS((await res.json()) as S); setError(null); }
       } catch {
