@@ -5,11 +5,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { QuizProjector } from '@/app/screen/quiz/QuizProjector';
 import { AuctionProjector } from '@/app/screen/auction/AuctionProjector';
 import { BoardProjector } from '@/app/screen/board/BoardProjector';
-import { RevealProjector } from '@/app/screen/reveal/RevealProjector';
-import { HoldingScreen, WelcomeScreen } from '@/components/screen/Slides';
+import { CoverScreen, HoldingScreen, PodiumScreen, WelcomeScreen } from '@/components/screen/Slides';
 import type { ProjectorScreen } from '@/lib/projector';
 
-type State = { now: string; phase: string; mode: string; screen: ProjectorScreen; startsAt: string; venue: string; agencies: number };
+type State = { now: string; phase: string; mode: string; screen: ProjectorScreen; startsAt: string; venue: string; agencies: number; places?: { place: number; id: string; name: string; coinToss: boolean }[] };
 
 const POLL_MS = 2000;
 const IDLE_MS = 2500;
@@ -73,8 +72,10 @@ function Screen({ state }: { state: State }) {
       return <AuctionProjector />;
     case 'board':
       return <BoardProjector />;
+    case 'cover':
+      return <CoverScreen />;
     case 'reveal':
-      return <RevealProjector canDrive={false} />;
+      return <PodiumScreen places={state.places ?? []} />;
     case 'welcome':
       return <WelcomeScreen startsAt={state.startsAt} serverNow={state.now} agencies={state.agencies} />;
     case 'holding':

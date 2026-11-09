@@ -72,7 +72,7 @@ export function LeaderboardView({ initial }: { initial: Leaderboard | null }) {
         </Block>
       )}
 
-      {lb.round3 && (
+      {lb.round3 && lb.round3.missions.some((m) => m.winner || m.choice) && (
         <Block eyebrow={`Round 3 · ${ROUNDS.round3}`} title="Mission log">
           <ol className="divide-y divide-line/60 border-y border-line/60">
             {lb.round3.missions.map((m) => (

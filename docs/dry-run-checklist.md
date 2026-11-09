@@ -8,7 +8,7 @@ This file is generated from `lib/print/checklist.ts`; edit that file, then run `
 ## The day before
 
 - [ ] Merge the latest pull request on GitHub and wait until Vercel shows the new deployment as **Ready**.
-- [ ] In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (20 files; the last is `20261108002000_small_teams.sql`).
+- [ ] In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (21 files; the last is `20261109002100_round3_offline.sql`).
 - [ ] If the secret seed has never been run, run `supabase/private/seed_secrets.sql` once.
 - [ ] Command centre: **Database updates** says “Up to date”, and Seed data says **OK** on every row.
 - [ ] Every crew member with a website job signs in once at `/admin/login`; an admin gives each their role in Crew & roles (quiz host, 2 ledger keepers, auctioneer, 2 scorers, social-media lead, anchor, 2 floaters).
@@ -56,19 +56,19 @@ This file is generated from `lib/print/checklist.ts`; edit that file, then run `
 - [ ] Scorers enter tower results: correct blocks, reference blocks, build time as m:ss (make one a DNF = 10:00), frozen blocks, blocks fallen. Work one Tower Score by hand on the Round 2 sheet and compare.
 - [ ] Publish: the top 8 stay in, the rest are eliminated in Round 2, and each duel winner or bye in the top 8 gets +₹5 Cr.
 
-### Round 3 · The Doomsday Vault
+### Round 3 · The Doomsday Vault (runs offline)
 
-- [ ] After publishing, press **Start Round 3 →** on the Round 2 console. One admin enters a test multiplier map on the Round 3 console (any spread the spec allows). The reset deletes it.
-- [ ] Record the deal: which finalist holds which envelope (E1–E8).
-- [ ] Each mission: Force Field (₹5 Cr) → Play → Results → Winner’s choice → Chai Pe Charcha. Try a swap with a protected agency (refused), an X-Ray (organisers only), the ₹6 Cr cash choice, a Chai Pe Charcha transfer and a ₹5 Cr fine.
-- [ ] Undo one choice before the reveal.
+- [ ] After publishing, press **Start Round 3 →** on the Round 2 console. The projector shows only the Round 3 cover.
+- [ ] One admin enters a test multiplier map on the Round 3 console (any spread the spec allows). The reset deletes it.
+- [ ] Run the missions on paper. On the Round 3 console, record one Chai Pe Charcha transfer and one ₹5 Cr fine; check the funds on My Agency.
+- [ ] After the last mission, record who holds which envelope (E1–E8) and press **Save envelopes**.
 
 ### Zero Hour
 
-- [ ] Once Mission 4’s result is in, press **Start Zero Hour →**. Record Mission 4’s choice before the first envelope opens.
-- [ ] Anchor: **Open next envelope** in the command centre or the Vault console. Envelopes open in ascending Power Level, ties by agency ID. Work one Hero Score by hand on the Zero Hour sheet and compare.
-- [ ] After the eighth, the final ranking shows; a tie for 1st or 2nd that survives fund left and Power Level shows a coin-toss call.
-- [ ] Phase **Event over**.
+- [ ] Press **Start Zero Hour →**. The projector shows the results cover.
+- [ ] Anchor: Final leaderboard → **Calculate the results**. Work one Hero Score by hand on the Zero Hour sheet and compare. A tester’s My Agency and `/leaderboard` show no result yet.
+- [ ] Press **Reveal 3rd place**, then 2nd, then 1st: each appears on the projector in turn. Try **Undo** once. A tie for 1st that survives fund left and Power Level shows a coin-toss call.
+- [ ] After 1st place is out, My Agency and `/leaderboard` show the results. Then phase **Event over**.
 
 ## Fallback drills (use the backup sheets)
 

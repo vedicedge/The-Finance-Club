@@ -1,4 +1,5 @@
 import 'server-only';
+import { placesAnnounced } from '@/lib/zero-hour';
 import { serviceDb } from '@/lib/db/server';
 import { withRunningBalance, type LedgerRow } from '@/lib/ledger';
 import type { Category } from '@/lib/round1/steps';
@@ -165,7 +166,8 @@ export async function loadDossier(agencyId: string): Promise<DossierData> {
       forceFields: (ffs.data ?? []).map((f) => f.mission as number),
       currentMission: (st.data?.current_mission as number | null) ?? null,
     },
-    hero: hero.data
+    // No result reaches a participant until the anchor has announced 1st place.
+    hero: hero.data && placesAnnounced(st.data?.phase as string, st.data?.step as string | null) === 3
       ? { outcome: hero.data.outcome_label, multiplier: Number(hero.data.multiplier), hero: Number(hero.data.hero_score) }
       : null,
   };

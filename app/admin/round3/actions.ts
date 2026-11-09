@@ -29,7 +29,7 @@ export async function saveEnvelopeMap(formData: FormData) {
 
 export async function saveDeal(formData: FormData) {
   const map = Object.fromEntries([...formData.entries()].filter(([k]) => k.startsWith('deal_')).map(([k, v]) => [k.slice(5), String(v)]));
-  await run(['ledger_keeper'], 'r3.deal', { map }, (actor) => serviceDb().rpc('r3_deal', { p_map: map, p_actor: actor }), 'Deal recorded.');
+  await run(['ledger_keeper'], 'r3.deal', { map }, (actor) => serviceDb().rpc('r3_deal', { p_map: map, p_actor: actor }), 'Envelopes recorded.');
 }
 
 export async function setMissionStep(mission: number, step: string) {

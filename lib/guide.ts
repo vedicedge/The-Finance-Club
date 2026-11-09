@@ -3,6 +3,7 @@
  * to take now, plus a short done / now / later list for the current phase. The command centre
  * shows it when Simple mode is on; app/admin/guide/actions.ts carries out the step's button.
  */
+import { placesAnnounced } from '@/lib/zero-hour';
 import type { Area } from '@/lib/auth/roles';
 import { ROUNDS } from '@/lib/config';
 import type { Phase } from '@/lib/phases';
@@ -294,63 +295,32 @@ function round2(s: GuideSnapshot): Guide {
 
 function round3(s: GuideSnapshot): Guide {
   const r = s.r3;
-  const labels = ['Multiplier map', 'Deal the envelopes', 'Mission 1', 'Mission 2', 'Mission 3', 'Mission 4', 'Start Zero Hour'];
+  const labels = ['Multiplier map', 'Run the round offline', 'Start Zero Hour'];
   const base = { phaseTitle: `Round 3 · ${ROUNDS.round3}` };
+  const consoleLink = { href: '/admin/round3', label: 'Open the Round 3 console' };
   if (!r.multipliersEntered) {
     return { ...base, items: items(labels, 0), now: { key: 'r3-map', title: 'Enter the multiplier map', body: 'What is inside each numbered envelope. Secret: an admin enters it, nobody else sees it.', ...ADMIN, buttons: [], link: { href: '/admin/round3', label: 'Enter the map' } } };
   }
   if (!r.dealt) {
-    return { ...base, items: items(labels, 1), now: { key: 'r3-deal', title: 'Record the deal', body: 'Which finalist holds which envelope (E1–E8), as dealt face down.', ...R3, buttons: [], link: { href: '/admin/round3', label: 'Record the deal' } } };
+    return { ...base, items: items(labels, 1), now: { key: 'r3-offline', title: 'Run Round 3 offline', body: 'The projector shows the Round 3 cover. Record each Chai Pe Charcha transfer and each fine on the Round 3 console as it happens. After the last mission, record who holds which envelope.', ...R3, buttons: [], link: consoleLink } };
   }
-  // A mission is decided once it has a winner and (missions 1–3) the winner's choice, or "no winner".
-  const decided = (x: GuideSnapshot['r3']['missions'][number]) => (x.winner === null ? x.choice === 'none' : x.no === 4 || x.choice !== null);
-  // The mission the console is on finishes with its Chai Pe Charcha (missions 1–3) before the next starts.
-  const current = r.mission !== null ? r.missions.find((x) => x.no === r.mission) ?? null : null;
-  if (current && current.no < 4 && decided(current)) {
-    const t = `Mission ${current.no} · ${current.name}`;
-    const arg = String(current.no);
-    if (s.step === 'chai') {
-      return { ...base, items: items(labels, 1 + current.no), now: { key: `r3-chai-${arg}`, title: `${t}: Chai Pe Charcha`, body: 'One minute of deals. Record any cash deal a team reports (from, to, amount) in the full console, then start the next mission.', ...R3, buttons: [{ action: 'r3-next-mission', label: `Start mission ${current.no + 1}`, arg }], link: { href: '/admin/round3', label: 'Record a cash deal' } } };
-    }
-    return { ...base, items: items(labels, 1 + current.no), now: { key: `r3-to-chai-${arg}`, title: `${t}: Chai Pe Charcha`, body: current.choice === 'none' ? 'No winner this mission. Open the one-minute Chai Pe Charcha.' : 'The choice is made. Open the one-minute Chai Pe Charcha.', ...R3, buttons: [{ action: 'r3-chai', label: 'Open Chai Pe Charcha', arg }] } };
-  }
-  const mission = r.missions.find((x) => !decided(x)) ?? null;
-  if (!mission) {
-    return { ...base, items: items(labels, 6), now: { key: 'start-zero-hour', title: 'Start Zero Hour', body: 'All four missions are decided. Mission 4’s winner makes the last choice at the start of Zero Hour.', ...ADMIN, buttons: [{ action: 'start-zero-hour', label: 'Start Zero Hour' }] } };
-  }
-  const idx = 1 + mission.no;
-  const t = `Mission ${mission.no} · ${mission.name}`;
-  const here = r.mission === mission.no ? s.step : null;
-  const arg = String(mission.no);
-  if (mission.winner && mission.no < 4) {
-    if (here !== 'choice') {
-      return { ...base, items: items(labels, idx), now: { key: `r3-choice-open-${arg}`, title: `${t}: winner’s choice`, body: `${mission.winner} won. Open the 30-second choice: Swap, X-Ray or ₹6 Cr.`, ...R3, buttons: [{ action: 'r3-choice-window', label: 'Open the winner’s choice', arg }] } };
-    }
-    return { ...base, items: items(labels, idx), now: { key: `r3-choice-${arg}`, title: `${t}: ${mission.winner} chooses`, body: 'Record what the winner chose. A swap cannot target a team with a Force Field this mission.', ...R3, form: 'choice', buttons: [] } };
-  }
-  if (here === 'results') {
-    return { ...base, items: items(labels, idx), now: { key: `r3-winner-${arg}`, title: `${t}: record the winner`, body: 'The first fully correct sheet in arrival order wins. If nobody got it right, choose “No winner”.', area: 'round3', roleLabel: 'Scorer', form: 'winner', buttons: [] } };
-  }
-  if (here === 'play') {
-    return { ...base, items: items(labels, idx), now: { key: `r3-play-${arg}`, title: `${t}: puzzle running (4 min)`, body: 'Teams solve on paper and hand sheets to the scorers in arrival order. When time is up, go to Results.', ...R3, buttons: [{ action: 'r3-results', label: 'Time’s up: go to Results', arg }] } };
-  }
-  if (here === 'force_field') {
-    return { ...base, items: items(labels, idx), now: { key: `r3-ff-${arg}`, title: `${t}: Force Field window (30 s)`, body: 'Tap each team that pays ₹5 Cr for a Force Field, then start the puzzle.', ...R3, form: 'force-fields', buttons: [{ action: 'r3-play', label: 'Start the puzzle (4 min)', arg }] } };
-  }
-  return { ...base, items: items(labels, idx), now: { key: `r3-start-${arg}`, title: `${t}: open the Force Field window`, body: 'Each mission starts with a 30-second window to buy Force Fields.', ...R3, buttons: [{ action: 'r3-ff-window', label: `Start mission ${mission.no}`, arg }] } };
+  return { ...base, items: items(labels, 2), now: { key: 'start-zero-hour', title: 'Start Zero Hour', body: 'Every finalist’s envelope is recorded. You can still correct it on the Round 3 console until the results are calculated.', ...ADMIN, buttons: [{ action: 'start-zero-hour', label: 'Start Zero Hour' }], link: consoleLink } };
 }
 
 // ---------------------------------------------------------------- Zero Hour
 
 function zeroHour(s: GuideSnapshot): Guide {
-  const m4 = s.r3.missions.find((x) => x.no === 4);
-  const labels = ['Mission 4’s last choice', 'Open the envelopes', 'End the event'];
+  const labels = ['Calculate the results', 'Announce 3rd, 2nd, then 1st', 'End the event'];
   const base = { phaseTitle: 'Zero Hour' };
-  if (m4?.winner && !m4.choice) {
-    return { ...base, items: items(labels, 0), now: { key: 'zh-m4-choice', title: `Mission 4: ${m4.winner} makes the last choice`, body: 'Swap, X-Ray or ₹6 Cr, before the first envelope opens.', ...R3, form: 'choice', buttons: [] } };
+  const board = { href: '/admin/results', label: 'Open the Final leaderboard' };
+  const anchor = { area: 'reveal' as const, roleLabel: 'Anchor' };
+  if (s.zh.opened < s.zh.total || s.zh.total === 0) {
+    return { ...base, items: items(labels, 0), now: { key: 'zh-calc', title: 'Calculate the results', body: 'The site ranks the finalists from the recorded envelopes. Nothing shows on the projector or on phones yet.', ...anchor, buttons: [], link: board } };
   }
-  if (s.zh.opened < s.zh.total) {
-    return { ...base, items: items(labels, 1), now: { key: `zh-open-${s.zh.opened}`, title: `Open envelope ${s.zh.opened + 1} of ${s.zh.total}`, body: 'Lowest Power Level first. Each press opens the next envelope on the projector with its Hero Score. The anchor can also press → on the reveal screen.', area: 'reveal', roleLabel: 'Anchor', buttons: [{ action: 'zh-next', label: 'Open the next envelope' }], link: { href: '/screen/reveal', label: 'Open the reveal screen' }, progress: `${s.zh.opened} / ${s.zh.total} opened` } };
+  const n = placesAnnounced('zero_hour', s.step);
+  if (n < 3) {
+    const place = ['3rd', '2nd', '1st'][n];
+    return { ...base, items: items(labels, 1), now: { key: `zh-announce-${n}`, title: `Announce ${place} place`, body: 'Each press on the Final leaderboard puts the next place on the projector. Participants see no result until 1st place is out.', ...anchor, buttons: [], link: board, progress: `${n} / 3 announced` } };
   }
-  return { ...base, items: items(labels, 2), now: { key: 'end-event', title: 'All envelopes are open', body: 'The winner is on the projector. If two teams are still level, the anchor runs the coin toss on stage. Then end the event.', ...ADMIN, buttons: [{ action: 'end-event', label: 'End the event' }] } };
+  return { ...base, items: items(labels, 2), now: { key: 'end-event', title: 'The winner is announced', body: 'If 1st place is a tie, the anchor runs the coin toss on stage. Then end the event.', ...ADMIN, buttons: [{ action: 'end-event', label: 'End the event' }] } };
 }

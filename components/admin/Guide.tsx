@@ -20,7 +20,7 @@ export const CONSOLE_FOR: Record<Phase, { href: string; label: string }> = {
   round1: { href: '/admin/auction', label: 'Power Bazaar console' },
   round2: { href: '/admin/round2', label: 'Round 2 console' },
   round3: { href: '/admin/round3', label: 'Round 3 console' },
-  zero_hour: { href: '/admin/round3', label: 'Round 3 console' },
+  zero_hour: { href: '/admin/results', label: 'Final leaderboard' },
   ended: { href: '/admin/print', label: 'Print & backups' },
 };
 
