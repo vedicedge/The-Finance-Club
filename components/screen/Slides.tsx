@@ -125,7 +125,7 @@ export function PodiumScreen({ places }: { places: Place[] }) {
         ) : (
           <ol className="mt-[4cqh] flex w-[70cqw] flex-col gap-[2.5cqh]">
             {places.map((p) => {
-              const top = p === first;
+              const top = p === places[0]; // the place just announced
               return (
                 <li key={p.id} className={`projector-fade flex items-baseline justify-between border px-[3cqw] py-[2.5cqh] ${top ? 'border-glow bg-glow/10' : 'border-line bg-abyss/60'}`}>
                   <span className={`display ${top ? 'text-[4cqw] text-glow' : 'text-[3cqw] text-steel'}`}>{PLACE[p.place - 1]}</span>

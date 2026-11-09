@@ -4,6 +4,10 @@ import type { Organiser } from '@/lib/auth/organiser';
 import { AUTO_SCREEN, PROJECTOR_SCREENS, SCREEN_LABEL, projectorScreen, type ProjectorMode } from '@/lib/projector';
 import { PHASE_INFO, type Phase } from '@/lib/phases';
 import { setProjector } from '@/app/admin/actions';
+import { announceNext } from '@/app/admin/results/actions';
+import { placesAnnounced } from '@/lib/zero-hour';
+
+const PLACE = ['3rd', '2nd', '1st'];
 
 /**
  * The command centre's projector control: what the auditorium sees now (with a live preview),
@@ -13,11 +17,13 @@ import { setProjector } from '@/app/admin/actions';
 export function ProjectorPanel({
   organiser,
   phase,
+  step,
   mode,
   available,
 }: {
   organiser: Organiser;
   phase: Phase;
+  step: string | null;
   mode: ProjectorMode;
   /** False until the 8 November database update has been run. */
   available: boolean;
@@ -25,6 +31,7 @@ export function ProjectorPanel({
   if (!canAccess(organiser.roles, 'projector')) return null;
   const screen = projectorScreen(mode, phase);
   const canReveal = canAccess(organiser.roles, 'reveal');
+  const announced = placesAnnounced(phase, step);
   const btn = 'btn !min-h-0 !px-3 !py-2 !text-[0.7rem]';
   return (
     <section id="projector" className="panel mt-10 grid gap-6 px-5 py-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
@@ -71,8 +78,17 @@ export function ProjectorPanel({
           {SCREEN_LABEL[AUTO_SCREEN[phase]]}.
         </p>
 
-        {screen === 'reveal' && canReveal && (
-          <Link href="/admin/results" className="btn btn-primary mt-5">Final leaderboard →</Link>
+        {phase === 'zero_hour' && canReveal && (
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            {announced < 3 ? (
+              <form action={announceNext}>
+                <button className="btn btn-primary">Reveal {PLACE[announced]} place</button>
+              </form>
+            ) : (
+              <p className="text-sm text-glow">3rd, 2nd and 1st are on the projector.</p>
+            )}
+            <Link href="/admin/results" className="btn btn-ghost">Final leaderboard →</Link>
+          </div>
         )}
       </div>
 
