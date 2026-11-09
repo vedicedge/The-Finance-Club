@@ -5,11 +5,10 @@ import { requireOrganiser } from '@/lib/auth/organiser';
 import { serviceDb } from '@/lib/db/server';
 import { audit } from '@/lib/audit';
 import { dbMessage } from '@/lib/round1/server';
-import { PODIUM_STEPS, placesAnnounced } from '@/lib/zero-hour';
+import { RESULT_BUTTON, RESULT_STEPS, resultStage } from '@/lib/zero-hour';
 import { loadReveal } from '@/lib/zero-hour-server';
 
 const back = (p: Record<string, string>): never => redirect(`/admin/results?${new URLSearchParams(p)}`);
-const PLACE = ['3rd', '2nd', '1st'];
 
 /** Opens every envelope at once (privately) so the site can rank the finalists. */
 export async function calculateResults() {
@@ -26,29 +25,30 @@ export async function calculateResults() {
 
 async function current() {
   const st = await serviceDb().from('event_state').select('phase, step').single();
-  if (st.data?.phase !== 'zero_hour') back({ error: 'Places are announced at Zero Hour.' });
-  return placesAnnounced('zero_hour', st.data!.step as string | null);
+  if (st.data?.phase !== 'zero_hour') back({ error: 'The results are announced at Zero Hour.' });
+  return resultStage('zero_hour', st.data!.step as string | null);
 }
 
-/** Puts the next place on the projector: 3rd, then 2nd, then 1st. */
+async function go(me: Awaited<ReturnType<typeof requireOrganiser>>, to: number, ok: string) {
+  const { error } = await serviceDb().from('event_state').update({ step: RESULT_STEPS[to] }).eq('id', true).eq('phase', 'zero_hour');
+  if (error) back({ error: dbMessage(error) });
+  await audit(me, 'zh.announce', { stage: RESULT_STEPS[to] });
+  back({ ok });
+}
+
+/** The next press: 3rd, 2nd, 1st, the final leaderboard, then the Doomsday cover. */
 export async function announceNext() {
   const me = await requireOrganiser('reveal');
   const n = await current();
-  if (n >= 3) back({ error: 'All three places are announced.' });
+  if (n >= RESULT_STEPS.length - 1) back({ error: 'The Doomsday cover is already up.' });
   if (!(await loadReveal()).final) back({ error: 'Calculate the results first.' });
-  const { error } = await serviceDb().from('event_state').update({ step: PODIUM_STEPS[n] }).eq('id', true).eq('phase', 'zero_hour');
-  if (error) back({ error: dbMessage(error) });
-  await audit(me, 'zh.announce', { place: PLACE[n] });
-  back({ ok: `${PLACE[n]} place is on the projector.` });
+  await go(me, n + 1, `${RESULT_BUTTON[n]}: done.`);
 }
 
-/** Takes the last announced place off the projector. */
+/** Goes back one press. */
 export async function undoAnnounce() {
   const me = await requireOrganiser('reveal');
   const n = await current();
   if (n === 0) back({ error: 'Nothing is announced yet.' });
-  const { error } = await serviceDb().from('event_state').update({ step: n > 1 ? PODIUM_STEPS[n - 2] : null }).eq('id', true).eq('phase', 'zero_hour');
-  if (error) back({ error: dbMessage(error) });
-  await audit(me, 'zh.announce_undo', { place: PLACE[n - 1] });
-  back({ ok: `${PLACE[n - 1]} place taken off the projector.` });
+  await go(me, n - 1, `Undone: ${RESULT_BUTTON[n - 1]}.`);
 }

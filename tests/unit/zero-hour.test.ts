@@ -16,6 +16,7 @@ describe('the podium, one place at a time', () => {
     expect(placesAnnounced('zero_hour', null)).toBe(0);
     expect(placesAnnounced('zero_hour', 'top3')).toBe(1);
     expect(placesAnnounced('zero_hour', 'top1')).toBe(3);
+    expect(placesAnnounced('zero_hour', 'cover')).toBe(3);
     expect(placesAnnounced('ended', null)).toBe(3);
   });
   it('shows 3rd, then 2nd and 3rd, then all three, and never 4th', () => {

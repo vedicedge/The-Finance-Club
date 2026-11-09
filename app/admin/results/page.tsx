@@ -4,7 +4,7 @@ import { requireOrganiser } from '@/lib/auth/organiser';
 import { serviceDb } from '@/lib/db/server';
 import { formatCrore } from '@/lib/money';
 import { loadReveal } from '@/lib/zero-hour-server';
-import { placesAnnounced, podium } from '@/lib/zero-hour';
+import { RESULT_BUTTON, placesAnnounced, podium, resultStage } from '@/lib/zero-hour';
 import { AdminShell } from '@/components/admin/AdminShell';
 import { AutoRefresh } from '@/components/admin/AutoRefresh';
 import { NextPhase } from '@/components/admin/NextPhase';
@@ -21,6 +21,7 @@ export default async function Results({ searchParams }: { searchParams: Promise<
   const sp = await searchParams;
   const [rv, st] = await Promise.all([loadReveal(), serviceDb().from('event_state').select('phase, step').single()]);
   const phase = (st.data?.phase as string) ?? 'registration';
+  const stage = resultStage(phase, st.data?.step as string | null);
   const announced = placesAnnounced(phase, st.data?.step as string | null);
   const final = rv.final;
   const onStage = new Set(podium(final, announced).map((r) => r.agencyId));
@@ -59,22 +60,22 @@ export default async function Results({ searchParams }: { searchParams: Promise<
           <>
             <h2 className="eyebrow">Step 2 · Announce, one place at a time</h2>
             <p className="mt-2 text-sm text-steel">
-              {announced === 0 ? 'The projector shows the cover.' : `On the projector: ${PLACE.slice(0, announced).join(', then ')}.`}{' '}
+              {stage === 0 ? 'The projector shows the results cover.' : stage <= 3 ? `On the projector: ${PLACE.slice(0, announced).join(', then ')}.` : stage === 4 ? 'On the projector: the final leaderboard.' : 'On the projector: the Doomsday cover.'}{' '}
               Participants see no result until 1st place is announced.
             </p>
             <div className="mt-4 flex flex-wrap gap-3">
-              {announced < 3 && (
+              {stage < 5 && (
                 <form action={announceNext}>
-                  <button disabled={!zh} className="btn btn-primary !min-h-14 !px-6">Reveal {PLACE[announced]} place</button>
+                  <button disabled={!zh} className="btn btn-primary !min-h-14 !px-6">{RESULT_BUTTON[stage]}</button>
                 </form>
               )}
-              {announced > 0 && zh && (
+              {stage > 0 && zh && (
                 <form action={undoAnnounce}>
-                  <button className="btn btn-ghost">Undo {PLACE[announced - 1]}</button>
+                  <button className="btn btn-ghost">Undo: {RESULT_BUTTON[stage - 1]}</button>
                 </form>
               )}
             </div>
-            {announced === 3 && zh && <p className="mt-4 text-sm text-glow">All three are out. Switch the phase to Event over in the command centre when you are done.</p>}
+            {stage === 5 && zh && <p className="mt-4 text-sm text-glow">The Doomsday cover is up. Switch the phase to Event over in the command centre when you are done.</p>}
           </>
         )}
       </section>

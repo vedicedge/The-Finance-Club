@@ -5,9 +5,7 @@ import { AUTO_SCREEN, PROJECTOR_SCREENS, SCREEN_LABEL, projectorScreen, type Pro
 import { PHASE_INFO, type Phase } from '@/lib/phases';
 import { setProjector } from '@/app/admin/actions';
 import { announceNext } from '@/app/admin/results/actions';
-import { placesAnnounced } from '@/lib/zero-hour';
-
-const PLACE = ['3rd', '2nd', '1st'];
+import { RESULT_BUTTON, resultStage } from '@/lib/zero-hour';
 
 /**
  * The command centre's projector control: what the auditorium sees now (with a live preview),
@@ -31,7 +29,7 @@ export function ProjectorPanel({
   if (!canAccess(organiser.roles, 'projector')) return null;
   const screen = projectorScreen(mode, phase);
   const canReveal = canAccess(organiser.roles, 'reveal');
-  const announced = placesAnnounced(phase, step);
+  const stage = resultStage(phase, step);
   const btn = 'btn !min-h-0 !px-3 !py-2 !text-[0.7rem]';
   return (
     <section id="projector" className="panel mt-10 grid gap-6 px-5 py-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
@@ -80,12 +78,12 @@ export function ProjectorPanel({
 
         {phase === 'zero_hour' && canReveal && (
           <div className="mt-5 flex flex-wrap items-center gap-2">
-            {announced < 3 ? (
+            {stage < 5 ? (
               <form action={announceNext}>
-                <button className="btn btn-primary">Reveal {PLACE[announced]} place</button>
+                <button className="btn btn-primary">{RESULT_BUTTON[stage]}</button>
               </form>
             ) : (
-              <p className="text-sm text-glow">3rd, 2nd and 1st are on the projector.</p>
+              <p className="text-sm text-glow">The Doomsday cover is on the projector.</p>
             )}
             <Link href="/admin/results" className="btn btn-ghost">Final leaderboard →</Link>
           </div>

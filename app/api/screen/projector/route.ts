@@ -6,7 +6,7 @@ import { isPhase, type Phase } from '@/lib/phases';
 import { isProjectorMode, projectorScreen, type ProjectorMode } from '@/lib/projector';
 import { parseSettings } from '@/lib/settings';
 import { loadReveal } from '@/lib/zero-hour-server';
-import { placesAnnounced, podium } from '@/lib/zero-hour';
+import { placesAnnounced, podium, resultStage } from '@/lib/zero-hour';
 
 /**
  * What /projector should show right now: the phase, the projector mode (auto or pinned) and the
@@ -29,7 +29,9 @@ export async function GET() {
   const agencies = await db.from('agencies').select('id', { count: 'exact', head: true }).eq('is_test', false);
   const screen = projectorScreen(mode, phase);
   // The results screen gets only the places the anchor has announced, never the rest.
-  const announced = screen === 'reveal' ? placesAnnounced(phase, (row.data as { step?: string | null } | null)?.step) : 0;
+  const step = (row.data as { step?: string | null } | null)?.step;
+  const announced = screen === 'reveal' ? placesAnnounced(phase, step) : 0;
+  const stage = screen === 'reveal' ? resultStage(phase, step) : 0;
   const places = announced ? podium((await loadReveal()).final, announced).map((r) => ({ place: r.place, id: r.agencyId, name: r.name, coinToss: r.coinToss })) : [];
 
   return NextResponse.json(
@@ -39,6 +41,7 @@ export async function GET() {
       mode,
       screen,
       places,
+      finale: stage === 5 ? 'cover' : stage === 4 ? 'podium' : null,
       startsAt: settings.event.startsAt,
       venue: settings.event.venue,
       agencies: agencies.count ?? 0,
