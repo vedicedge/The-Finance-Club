@@ -57,9 +57,8 @@ describe.skipIf(!hasDb)('Round 3', () => {
   const holder = (e: string) => `select holder_agency_id from v_envelope_holders where envelope_id = '${e}';`;
   const fund = (a: string) => `select fund_left('${a}');`;
 
-  it('the multiplier map must match the spec distribution', () => {
-    expect(sqlError(`select r3_set_envelope_contents(replace(${map}::text, 'Villain escaped', 'Clean win, zero damage')::jsonb, '${K}');`))
-      .toMatch(/bad_distribution/);
+  it('the multiplier map takes any outcome in any envelope', () => {
+    expect(sql(`select 1 from (select r3_set_envelope_contents(replace(${map}::text, 'Villain escaped', 'Clean win, zero damage')::jsonb, '${K}')) x;`)).toEqual(['1']);
   });
 
   it('the deal gives every finalist a different envelope', () => {

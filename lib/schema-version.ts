@@ -3,7 +3,7 @@
  * supabase/migrations/. A unit test keeps the two in step. The newest migration also
  * defines public.schema_version() returning the same value.
  */
-export const EXPECTED_SCHEMA = '20261109002100';
+export const EXPECTED_SCHEMA = '20261109002200';
 
 export type SchemaStatus = { ok: boolean; found: string | null; expected: string };
 

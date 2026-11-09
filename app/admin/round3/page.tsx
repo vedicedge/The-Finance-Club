@@ -7,7 +7,7 @@ import { AdminShell } from '@/components/admin/AdminShell';
 import { NextPhase } from '@/components/admin/NextPhase';
 import { AutoRefresh } from '@/components/admin/AutoRefresh';
 import { canAccess } from '@/lib/auth/roles';
-import { fine, saveDeal, saveEnvelopeMap, transfer } from './actions';
+import { fine, randomEnvelopeMap, saveDeal, saveEnvelopeMap, transfer } from './actions';
 
 export const metadata: Metadata = { title: 'Doomsday Vault console' };
 
@@ -69,6 +69,7 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
               </div>
               <button className="btn btn-primary mt-3 w-full">Save map</button>
             </details>
+            <button formAction={randomEnvelopeMap} formNoValidate className="btn btn-ghost w-full">Random map (×3, ×2, ×0.5, ×0.25 only)</button>
           </form>
         )}
 

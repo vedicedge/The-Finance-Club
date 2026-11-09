@@ -27,6 +27,16 @@ export async function saveEnvelopeMap(formData: FormData) {
     'Multiplier map saved. It stays secret until Zero Hour.');
 }
 
+/** Admin only: a random map using only the ×3, ×2, ×0.5 and ×0.25 outcomes. */
+export async function randomEnvelopeMap() {
+  const { data } = await serviceDb().from('battle_outcomes').select('label, multiplier').in('multiplier', [3, 2, 0.5, 0.25]);
+  const labels = (data ?? []).map((o) => o.label as string);
+  if (!labels.length) back({ error: 'No ×3, ×2, ×0.5 or ×0.25 outcome found.' });
+  const map = Object.fromEntries([1, 2, 3, 4, 5, 6, 7, 8].map((i) => [`E${i}`, labels[Math.floor(Math.random() * labels.length)]]));
+  await run([], 'r3.envelope_map_random', {}, (actor) => serviceDb().rpc('r3_set_envelope_contents', { p_map: map, p_actor: actor }),
+    'Random multiplier map saved. It stays secret until Zero Hour.');
+}
+
 export async function saveDeal(formData: FormData) {
   const map = Object.fromEntries([...formData.entries()].filter(([k]) => k.startsWith('deal_')).map(([k, v]) => [k.slice(5), String(v)]));
   await run(['ledger_keeper'], 'r3.deal', { map }, (actor) => serviceDb().rpc('r3_deal', { p_map: map, p_actor: actor }), 'Envelopes recorded.');
