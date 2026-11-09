@@ -5,10 +5,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { QuizProjector } from '@/app/screen/quiz/QuizProjector';
 import { AuctionProjector } from '@/app/screen/auction/AuctionProjector';
 import { BoardProjector } from '@/app/screen/board/BoardProjector';
-import { CoverScreen, HoldingScreen, PodiumScreen, WelcomeScreen } from '@/components/screen/Slides';
+import { CoverScreen, EventCover, HoldingScreen, PodiumScreen, WelcomeScreen } from '@/components/screen/Slides';
 import type { ProjectorScreen } from '@/lib/projector';
 
-type State = { now: string; phase: string; mode: string; screen: ProjectorScreen; startsAt: string; venue: string; agencies: number; places?: { place: number; id: string; name: string; coinToss: boolean }[] };
+type State = { now: string; phase: string; mode: string; screen: ProjectorScreen; startsAt: string; venue: string; agencies: number; places?: { place: number; id: string; name: string; coinToss: boolean }[]; finale?: 'podium' | 'cover' | null };
 
 const POLL_MS = 2000;
 const IDLE_MS = 2500;
@@ -48,7 +48,7 @@ export function ProjectorShell({ preview = false }: { preview?: boolean }) {
   return (
     <div className="fixed inset-0 bg-black">
       {state ? (
-        <div key={state.screen} className="projector-fade absolute inset-0">
+        <div key={state.screen + (state.finale ?? "")} className="projector-fade absolute inset-0">
           <Screen state={state} />
         </div>
       ) : (
@@ -75,7 +75,7 @@ function Screen({ state }: { state: State }) {
     case 'cover':
       return <CoverScreen />;
     case 'reveal':
-      return <PodiumScreen places={state.places ?? []} />;
+      return state.finale === 'cover' ? <EventCover /> : <PodiumScreen places={state.places ?? []} final={state.finale === 'podium'} />;
     case 'welcome':
       return <WelcomeScreen startsAt={state.startsAt} serverNow={state.now} agencies={state.agencies} />;
     case 'holding':

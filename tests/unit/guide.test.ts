@@ -101,10 +101,12 @@ describe('Simple mode: the next step', () => {
     const z = (step: string | null, opened = 8) => snap({ phase: 'zero_hour', step, zh: { opened, total: 8 } });
     expect(now(z(null, 0)).key).toBe('zh-calc');
     expect(now(z(null, 0)).link?.href).toBe('/admin/results');
-    expect(now(z(null)).title).toBe('Announce 3rd place');
-    expect(now(z('top3')).title).toBe('Announce 2nd place');
-    expect(now(z('top2')).title).toBe('Announce 1st place');
-    expect(actions(z('top1'))).toEqual(['end-event']);
+    expect(now(z(null)).title).toBe('Reveal 3rd place');
+    expect(now(z('top3')).title).toBe('Reveal 2nd place');
+    expect(now(z('top2')).title).toBe('Reveal 1st place');
+    expect(now(z('top1')).title).toBe('Show the final leaderboard');
+    expect(now(z('podium')).title).toBe('Show the Doomsday cover');
+    expect(actions(z('cover'))).toEqual(['end-event']);
     expect(actions(snap({ phase: 'ended' }))).toEqual([]);
   });
 

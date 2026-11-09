@@ -3,7 +3,7 @@
  * to take now, plus a short done / now / later list for the current phase. The command centre
  * shows it when Simple mode is on; app/admin/guide/actions.ts carries out the step's button.
  */
-import { placesAnnounced } from '@/lib/zero-hour';
+import { RESULT_BUTTON, resultStage } from '@/lib/zero-hour';
 import type { Area } from '@/lib/auth/roles';
 import { ROUNDS } from '@/lib/config';
 import type { Phase } from '@/lib/phases';
@@ -310,17 +310,16 @@ function round3(s: GuideSnapshot): Guide {
 // ---------------------------------------------------------------- Zero Hour
 
 function zeroHour(s: GuideSnapshot): Guide {
-  const labels = ['Calculate the results', 'Announce 3rd, 2nd, then 1st', 'End the event'];
+  const labels = ['Calculate the results', 'Announce 3rd, 2nd, 1st, then the covers', 'End the event'];
   const base = { phaseTitle: 'Zero Hour' };
   const board = { href: '/admin/results', label: 'Open the Final leaderboard' };
   const anchor = { area: 'reveal' as const, roleLabel: 'Anchor' };
   if (s.zh.opened < s.zh.total || s.zh.total === 0) {
     return { ...base, items: items(labels, 0), now: { key: 'zh-calc', title: 'Calculate the results', body: 'The site ranks the finalists from the recorded envelopes. Nothing shows on the projector or on phones yet.', ...anchor, buttons: [], link: board } };
   }
-  const n = placesAnnounced('zero_hour', s.step);
-  if (n < 3) {
-    const place = ['3rd', '2nd', '1st'][n];
-    return { ...base, items: items(labels, 1), now: { key: `zh-announce-${n}`, title: `Announce ${place} place`, body: 'Each press on the Final leaderboard puts the next place on the projector. Participants see no result until 1st place is out.', ...anchor, buttons: [], link: board, progress: `${n} / 3 announced` } };
+  const n = resultStage('zero_hour', s.step);
+  if (n < 5) {
+    return { ...base, items: items(labels, 1), now: { key: `zh-announce-${n}`, title: RESULT_BUTTON[n], body: 'Each press on the Final leaderboard or the Projector panel moves the projector on: 3rd, 2nd, 1st, the final leaderboard, then the Doomsday cover. Participants see no result until 1st place is out.', ...anchor, buttons: [], link: board, progress: `${n} / 5` } };
   }
   return { ...base, items: items(labels, 2), now: { key: 'end-event', title: 'The winner is announced', body: 'If 1st place is a tie, the anchor runs the coin toss on stage. Then end the event.', ...ADMIN, buttons: [{ action: 'end-event', label: 'End the event' }] } };
 }

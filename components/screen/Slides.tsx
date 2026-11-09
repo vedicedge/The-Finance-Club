@@ -111,12 +111,15 @@ type Place = { place: number; id: string; name: string; coinToss: boolean };
 const PLACE = ['1st', '2nd', '3rd'];
 
 /** Zero Hour: a cover until the anchor announces 3rd place, then 2nd, then 1st. */
-export function PodiumScreen({ places }: { places: Place[] }) {
+export function PodiumScreen({ places, final = false }: { places: Place[]; final?: boolean }) {
   const first = places.find((p) => p.place === 1) ?? null;
+  // The final leaderboard: all three together, 1st on top and highlighted.
+  const big = final ? first : places[0]; // otherwise the place just announced
   return (
     <Stage art="zerohour">
       <div className="flex h-full flex-col items-center justify-center text-center">
-        <p className="text-[1.4cqw] font-semibold tracking-[0.35em] text-glow uppercase">Zero Hour · The results</p>
+        <p className="text-[1.4cqw] font-semibold tracking-[0.35em] text-glow uppercase">{final ? 'Final leaderboard' : 'Zero Hour · The results'}</p>
+        {final && <h1 className="display metal mt-[2cqh] text-[5cqw] leading-none">The heroes of {EVENT.city}</h1>}
         {places.length === 0 ? (
           <>
             <h1 className="display metal mt-[2cqh] text-[7.5cqw] leading-none">Who saved {EVENT.city}?</h1>
@@ -125,7 +128,7 @@ export function PodiumScreen({ places }: { places: Place[] }) {
         ) : (
           <ol className="mt-[4cqh] flex w-[70cqw] flex-col gap-[2.5cqh]">
             {places.map((p) => {
-              const top = p === places[0]; // the place just announced
+              const top = p === big;
               return (
                 <li key={p.id} className={`projector-fade flex items-baseline justify-between border px-[3cqw] py-[2.5cqh] ${top ? 'border-glow bg-glow/10' : 'border-line bg-abyss/60'}`}>
                   <span className={`display ${top ? 'text-[4cqw] text-glow' : 'text-[3cqw] text-steel'}`}>{PLACE[p.place - 1]}</span>
@@ -139,7 +142,27 @@ export function PodiumScreen({ places }: { places: Place[] }) {
             })}
           </ol>
         )}
-        {first && <p className="mt-[4cqh] font-serif text-[2.4cqw] text-silver italic">{first.name} saved {EVENT.city}.</p>}
+        {first && !final && <p className="mt-[4cqh] font-serif text-[2.4cqw] text-silver italic">{first.name} saved {EVENT.city}.</p>}
+      </div>
+    </Stage>
+  );
+}
+
+/** The Doomsday cover, for the photos once the results are out. */
+export function EventCover() {
+  return (
+    <Stage
+      backdrop={
+        <>
+          <Image src={heroDesktop} alt="" fill sizes="100vw" className="pointer-events-none object-cover object-[60%_30%]" aria-hidden="true" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgb(8_10_7/0.55)_0%,rgb(8_10_7/0.9)_75%)]" />
+        </>
+      }
+    >
+      <div className="flex h-full flex-col items-center justify-center text-center">
+        <p className="text-[1.4cqw] font-semibold tracking-[0.35em] text-glow uppercase">{EVENT.club}</p>
+        <Image src={wordmark} alt={EVENT.name} sizes="60vw" className="mt-[3cqh] h-auto w-[56cqw]" />
+        <p className="mt-[3cqh] font-serif text-[2.6cqw] text-silver italic">{EVENT.tagline}</p>
       </div>
     </Stage>
   );
