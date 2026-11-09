@@ -27,12 +27,17 @@ export async function saveEnvelopeMap(formData: FormData) {
     'Multiplier map saved. It stays secret until Zero Hour.');
 }
 
-/** Admin only: a random map using only the ×3, ×2, ×0.5 and ×0.25 outcomes. */
+/** Admin only: a random map with one each of ×3, ×2, ×0.5 and ×0.25, and two each of ×1 and ×1.5, shuffled. */
 export async function randomEnvelopeMap() {
-  const { data } = await serviceDb().from('battle_outcomes').select('label, multiplier').in('multiplier', [3, 2, 0.5, 0.25]);
-  const labels = (data ?? []).map((o) => o.label as string);
-  if (!labels.length) back({ error: 'No ×3, ×2, ×0.5 or ×0.25 outcome found.' });
-  const map = Object.fromEntries([1, 2, 3, 4, 5, 6, 7, 8].map((i) => [`E${i}`, labels[Math.floor(Math.random() * labels.length)]]));
+  const { data } = await serviceDb().from('battle_outcomes').select('label, multiplier');
+  const label = (m: number) => (data ?? []).find((o) => Number(o.multiplier) === m)?.label as string | undefined;
+  const picks = [3, 2, 0.5, 0.25, 1, 1, 1.5, 1.5].map(label);
+  if (picks.some((l) => !l)) back({ error: 'An outcome for ×3, ×2, ×1.5, ×1, ×0.5 or ×0.25 is missing.' });
+  for (let i = picks.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [picks[i], picks[j]] = [picks[j], picks[i]];
+  }
+  const map = Object.fromEntries(picks.map((l, i) => [`E${i + 1}`, l!]));
   await run([], 'r3.envelope_map_random', {}, (actor) => serviceDb().rpc('r3_set_envelope_contents', { p_map: map, p_actor: actor }),
     'Random multiplier map saved. It stays secret until Zero Hour.');
 }

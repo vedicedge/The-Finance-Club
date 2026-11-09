@@ -69,7 +69,7 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
               </div>
               <button className="btn btn-primary mt-3 w-full">Save map</button>
             </details>
-            <button formAction={randomEnvelopeMap} formNoValidate className="btn btn-ghost w-full">Random map (×3, ×2, ×0.5, ×0.25 only)</button>
+            <button formAction={randomEnvelopeMap} formNoValidate className="btn btn-ghost w-full">Random map (one each ×3, ×2, ×0.5, ×0.25; two each ×1, ×1.5)</button>
           </form>
         )}
 
