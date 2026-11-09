@@ -22,7 +22,9 @@ async function run(roles: Role[], action: string, payload: Record<string, unknow
 
 /** Admin only: the secret multiplier map from the filled envelopes. */
 export async function saveEnvelopeMap(formData: FormData) {
-  const map = Object.fromEntries([1, 2, 3, 4, 5, 6, 7, 8].map((i) => [`E${i}`, String(formData.get(`E${i}`) ?? '')]));
+  const map = Object.fromEntries(
+    Array.from({ length: 10 }, (_, i) => [`E${i + 1}`, String(formData.get(`E${i + 1}`) ?? '')]).filter(([, v]) => v), // E9–E10 only with 10 finalists
+  );
   await run([], 'r3.envelope_map', {}, (actor) => serviceDb().rpc('r3_set_envelope_contents', { p_map: map, p_actor: actor }),
     'Multiplier map saved. It stays secret until Zero Hour.');
 }
@@ -31,7 +33,8 @@ export async function saveEnvelopeMap(formData: FormData) {
 export async function randomEnvelopeMap() {
   const { data } = await serviceDb().from('battle_outcomes').select('label, multiplier');
   const label = (m: number) => (data ?? []).find((o) => Number(o.multiplier) === m)?.label as string | undefined;
-  const picks = [3, 2, 0.5, 0.25, 1, 1, 1.5, 1.5].map(label);
+  const { count } = await serviceDb().from('agencies').select('id', { count: 'exact', head: true }).eq('status', 'active');
+  const picks = [3, 2, 0.5, 0.25, 1, 1, 1.5, 1.5, ...((count ?? 0) > 8 ? [1, 1.5] : [])].map(label);
   if (picks.some((l) => !l)) back({ error: 'An outcome for ×3, ×2, ×1.5, ×1, ×0.5 or ×0.25 is missing.' });
   for (let i = picks.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));

@@ -101,7 +101,7 @@ export function CoverScreen() {
       <div className="flex h-full flex-col items-center justify-center text-center">
         <p className="text-[1.4cqw] font-semibold tracking-[0.35em] text-glow uppercase">Round 3</p>
         <h1 className="display metal mt-[2cqh] text-[7.5cqw] leading-none">The Doomsday Vault</h1>
-        <p className="mt-[3cqh] font-serif text-[2.2cqw] text-silver italic">Eight sealed Mission Files. Only one agency saves {EVENT.city}.</p>
+        <p className="mt-[3cqh] font-serif text-[2.2cqw] text-silver italic">Sealed Mission Files. Only one agency saves {EVENT.city}.</p>
       </div>
     </Stage>
   );

@@ -192,7 +192,8 @@ export default async function Round2Console({ searchParams }: { searchParams: Pr
               <label className="flex items-center gap-2 text-sm text-steel">
                 <input type="checkbox" name="confirm" className="accent-glow" /> All towers and votes are final
               </label>
-              <button disabled={!r2.board.qualifiers} className="btn btn-primary w-full">Publish results</button>
+              <button name="top" value="8" disabled={!r2.board.qualifiers} className="btn btn-primary w-full">Publish: top 8 to Round 3</button>
+              <button name="top" value="10" className="btn btn-ghost w-full">Publish: top 10 to Round 3</button>
             </form>
           )}
         </div>

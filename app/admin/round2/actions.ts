@@ -78,10 +78,11 @@ export async function saveCutoff(formData: FormData) {
 export async function publishRound2(formData: FormData) {
   const me = await who(['scorer']);
   if (formData.get('confirm') !== 'on') back({ error: 'Tick the confirmation to publish.' });
-  const r2 = await loadRound2();
-  if (!r2.board.qualifiers) back({ error: 'Settle the tie at 8th place first.' });
-  const { error } = await serviceDb().rpc('r2_publish', { p_qualifiers: r2.board.qualifiers, p_actor: me.userId });
+  const top = formData.get('top') === '10' ? 10 : 8; // the spec's 8, or 10 if the organisers choose
+  const r2 = await loadRound2(top);
+  if (!r2.board.qualifiers) back({ error: `Settle the tie at ${top}th place first.` });
+  const { error } = await serviceDb().rpc('r2_publish', { p_qualifiers: r2.board.qualifiers, p_actor: me.userId, p_top: top });
   if (error) back({ error: dbMessage(error) });
-  await audit(me, 'r2.publish', { qualifiers: r2.board.qualifiers });
-  back({ ok: 'Round 2 published. The top 8 go to the Vault; poster bonuses credited.' });
+  await audit(me, 'r2.publish', { qualifiers: r2.board.qualifiers, top });
+  back({ ok: `Round 2 published. The top ${top} go to the Vault; poster bonuses credited.` });
 }

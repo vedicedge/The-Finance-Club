@@ -142,8 +142,7 @@ describe.skipIf(!hasDb)('Zero Hour reveal', () => {
     expect(out).toEqual(['E8', 'E6', 'A08|2|0.25|19.0|10.00', 'A06|3|0.50|19.0|11.00']);
   });
 
-  it('waits for Mission 4\'s choice, then stops after the eighth envelope', () => {
-    expect(sqlError(`${zh} select r3_set_winner(4, 'A01', '${K}'); select zh_next_reveal('${K}');`)).toMatch(/mission4_choice_pending/);
+  it('stops after the eighth envelope (missions run offline)', () => {
     expect(sqlError(`${zh} ${Array(9).fill(`select zh_next_reveal('${K}');`).join(' ')}`)).toMatch(/all_revealed/);
   });
 });

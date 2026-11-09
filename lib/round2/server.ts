@@ -1,6 +1,6 @@
 import 'server-only';
 import { serviceDb } from '@/lib/db/server';
-import { rankTower, type TowerInput } from '@/lib/round2/tower-board';
+import { TOP, rankTower, type TowerInput } from '@/lib/round2/tower-board';
 
 export type Duel = {
   id: number;
@@ -21,7 +21,7 @@ export type TowerRaw = {
   cutoff_rank: number | null;
 };
 
-export async function loadRound2() {
+export async function loadRound2(cutoff = TOP) {
   const db = serviceDb();
   const [st, agencies, duels, raw, scores] = await Promise.all([
     db.from('event_state').select('phase, round2_published_at').single(),
@@ -52,7 +52,7 @@ export async function loadRound2() {
     field: field.map((a) => ({ id: a.id as string, name: a.name as string, status: a.status as string })),
     duels: (duels.data ?? []) as Duel[],
     raw: rawOf,
-    board: rankTower(input),
+    board: rankTower(input, cutoff),
   };
 }
 

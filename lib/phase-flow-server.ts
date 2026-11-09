@@ -16,6 +16,6 @@ export async function loadFlowState(): Promise<FlowState> {
     prelimFrozen: Boolean(st.data.prelim_frozen_at),
     round1Locked: Boolean(st.data.round1_locked_at),
     round2Published: Boolean(st.data.round2_published_at),
-    envelopesRecorded: (active.count ?? 0) > 0 && held.count === active.count && map.count === 8,
+    envelopesRecorded: (active.count ?? 0) > 0 && held.count === active.count && (map.count ?? 0) >= Math.max(8, active.count ?? 0),
   };
 }
