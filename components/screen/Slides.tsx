@@ -159,10 +159,11 @@ export function EventCover() {
         </>
       }
     >
-      <div className="flex h-full flex-col items-center justify-center text-center">
-        <p className="text-[1.4cqw] font-semibold tracking-[0.35em] text-glow uppercase">{EVENT.club}</p>
-        <Image src={wordmark} alt={EVENT.name} sizes="60vw" className="mt-[3cqh] h-auto w-[56cqw]" />
-        <p className="mt-[3cqh] font-serif text-[2.6cqw] text-silver italic">{EVENT.tagline}</p>
+      {/* Kept in the top part of the slide: people stand in front of the screen for photos. */}
+      <div className="flex h-full flex-col items-center justify-start pt-[6cqh] text-center">
+        <p className="text-[1.4cqw] font-semibold tracking-[0.35em] text-glow uppercase [text-shadow:0_0.2cqw_0.8cqw_rgb(0_0_0/0.95),0_0_2cqw_rgb(0_0_0/0.8)]">{EVENT.club}</p>
+        <Image src={wordmark} alt={EVENT.name} sizes="60vw" className="mt-[2cqh] h-auto w-[52cqw] [filter:drop-shadow(0_0.4cqw_1.2cqw_rgb(0_0_0/0.95))_drop-shadow(0_0_2.5cqw_rgb(0_0_0/0.7))]" />
+        <p className="mt-[2cqh] font-serif text-[2.6cqw] text-silver italic [text-shadow:0_0.2cqw_0.8cqw_rgb(0_0_0/0.95),0_0_2cqw_rgb(0_0_0/0.8)]">{EVENT.tagline}</p>
       </div>
     </Stage>
   );
