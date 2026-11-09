@@ -1,10 +1,6 @@
-import type { Metadata } from 'next';
-import { hasRole, requireOrganiser } from '@/lib/auth/organiser';
-import { RevealProjector } from './RevealProjector';
+import { redirect } from 'next/navigation';
 
-export const metadata: Metadata = { title: 'Projector · Zero Hour' };
-
-export default async function RevealPage() {
-  const organiser = await requireOrganiser('screens');
-  return <RevealProjector canDrive={hasRole(organiser, 'anchor')} />;
+/** The old envelope-by-envelope screen. Results now go up only through /projector, one place at a time. */
+export default function RevealPage() {
+  redirect('/projector');
 }
