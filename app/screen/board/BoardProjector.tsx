@@ -1,5 +1,6 @@
 'use client';
 
+import { pollFetch } from '@/lib/poll';
 import { useEffect, useState } from 'react';
 import { EVENT, ROUNDS } from '@/lib/config';
 import { formatCrore } from '@/lib/money';
@@ -15,7 +16,7 @@ export function BoardProjector() {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch('/api/leaderboard');
+        const res = await pollFetch('/api/leaderboard');
         if (res.ok) setLb((await res.json()) as Leaderboard);
       } catch {
         /* keep the last board */

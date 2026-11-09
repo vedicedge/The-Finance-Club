@@ -1,5 +1,6 @@
 'use client';
 
+import { pollFetch } from '@/lib/poll';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { QuizProjector } from '@/app/screen/quiz/QuizProjector';
 import { AuctionProjector } from '@/app/screen/auction/AuctionProjector';
@@ -27,7 +28,7 @@ export function ProjectorShell({ preview = false }: { preview?: boolean }) {
     let t: number;
     const loop = async () => {
       try {
-        const res = await fetch('/api/screen/projector', { cache: 'no-store' });
+        const res = await pollFetch('/api/screen/projector');
         if (res.status === 401) setError('Sign in at /admin/login with the projector account.');
         else {
           setState((await res.json()) as State);

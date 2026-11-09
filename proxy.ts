@@ -4,7 +4,7 @@ import { createServerClient } from '@supabase/ssr';
 /**
  * Keeps organiser sign-in sessions fresh. Supabase Auth tokens expire hourly; this refreshes
  * them before organiser pages render and writes the new cookies back on the response.
- * Agency (phone) pages do not use Supabase Auth and are not matched here.
+ * Includes /projector and its data feeds. Agency (phone) pages do not use Supabase Auth and are not matched.
  */
 export async function proxy(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -31,5 +31,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/screen/:path*', '/auth/:path*'],
+  // /projector and the screens' data feeds poll for hours: their sign-in must be refreshed too,
+  // or the projector freezes when the hourly token expires.
+  matcher: ['/admin/:path*', '/screen/:path*', '/auth/:path*', '/projector/:path*', '/api/screen/:path*'],
 };
