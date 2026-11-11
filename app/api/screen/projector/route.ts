@@ -28,6 +28,8 @@ export async function GET() {
   const settings = parseSettings(row.data?.settings);
   const agencies = await db.from('agencies').select('id', { count: 'exact', head: true }).eq('is_test', false);
   const screen = projectorScreen(mode, phase);
+  const ff = screen === 'cover' ? await db.from('event_state').select('ff_closes_at').maybeSingle() : null;
+  const ffCloses = (ff?.data?.ff_closes_at as string | undefined) ?? null;
   // The results screen gets only the places the anchor has announced, never the rest.
   const step = (row.data as { step?: string | null } | null)?.step;
   const announced = screen === 'reveal' ? placesAnnounced(phase, step) : 0;
@@ -41,6 +43,7 @@ export async function GET() {
       mode,
       screen,
       places,
+      ffClosesAt: ffCloses && Date.parse(ffCloses) > Date.now() ? ffCloses : null,
       finale: stage === 5 ? 'cover' : stage === 4 ? 'podium' : null,
       startsAt: settings.event.startsAt,
       venue: settings.event.venue,

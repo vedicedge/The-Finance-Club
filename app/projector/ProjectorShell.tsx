@@ -8,7 +8,7 @@ import { BoardProjector } from '@/app/screen/board/BoardProjector';
 import { CoverScreen, EventCover, HoldingScreen, PodiumScreen, WelcomeScreen } from '@/components/screen/Slides';
 import type { ProjectorScreen } from '@/lib/projector';
 
-type State = { now: string; phase: string; mode: string; screen: ProjectorScreen; startsAt: string; venue: string; agencies: number; places?: { place: number; id: string; name: string; coinToss: boolean }[]; finale?: 'podium' | 'cover' | null };
+type State = { now: string; phase: string; mode: string; screen: ProjectorScreen; startsAt: string; venue: string; agencies: number; places?: { place: number; id: string; name: string; coinToss: boolean }[]; finale?: 'podium' | 'cover' | null; ffClosesAt?: string | null };
 
 const POLL_MS = 2000;
 const IDLE_MS = 2500;
@@ -73,7 +73,7 @@ function Screen({ state }: { state: State }) {
     case 'board':
       return <BoardProjector />;
     case 'cover':
-      return <CoverScreen />;
+      return <CoverScreen ffClosesAt={state.ffClosesAt ?? null} serverNow={state.now} />;
     case 'reveal':
       return state.finale === 'cover' ? <EventCover /> : <PodiumScreen places={state.places ?? []} final={state.finale === 'podium'} />;
     case 'welcome':

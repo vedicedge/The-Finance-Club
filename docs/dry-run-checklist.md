@@ -8,7 +8,7 @@ This file is generated from `lib/print/checklist.ts`; edit that file, then run `
 ## The day before
 
 - [ ] Merge the latest pull request on GitHub and wait until Vercel shows the new deployment as **Ready**.
-- [ ] In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (23 files; the last is `20261110002300_top_ten.sql`).
+- [ ] In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (24 files; the last is `20261111002400_one_force_field.sql`).
 - [ ] If the secret seed has never been run, run `supabase/private/seed_secrets.sql` once.
 - [ ] Command centre: **Database updates** says “Up to date”, and Seed data says **OK** on every row.
 - [ ] Every crew member with a website job signs in once at `/admin/login`; an admin gives each their role in Crew & roles (quiz host, 2 ledger keepers, auctioneer, 2 scorers, social-media lead, anchor, 2 floaters).
@@ -60,6 +60,7 @@ This file is generated from `lib/print/checklist.ts`; edit that file, then run `
 
 - [ ] After publishing, press **Start Round 3 →** on the Round 2 console. The projector shows only the Round 3 cover.
 - [ ] One admin enters a test multiplier map on the Round 3 console (any spread the spec allows). The reset deletes it.
+- [ ] Deal the envelopes. On the Round 3 console press **Open the 60-second window**: the projector counts down and two testers buy a Force Field on My Agency (₹5 Cr, once per team). Only the console lists who bought one; mark one **used**.
 - [ ] Run the missions on paper. On the Round 3 console, record one Chai Pe Charcha transfer and one ₹5 Cr fine; check the funds on My Agency.
 - [ ] After the last mission, record who holds which envelope (E1–E8) and press **Save envelopes**.
 

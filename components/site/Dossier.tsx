@@ -5,6 +5,7 @@ import type { DossierData } from '@/lib/agency-view';
 import { formatCrore } from '@/lib/money';
 import { REASON_LABEL, ledgerTime } from '@/lib/ledger';
 import { BuyTip } from '@/components/site/BuyTip';
+import { BuyForceField } from '@/components/site/BuyForceField';
 import { Scene } from '@/components/art/Scene';
 import { GearCard } from '@/components/cards/GearCard';
 import { GearIcon } from '@/components/art/gear-icons';
@@ -327,15 +328,18 @@ export function Dossier({
               <span className="num text-5xl font-semibold text-glow">{data.round3.envelope}</span>
               <span className="text-sm text-steel">your Mission File · keep it sealed</span>
             </p>
-            {data.round3.currentMission && (
-              <p className="mt-2 text-sm">
-                Mission {data.round3.currentMission}:{' '}
-                {data.round3.forceFields.includes(data.round3.currentMission) ? (
-                  <span className="text-toxic">Force Field up</span>
-                ) : (
-                  <span className="text-steel">no Force Field</span>
-                )}
-              </p>
+            <p className="mt-2 text-sm">
+              Force Field:{' '}
+              {data.round3.forceField ? (
+                data.round3.forceField.used ? <span className="text-steel">used</span> : <span className="text-toxic">ready · play it once, when a winner tries to swap with you</span>
+              ) : (
+                <span className="text-steel">none</span>
+              )}
+            </p>
+            {data.round3.ffWindow && !data.round3.forceField && agency.status === 'active' && (
+              <div className="mt-4">
+                <BuyForceField closesAt={data.round3.ffWindow.closesAt} serverNow={data.round3.ffWindow.serverNow} fund={data.fund} />
+              </div>
             )}
             {data.round3.swaps.length > 0 && (
               <ul className="mt-3 space-y-1 text-sm text-steel">
