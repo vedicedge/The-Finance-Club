@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { EVENT } from '@/lib/config';
+import { FullscreenButton } from '@/components/site/FullscreenButton';
 
 const LINKS = [
   { href: '/rounds', label: 'Rounds' },
@@ -48,7 +49,8 @@ export function SiteHeader({ registrationOpen }: { registrationOpen: boolean }) 
             </Link>
           )}
         </nav>
-        <details className="group relative ml-auto lg:hidden">
+        <FullscreenButton className="ml-auto lg:hidden" />
+        <details className="group relative lg:hidden">
           <summary className="btn btn-ghost !min-h-0 list-none !px-3.5 !py-2 [&::-webkit-details-marker]:hidden">
             <span aria-hidden="true" className="flex flex-col gap-[3px]">
               <span className="block h-px w-4 bg-current" />
