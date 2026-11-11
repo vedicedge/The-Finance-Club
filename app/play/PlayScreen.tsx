@@ -1,4 +1,5 @@
 'use client';
+import { FullscreenButton } from '@/components/site/FullscreenButton';
 
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -332,11 +333,14 @@ function Shell({
           <span className="num text-lg font-semibold text-glow">{agency?.id ?? '—'}</span>
           <span className="ml-2 truncate text-sm text-bone">{agency?.name}</span>
         </span>
-        {agency && (
-          <span className="num flex-none text-right text-sm text-steel">
-            <span className="text-bone">{(points ?? 0).toLocaleString('en-IN')}</span> pts · {done}/15
-          </span>
-        )}
+        <span className="flex flex-none items-center gap-3">
+          {agency && (
+            <span className="num text-right text-sm text-steel">
+              <span className="text-bone">{(points ?? 0).toLocaleString('en-IN')}</span> pts · {done}/15
+            </span>
+          )}
+          <FullscreenButton />
+        </span>
       </header>
       {offline && (
         <p role="alert" className="bg-ember/15 px-4 py-2 text-center text-xs font-semibold tracking-[0.14em] text-ember uppercase">
