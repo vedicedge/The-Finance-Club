@@ -185,10 +185,10 @@ export async function guideDo(action: GuideActionId, arg: string, formData: Form
       const target = choice === 'cash' ? null : String(formData.get('target') ?? '') || null;
       if (choice !== 'cash' && !target) fail('Pick the team.');
       await call(db.rpc('r3_choose', { p_mission: mission, p_choice: choice, p_target: target, p_actor: actor }));
-      ok = choice === 'swap' ? `Swapped with ${target}.` : choice === 'xray' ? `X-Ray: the marshal shows ${target}’s card privately.` : 'Cash: +₹6 Cr.';
+      ok = choice === 'swap' ? `Swapped with ${target}.` : choice === 'xray' ? `X-Ray: the marshal shows ${target}’s envelope privately.` : 'Cash: +₹6 Cr.';
       break;
     }
-    case 'zh-next': { const env = await call<string>(db.rpc('zh_next_reveal', { p_actor: actor })); ok = `Card ${env} is open on the projector.`; break; }
+    case 'zh-next': { const env = await call<string>(db.rpc('zh_next_reveal', { p_actor: actor })); ok = `Envelope ${env} is open on the projector.`; break; }
   }
   await audit(me, `simple.${action}`, { arg: arg || null });
   done(ok);

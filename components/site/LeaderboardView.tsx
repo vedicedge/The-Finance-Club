@@ -66,7 +66,7 @@ export function LeaderboardView({ initial }: { initial: Leaderboard | null }) {
                   <Row key={r.id} id={r.id} name={r.name} right={fmt(r.hero)} note={`${r.envelope} · ×${fmt(r.multiplier)} · ${r.outcome}`} />
                 ))}
               </ol>
-              <p className="mt-2 text-sm text-steel">{lb.zeroHour.sealed} card{lb.zeroHour.sealed === 1 ? '' : 's'} still sealed.</p>
+              <p className="mt-2 text-sm text-steel">{lb.zeroHour.sealed} envelope{lb.zeroHour.sealed === 1 ? '' : 's'} still sealed.</p>
             </>
           )}
         </Block>

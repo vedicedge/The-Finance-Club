@@ -10,7 +10,7 @@ import { loadReveal } from '@/lib/zero-hour-server';
 
 const back = (p: Record<string, string>): never => redirect(`/admin/results?${new URLSearchParams(p)}`);
 
-/** Opens every card at once (privately) so the site can rank the finalists. */
+/** Opens every envelope at once (privately) so the site can rank the finalists. */
 export async function calculateResults() {
   const me = await requireOrganiser('reveal');
   const db = serviceDb();

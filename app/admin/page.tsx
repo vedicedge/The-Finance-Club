@@ -20,7 +20,7 @@ export const metadata: Metadata = { title: 'Command centre' };
 const EXPECTED: { table: string; label: string; expected: number; secret?: boolean }[] = [
   { table: 'gear_cards', label: 'Gear cards (60 + 4 Jugaad Kits)', expected: 64 },
   { table: 'battle_outcomes', label: 'Battle Outcomes', expected: 6 },
-  { table: 'envelopes', label: 'Mission File cards', expected: 8 },
+  { table: 'envelopes', label: 'Mission File envelopes', expected: 8 },
   { table: 'missions', label: 'Round 3 missions', expected: 4 },
   { table: 'questions', label: 'Prelim questions (38 + 3 sudden death)', expected: 41, secret: true },
   { table: 'question_keys', label: 'Answer keys', expected: 41, secret: true },

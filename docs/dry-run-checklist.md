@@ -61,7 +61,7 @@ This file is generated from `lib/print/checklist.ts`; edit that file, then run `
 - [ ] After publishing, press **Start Round 3 →** on the Round 2 console. The projector shows only the Round 3 cover.
 - [ ] One admin enters a test multiplier map on the Round 3 console (any spread the spec allows). The reset deletes it.
 - [ ] Run the missions on paper. On the Round 3 console, record one Chai Pe Charcha transfer and one ₹5 Cr fine; check the funds on My Agency.
-- [ ] After the last mission, record who holds which card (E1–E8) and press **Save cards**.
+- [ ] After the last mission, record who holds which envelope (E1–E8) and press **Save envelopes**.
 
 ### Zero Hour
 
@@ -91,7 +91,7 @@ This file is generated from `lib/print/checklist.ts`; edit that file, then run `
 - [ ] No DRY RUN strip anywhere (dry run mode is off).
 - [ ] Registration closed (deadline passed, or closed in Settings); phase **Check-in** when the doors open.
 - [ ] Floaters check agencies in on Agencies & check-in; the printed check-in sheet is the backup.
-- [ ] Before Round 3, one admin enters the real multiplier map from the filled cards. No screen shows it until each card opens.
+- [ ] Before Round 3, one admin enters the real multiplier map from the filled envelopes. No screen shows it until each envelope opens.
 - [ ] Breaking News: the 6 drawn and sealed in order, and entered on the console before the first tip.
 - [ ] Projector (`/projector`, Automatic), consoles, chargers and hotspot set up as in the rehearsal.
 - [ ] A fresh set of backup sheets printed, with pens and clipboards for the ledger keepers and scorers.

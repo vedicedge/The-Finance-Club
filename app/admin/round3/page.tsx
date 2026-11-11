@@ -52,7 +52,7 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
           <form action={saveEnvelopeMap} className="panel space-y-3 px-5 py-5">
             <h2 className="eyebrow">Multiplier map · admin only · secret</h2>
             <p className="text-sm text-steel">
-              {r3.multipliersEntered ? 'Entered ✓. Change it only if the cards were refilled.' : 'Enter what is inside each numbered card.'}
+              {r3.multipliersEntered ? 'Entered ✓. Change it only if the envelopes were refilled.' : 'Enter what is inside each numbered envelope.'}
             </p>
             <details>
               <summary className="text-sm text-glow">Show / edit the map</summary>
@@ -74,8 +74,8 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
         )}
 
         <form action={saveDeal} className="panel space-y-3 px-5 py-5">
-          <h2 className="eyebrow">At the end · who holds which card</h2>
-          <p className="text-sm text-steel">Record each finalist&apos;s card after the last mission. You can correct it until the results are calculated.</p>
+          <h2 className="eyebrow">At the end · who holds which envelope</h2>
+          <p className="text-sm text-steel">Record each finalist&apos;s envelope after the last mission. You can correct it until the results are calculated.</p>
           {r3.finalists.length === 0 ? (
             <p className="text-sm text-steel">No finalists yet.</p>
           ) : (
@@ -91,7 +91,7 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
               ))}
             </div>
           )}
-          {keeper && recordable && <button className="btn btn-primary w-full">Save cards</button>}
+          {keeper && recordable && <button className="btn btn-primary w-full">Save envelopes</button>}
         </form>
       </section>
 
@@ -132,7 +132,7 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
             <thead>
               <tr className="border-b border-line-strong text-steel">
                 <th className="py-1.5 font-medium">Agency</th>
-                <th className="py-1.5 font-medium">Card</th>
+                <th className="py-1.5 font-medium">Envelope</th>
                 <th className="num py-1.5 text-right font-medium">Power</th>
                 <th className="num py-1.5 text-right font-medium">Fund</th>
               </tr>

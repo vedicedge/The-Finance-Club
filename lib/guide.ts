@@ -299,12 +299,12 @@ function round3(s: GuideSnapshot): Guide {
   const base = { phaseTitle: `Round 3 · ${ROUNDS.round3}` };
   const consoleLink = { href: '/admin/round3', label: 'Open the Round 3 console' };
   if (!r.multipliersEntered) {
-    return { ...base, items: items(labels, 0), now: { key: 'r3-map', title: 'Enter the multiplier map', body: 'What is inside each numbered card. Secret: an admin enters it, nobody else sees it.', ...ADMIN, buttons: [], link: { href: '/admin/round3', label: 'Enter the map' } } };
+    return { ...base, items: items(labels, 0), now: { key: 'r3-map', title: 'Enter the multiplier map', body: 'What is inside each numbered envelope. Secret: an admin enters it, nobody else sees it.', ...ADMIN, buttons: [], link: { href: '/admin/round3', label: 'Enter the map' } } };
   }
   if (!r.dealt) {
-    return { ...base, items: items(labels, 1), now: { key: 'r3-offline', title: 'Run Round 3 offline', body: 'The projector shows the Round 3 cover. Record each Chai Pe Charcha transfer and each fine on the Round 3 console as it happens. After the last mission, record who holds which card.', ...R3, buttons: [], link: consoleLink } };
+    return { ...base, items: items(labels, 1), now: { key: 'r3-offline', title: 'Run Round 3 offline', body: 'The projector shows the Round 3 cover. Record each Chai Pe Charcha transfer and each fine on the Round 3 console as it happens. After the last mission, record who holds which envelope.', ...R3, buttons: [], link: consoleLink } };
   }
-  return { ...base, items: items(labels, 2), now: { key: 'start-zero-hour', title: 'Start Zero Hour', body: 'Every finalist’s card is recorded. You can still correct it on the Round 3 console until the results are calculated.', ...ADMIN, buttons: [{ action: 'start-zero-hour', label: 'Start Zero Hour' }], link: consoleLink } };
+  return { ...base, items: items(labels, 2), now: { key: 'start-zero-hour', title: 'Start Zero Hour', body: 'Every finalist’s envelope is recorded. You can still correct it on the Round 3 console until the results are calculated.', ...ADMIN, buttons: [{ action: 'start-zero-hour', label: 'Start Zero Hour' }], link: consoleLink } };
 }
 
 // ---------------------------------------------------------------- Zero Hour
@@ -315,7 +315,7 @@ function zeroHour(s: GuideSnapshot): Guide {
   const board = { href: '/admin/results', label: 'Open the Final leaderboard' };
   const anchor = { area: 'reveal' as const, roleLabel: 'Anchor' };
   if (s.zh.opened < s.zh.total || s.zh.total === 0) {
-    return { ...base, items: items(labels, 0), now: { key: 'zh-calc', title: 'Calculate the results', body: 'The site ranks the finalists from the recorded cards. Nothing shows on the projector or on phones yet.', ...anchor, buttons: [], link: board } };
+    return { ...base, items: items(labels, 0), now: { key: 'zh-calc', title: 'Calculate the results', body: 'The site ranks the finalists from the recorded envelopes. Nothing shows on the projector or on phones yet.', ...anchor, buttons: [], link: board } };
   }
   const n = resultStage('zero_hour', s.step);
   if (n < 5) {

@@ -38,7 +38,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
         <h2 className="eyebrow text-ember">Danger zone · reset the event</h2>
         <p className="text-sm text-bone/85">
           Clears everything the event produced: quiz answers, the Fund Ledger, sales, tips, poster duels, tower results,
-          cards, Force Fields, X-Rays and reveals. Questions, news and missions go back to unused; the phase goes back to
+          envelopes, Force Fields, X-Rays and reveals. Questions, news and missions go back to unused; the phase goes back to
           Registration. Settings, crew and the audit log stay. Use it after the dry run.
         </p>
         <label className="flex items-start gap-3 text-sm">

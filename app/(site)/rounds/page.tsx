@@ -143,7 +143,7 @@ export default async function RoundsPage() {
       <Section id="round-3" index="04" scene="vault" eyebrow="Round 3 · 31 min · seated, on paper" title={ROUNDS.round3} meta="8 finalists">
         <p>
           Each finalist holds one sealed <strong>Mission File</strong> (numbered E1–E8) carrying a secret Battle Outcome
-          multiplier. Keep it sealed on the table. Cards open only at Zero Hour.
+          multiplier. Keep it sealed on the table. Envelopes open only at Zero Hour.
         </p>
         <Table
           head={['Battle Outcome', 'Envelopes', 'Multiplier']}
@@ -161,23 +161,23 @@ export default async function RoundsPage() {
         <Table
           head={['Step', 'Time', 'What happens']}
           rows={[
-            ['Force Field', '30 s', 'Pay ₹5 Cr to block swaps on your card until this mission’s winner has chosen.'],
+            ['Force Field', '30 s', 'Pay ₹5 Cr to block swaps on your envelope until this mission’s winner has chosen.'],
             ['Play', '4 min', 'All 8 agencies solve the same puzzle. One paper submission each; a wrong sheet is final.'],
             ['Results', '1 min', 'Scorers check sheets in arrival order. The first fully correct sheet wins.'],
-            ['Winner’s choice', '30 s', 'Swap cards with any unprotected agency (unseen), X-Ray one card privately, or take ₹6 Cr.'],
+            ['Winner’s choice', '30 s', 'Swap envelopes with any unprotected agency (unseen), X-Ray one envelope privately, or take ₹6 Cr.'],
             ['Chai Pe Charcha', '1 min', 'Information sales, cash deals and bluffing. Lying is allowed; cash deals go on the ledger.'],
           ]}
         />
         <ul>
           <li>Missions: The Multiverse Grid, Across the Multiverse, Before the World Ends, The Shutdown Key.</li>
           <li>Mission 4&apos;s winner chooses at the start of Zero Hour; its Force Fields stay up until then.</li>
-          <li>Opening another agency&apos;s card costs a ₹5 Cr fine. Only the anchor moves cards.</li>
+          <li>Opening another agency&apos;s envelope costs a ₹5 Cr fine. Only the anchor moves envelopes.</li>
         </ul>
       </Section>
 
       <Section id="zero-hour" index="05" scene="zerohour" eyebrow="Finale · 20 min" title={ROUNDS.zeroHour} meta="→ one Hero Agency">
         <p>
-          Mission 4&apos;s winner makes the last swap, X-Ray or cash call. Then all 8 cards are opened on stage, in
+          Mission 4&apos;s winner makes the last swap, X-Ray or cash call. Then all 8 envelopes are opened on stage, in
           ascending Power Level, and each Hero Score appears on the projector:
         </p>
         <p className="display panel corners px-4 py-6 text-center text-[clamp(1.3rem,3.6vw,2rem)] leading-snug text-bone [--corner-inset:6px] [--corner-size:12px]">

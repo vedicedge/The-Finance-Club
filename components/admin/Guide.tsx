@@ -134,7 +134,7 @@ export function Guide({ guide, snap, organiser }: { guide: GuideData; snap: Guid
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             <form action={guideDo.bind(null, 'r3-swap', String(r3m.no))} className="panel space-y-2 px-4 py-4">
               {key}
-              <p className="text-sm font-semibold text-bone">Swap cards with</p>
+              <p className="text-sm font-semibold text-bone">Swap envelopes with</p>
               <select name="target" required defaultValue="" className={sel}>
                 <option value="" disabled>Pick…</option>
                 {snap.r3.finalists.filter((f) => f.id !== r3m.winner && !protectedNow(f.id)).map((f) => <option key={f.id} value={f.id}>{f.id} · {f.name}</option>)}
