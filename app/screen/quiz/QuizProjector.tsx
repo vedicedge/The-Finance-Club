@@ -2,7 +2,7 @@
 
 import { pollFetch } from '@/lib/poll';
 import Image from 'next/image';
-import wordmark from '@/assets/art/wordmark.webp';
+import { TitleLockup } from '@/components/art/Poster';
 import { useEffect, useRef, useState } from 'react';
 import { EVENT, ROUNDS } from '@/lib/config';
 import { SEGMENTS, type QuizSegment } from '@/lib/scoring/quiz';
@@ -125,7 +125,7 @@ function Lobby({ s }: { s: ScreenState }) {
   const host = typeof window === 'undefined' ? '' : window.location.host;
   return (
     <div className="flex h-full flex-col items-center justify-center text-center">
-      <Image src={wordmark} alt={EVENT.name} sizes="40vw" className="h-auto w-[34cqw]" />
+      <TitleLockup sizes="40vw" className="w-[34cqw]" />
       <p className="mt-[3cqh] text-[1.4cqw] font-semibold tracking-[0.35em] text-glow uppercase">Incoming transmission</p>
       <h1 className="display metal mt-[1.5cqh] text-[8.8cqw]">{ROUNDS.prelim}</h1>
       <p className="mt-[3cqh] text-[2.4cqw] text-bone">

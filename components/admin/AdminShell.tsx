@@ -33,7 +33,10 @@ export async function AdminShell({ organiser, children, guideHome = false }: { o
       <header className="border-b border-line bg-abyss/85 shadow-[0_1px_0_rgb(169_207_110/0.12)] backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-[var(--gutter)] py-4">
           <Link href="/admin" className="flex items-baseline gap-3">
-            <span className="font-deco metal text-2xl leading-none">{EVENT.name}</span>
+            <span className="flex flex-col items-center leading-none">
+              <span className="font-deco metal text-2xl leading-none">{EVENT.name}</span>
+              <span className="font-display mt-1 text-[0.5rem] font-semibold tracking-[0.3em] whitespace-nowrap text-silver uppercase">{EVENT.tagline}</span>
+            </span>
             <span className="eyebrow text-glow">Command centre</span>
           </Link>
           {simple ? (

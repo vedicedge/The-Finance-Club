@@ -63,6 +63,29 @@ export function Wordmark({ className = '', sizes, preload = false, alt = EVENT.n
   return <Image src={wordmark} alt={alt} sizes={sizes} preload={preload} className={className} />;
 }
 
+/**
+ * The event title as the poster sets it: the DOOMSDAY wordmark with "Multiverse of Money"
+ * centred beneath it between two thin rules. Size it with the className width; the subtitle
+ * scales with the lockup (container units), so it looks the same on a phone and a projector.
+ */
+export function TitleLockup({ className = '', sizes, preload = false, star = false }: { className?: string; sizes: string; preload?: boolean; star?: boolean }) {
+  return (
+    <div className={`[container-type:inline-size] ${className}`}>
+      <Image src={wordmark} alt={EVENT.fullName} sizes={sizes} preload={preload} className="block h-auto w-full" />
+      <div className="mt-[0.6cqw] flex items-center gap-[2cqw] px-[3cqw]" aria-hidden="true">
+        <span className="h-px flex-1 bg-gradient-to-r from-transparent to-glow/80" />
+        <span className="size-[0.9cqw] flex-none rotate-45 bg-glow/90" />
+        <span className="font-display text-[4.3cqw] leading-none font-semibold tracking-[0.2em] whitespace-nowrap text-[#dfe8cf] uppercase [text-shadow:0_0_1.6cqw_rgb(169_207_110/0.45)]">
+          {EVENT.tagline}
+        </span>
+        <span className="size-[0.9cqw] flex-none rotate-45 bg-glow/90" />
+        <span className="h-px flex-1 bg-gradient-to-l from-transparent to-glow/80" />
+      </div>
+      {star && <StarRule className="mx-auto mt-[2.4cqw] w-[70%]" />}
+    </div>
+  );
+}
+
 /** The poster blurred into a green haze, to sit behind a section. */
 export function Ambient({ className = '' }: { className?: string }) {
   return <Image src={ambient} alt="" fill sizes="100vw" placeholder="blur" className={`object-cover ${className}`} aria-hidden="true" />;
