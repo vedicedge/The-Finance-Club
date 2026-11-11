@@ -2,14 +2,6 @@ import 'server-only';
 import { serviceDb } from '@/lib/db/server';
 import { parseSettings } from '@/lib/settings';
 
-export const MISSION_STEPS = [
-  { id: 'force_field', label: 'Force Field', length: '30 s' },
-  { id: 'play', label: 'Play', length: '4 min' },
-  { id: 'results', label: 'Results', length: '1 min' },
-  { id: 'choice', label: 'Winner’s choice', length: '30 s' },
-  { id: 'chai', label: 'Chai Pe Charcha', length: '1 min' },
-] as const;
-
 export type Mission = { no: number; name: string; winner_agency_id: string | null; choice: string | null; swap_target: string | null };
 export type Finalist = { id: string; name: string; envelope: string | null; fund: number; power: number; forceFields: number[] };
 

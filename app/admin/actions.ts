@@ -11,7 +11,6 @@ import { serializeSettings } from '@/lib/settings';
 import { NEXT_PHASE, canAdvance, isNextPhase } from '@/lib/phase-flow';
 import { loadFlowState } from '@/lib/phase-flow-server';
 import { isProjectorMode } from '@/lib/projector';
-import { nextReveal } from '@/app/screen/reveal/actions';
 
 /** Moves the event to another phase (admin only). Later milestones add the round-specific checks. */
 export async function setPhase(formData: FormData): Promise<void> {
@@ -96,11 +95,4 @@ export async function setProjector(mode: string): Promise<void> {
   }
   await audit(me, 'projector.mode', { mode });
   revalidatePath('/admin');
-}
-
-/** "Open next envelope" at Zero Hour, from the admin laptop (the projector laptop is view only). */
-export async function revealNextEnvelope(back: string): Promise<void> {
-  const r = await nextReveal();
-  const to = back === '/admin/round3' ? back : '/admin';
-  redirect(`${to}?${r.ok ? 'ok=' + encodeURIComponent(`Envelope ${r.envelope} opened on the projector.`) : 'error=' + encodeURIComponent(r.error)}`);
 }

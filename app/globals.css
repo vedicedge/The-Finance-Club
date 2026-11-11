@@ -18,11 +18,9 @@
   --color-abyss: #080a07;
   --color-vault: #0e130d;
   --color-vault-2: #151c13;
-  --color-moss: #1f2a1b;
   --color-line: rgb(170 184 150 / 0.15);
   --color-line-strong: rgb(170 184 150 / 0.32);
   --color-glow: #a9cf6e;
-  --color-glow-deep: #6e8f45;
   --color-toxic: #6fdca6;
   --color-steel: #9fa993;
   --color-bone: #ebe8da;
@@ -33,8 +31,6 @@
   --font-deco: var(--font-cinzel-deco), var(--font-cinzel), 'Cinzel Decorative', Georgia, serif;
   --font-serif: var(--font-cormorant), 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
   --font-sans: var(--font-inter), 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-
-  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 :root {
@@ -79,16 +75,6 @@ body {
     letter-spacing: 0.3em;
     text-transform: uppercase;
     color: var(--color-steel);
-  }
-
-  /* The poster's top line: spaced Cinzel capitals ("THE FINANCE CLUB"). */
-  .kicker {
-    font-family: var(--font-display);
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.42em;
-    text-transform: uppercase;
-    color: var(--color-bone);
   }
 
   /* Lining figures in the serif: "₹85 = $1" must read clearly in finance questions. */
@@ -361,12 +347,6 @@ body {
   mask-position: top, bottom;
   mask-repeat: no-repeat;
 }
-.torn-bottom {
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40' preserveAspectRatio='none'%3E%3Cpath d='M0 0v22l38-6 26 12 41-9 33 15 29-13 47 8 22-10 51 14 35-11 30 7 44-12 27 16 39-9 48 6 25-13 36 11 52-8 23 14 40-12 31 5 46-9 28 13 37-10 44 9 29-11 33 7 50-10 24 15 42-12 30 6 35-9 21 8 64-6V0Z' fill='%23000'/%3E%3C/svg%3E"), linear-gradient(#000, #000);
-  mask-size: 100% 40px, 100% calc(100% - 39px);
-  mask-position: bottom, top;
-  mask-repeat: no-repeat;
-}
 
 /* A slow push-in on the hero art, like a film's opening shot. */
 .hero-drift {
@@ -581,7 +561,6 @@ html.projector-idle * {
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
-.paper td.blank,
 .paper tr.blank td {
   height: 24px;
 }
@@ -603,9 +582,6 @@ html.projector-idle * {
 }
 .paper .muted {
   color: #555;
-}
-.paper .box::before {
-  content: '☐ ';
 }
 
 @media print {

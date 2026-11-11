@@ -50,35 +50,6 @@ export async function saveDeal(formData: FormData) {
   await run(['ledger_keeper'], 'r3.deal', { map }, (actor) => serviceDb().rpc('r3_deal', { p_map: map, p_actor: actor }), 'Envelopes recorded.');
 }
 
-export async function setMissionStep(mission: number, step: string) {
-  await run(['ledger_keeper', 'scorer'], 'r3.step', { mission, step }, () => serviceDb().rpc('r3_set_mission', { p_mission: mission, p_step: step }),
-    `Mission ${mission}: ${step.replace('_', ' ')}.`);
-}
-
-export async function buyForceField(agency: string) {
-  await run(['ledger_keeper'], 'r3.force_field', { agency }, (actor) => serviceDb().rpc('r3_force_field', { p_agency: agency, p_actor: actor }),
-    `Force Field up for ${agency} (−₹5 Cr).`);
-}
-
-export async function setWinner(mission: number, formData: FormData) {
-  const agency = String(formData.get('winner') ?? '');
-  await run(['scorer'], 'r3.winner', { mission, agency: agency || null }, (actor) =>
-    serviceDb().rpc('r3_set_winner', { p_mission: mission, p_agency: agency === 'none' ? null : agency, p_actor: actor }),
-  agency === 'none' ? `Mission ${mission}: no correct sheet, no winner.` : `Mission ${mission} winner: ${agency}.`);
-}
-
-export async function makeChoice(mission: number, choice: 'swap' | 'xray' | 'cash', formData: FormData) {
-  const target = String(formData.get('target') ?? '') || null;
-  await run(['ledger_keeper'], 'r3.choice', { mission, choice, target }, (actor) =>
-    serviceDb().rpc('r3_choose', { p_mission: mission, p_choice: choice, p_target: target, p_actor: actor }),
-  choice === 'swap' ? `Swapped with ${target}.` : choice === 'xray' ? `X-Ray logged (secret). The marshal shows ${target}'s envelope.` : 'Cash: +₹6 Cr.');
-}
-
-export async function undoChoice(mission: number) {
-  await run(['ledger_keeper'], 'r3.undo_choice', { mission }, (actor) => serviceDb().rpc('r3_undo_choice', { p_mission: mission, p_actor: actor }),
-    `Mission ${mission} choice undone.`);
-}
-
 export async function transfer(formData: FormData) {
   const from = String(formData.get('from') ?? '');
   const to = String(formData.get('to') ?? '');

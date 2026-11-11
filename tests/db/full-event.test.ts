@@ -16,7 +16,6 @@ const MAP = `'{"E1":"City saved, statue unveiled","E2":"Trending #1 across India
 
 /** The n-th (0-based) agency still in the game, in ID order. */
 const nth = (n: number) => `(select id from agencies where status = 'active' order by id offset ${n} limit 1)`;
-const fund = (who: string) => `fund_left(${who})`;
 
 /** Prelim: every checked-in agency answers every live question; answer speed and accuracy vary by agency. */
 const prelim = `
