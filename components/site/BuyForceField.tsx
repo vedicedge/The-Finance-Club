@@ -18,7 +18,7 @@ export function BuyForceField({ closesAt, serverNow, fund }: { closesAt: string;
       </div>
       <p className="mt-2 text-sm text-bone/85">
         For ₹5 Cr, one Force Field for the whole of Round 3. Play it once, whenever a mission winner tries to swap envelopes
-        with you, and the swap is blocked. Only the organisers know you bought it.
+        with you, and the swap is blocked: the winner loses that choice. Only the organisers know you bought it.
       </p>
       {state.error && (
         <p role="alert" className="mt-3 text-sm text-ember">
