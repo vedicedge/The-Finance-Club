@@ -16,7 +16,8 @@ export function BoardProjector() {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await pollFetch('/api/leaderboard');
+        // A fresh copy each time, past the CDN cache, so the board never lags a publish.
+        const res = await pollFetch(`/api/leaderboard?t=${Date.now()}`);
         if (res.ok) setLb((await res.json()) as Leaderboard);
       } catch {
         /* keep the last board */
