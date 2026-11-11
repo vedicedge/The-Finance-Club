@@ -3,7 +3,7 @@ import { EVENT, ROUNDS } from '@/lib/config';
 import { getEventState, registrationStatus } from '@/lib/event-state';
 import { longDate, posterDate, shortDate } from '@/lib/schedule';
 import { Countdown } from '@/components/site/Countdown';
-import { HeroArt, KalyugCloseUp, Star, StarRule, Wordmark } from '@/components/art/Poster';
+import { HeroArt, KalyugCloseUp, Star, StarRule, TitleLockup } from '@/components/art/Poster';
 import { Scene, type SceneName } from '@/components/art/Scene';
 import { GearIcon } from '@/components/art/gear-icons';
 
@@ -52,15 +52,12 @@ export default async function Landing() {
             <div className="mx-auto -mt-14 w-full max-w-xl text-center sm:-mt-20 lg:mx-0 lg:mt-0 lg:text-left">
               <p className="eyebrow hidden text-glow lg:block">Incoming transmission · {EVENT.city}</p>
               <h1 className="lg:mt-5 lg:short:mt-3">
-                <Wordmark
+                <TitleLockup
                   sizes="(min-width: 1024px) 560px, (min-width: 640px) 420px, 80vw"
                   preload
-                  className="mx-auto h-auto w-[min(80vw,21rem)] sm:w-[26rem] lg:mx-0 lg:-ml-2 lg:w-[min(100%,35rem)] lg:short:w-[27rem]"
+                  className="mx-auto w-[min(80vw,21rem)] sm:w-[26rem] lg:mx-0 lg:-ml-2 lg:w-[min(100%,35rem)] lg:short:w-[27rem]"
                 />
               </h1>
-              <p className="mt-1 font-serif text-[1.15rem] leading-snug text-silver italic sm:text-[1.45rem] lg:mt-4 lg:text-[clamp(1.45rem,3vw,1.95rem)] lg:short:mt-2">
-                {EVENT.tagline}
-              </p>
               <p className="mt-4 hidden max-w-md text-[0.95rem] leading-relaxed text-steel lg:block lg:short:hidden">
                 {EVENT.villain} has announced a doomsday attack on {EVENT.city}. Three founders, ₹50 crore, one evening to build a hero.
               </p>

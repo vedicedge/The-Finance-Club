@@ -32,7 +32,10 @@ export function SiteHeader({ registrationOpen }: { registrationOpen: boolean }) 
       <div className="mx-auto flex max-w-6xl items-center gap-6 px-[var(--gutter)] py-3.5">
         <Link href="/" className="group flex items-center gap-2.5" aria-label={`${EVENT.name} home`}>
           <EclipseMark />
-          <span className="font-deco metal text-[1.45rem] leading-none tracking-[0.06em] sm:text-[1.6rem]">{EVENT.name}</span>
+          <span className="flex flex-col items-center leading-none">
+            <span className="font-deco metal text-[1.45rem] leading-none tracking-[0.06em] sm:text-[1.6rem]">{EVENT.name}</span>
+            <span className="font-display mt-1 text-[0.5rem] font-semibold tracking-[0.3em] whitespace-nowrap text-silver uppercase">{EVENT.tagline}</span>
+          </span>
         </Link>
         <nav aria-label="Main" className="ml-auto hidden items-center gap-7 lg:flex">
           {LINKS.map((l) => (
