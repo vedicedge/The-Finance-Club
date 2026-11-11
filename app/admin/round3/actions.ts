@@ -95,3 +95,15 @@ export async function fine(formData: FormData) {
   await run(['ledger_keeper'], 'r3.fine', { agency, note }, (actor) => serviceDb().rpc('r3_fine', { p_agency: agency, p_note: note, p_actor: actor }),
     `Fine: ${agency} −₹5 Cr.`);
 }
+
+/** Opens the one-minute window in which finalists buy their Force Field on My Agency. */
+export async function openForceFieldWindow() {
+  await run(['ledger_keeper'], 'r3.ff_window', {}, (actor) => serviceDb().rpc('r3_open_ff_window', { p_seconds: 60, p_actor: actor }),
+    'Force Field window open for 60 seconds. Finalists buy on My Agency.');
+}
+
+/** Marks an agency's Force Field as played (or takes that back). */
+export async function setForceFieldUsed(agency: string, used: boolean) {
+  await run(['ledger_keeper'], 'r3.ff_used', { agency, used }, (actor) => serviceDb().rpc('r3_set_ff_used', { p_agency: agency, p_used: used, p_actor: actor }),
+    used ? `${agency}'s Force Field is used.` : `${agency}'s Force Field is ready again.`);
+}

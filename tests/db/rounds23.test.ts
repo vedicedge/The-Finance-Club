@@ -109,6 +109,16 @@ describe.skipIf(!hasDb)('Round 3', () => {
     expect(sqlError(`${r3} update event_state set phase = 'zero_hour' where id; select r3_transfer('A01', 'A02', 1, '', '${K}');`)).toMatch(/window_closed/);
   });
 
+  it('one Force Field per finalist, bought in the window, played once', () => {
+    const ses = `insert into agency_sessions (token_hash, agency_id, expires_at) values ('f1', 'A01', now() + interval '1 hour');`;
+    expect(sqlError(`${r3} ${ses} select r3_agency_buy_ff('f1');`)).toMatch(/ff_closed/);
+    const open = `${r3} ${ses} select 1 from (select r3_open_ff_window(60, '${K}')) x;`;
+    expect(sql(`${open} select 1 from (select r3_agency_buy_ff('f1')) y; ${fund('A01')}
+      select 1 from (select r3_set_ff_used('A01', true, '${K}')) z; select used_at is not null from force_fields where agency_id = 'A01';`)).toEqual(['1', '1', '15.0', '1', 't']);
+    expect(sqlError(`${open} select r3_agency_buy_ff('f1'); select r3_agency_buy_ff('f1');`)).toMatch(/ff_already_bought/);
+    expect(sqlError(`${r3} select r3_set_ff_used('A02', true, '${K}');`)).toMatch(/no_force_field/);
+  });
+
   it('a fine always applies, even below zero', () => {
     expect(sql(`${r3} select r3_fine('A04', '', '${K}'); select r3_fine('A04', '', '${K}'); select r3_fine('A04', '', '${K}');
       select r3_fine('A04', '', '${K}'); select r3_fine('A04', '', '${K}'); ${fund('A04')}`)).toEqual(['-5.0']);

@@ -7,6 +7,7 @@ import wordmark from '@/assets/art/wordmark.webp';
 import { EVENT } from '@/lib/config';
 import { PHASE_INFO, isPhase } from '@/lib/phases';
 import { Stage } from '@/components/screen/Stage';
+import { WindowClock } from '@/components/site/WindowClock';
 
 /**
  * Projector slides that are not a round of their own: the welcome slide before the prelim and
@@ -95,13 +96,19 @@ function BigCountdown({ target, serverNow }: { target: string; serverNow: string
 }
 
 /** Round 3 runs offline: the projector shows only this cover. */
-export function CoverScreen() {
+export function CoverScreen({ ffClosesAt = null, serverNow = '' }: { ffClosesAt?: string | null; serverNow?: string }) {
   return (
     <Stage art="zerohour">
       <div className="flex h-full flex-col items-center justify-center text-center">
         <p className="text-[1.4cqw] font-semibold tracking-[0.35em] text-glow uppercase">Round 3</p>
         <h1 className="display metal mt-[2cqh] text-[7.5cqw] leading-none">The Doomsday Vault</h1>
         <p className="mt-[3cqh] font-serif text-[2.2cqw] text-silver italic">Sealed Mission Files. Only one agency saves {EVENT.city}.</p>
+        {ffClosesAt && (
+          <div className="mt-[6cqh] border border-glow bg-glow/10 px-[4cqw] py-[2.5cqh]">
+            <p className="text-[1.4cqw] font-semibold tracking-[0.3em] text-glow uppercase">Force Field window · buy on My Agency</p>
+            <WindowClock closesAt={ffClosesAt} serverNow={serverNow} className="num mt-[1cqh] block text-[6cqw] font-semibold text-bone" />
+          </div>
+        )}
       </div>
     </Stage>
   );

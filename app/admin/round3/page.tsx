@@ -7,7 +7,9 @@ import { AdminShell } from '@/components/admin/AdminShell';
 import { NextPhase } from '@/components/admin/NextPhase';
 import { AutoRefresh } from '@/components/admin/AutoRefresh';
 import { canAccess } from '@/lib/auth/roles';
-import { fine, randomEnvelopeMap, saveDeal, saveEnvelopeMap, transfer } from './actions';
+import { fine, openForceFieldWindow, randomEnvelopeMap, saveDeal, saveEnvelopeMap, setForceFieldUsed, transfer } from './actions';
+import { serviceDb } from '@/lib/db/server';
+import { WindowClock } from '@/components/site/WindowClock';
 
 export const metadata: Metadata = { title: 'Doomsday Vault console' };
 
@@ -21,6 +23,14 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
   const keeper = hasRole(organiser, 'ledger_keeper');
   const inVault = r3.phase === 'round3';
   const recordable = inVault || r3.phase === 'zero_hour';
+  // The one Round 3 Force Field per finalist (error-tolerant until the 11 November update is run).
+  const db = serviceDb();
+  const [shields, ffState] = await Promise.all([
+    db.from('force_fields').select('agency_id, used_at').is('mission', null).is('voided_at', null).order('agency_id'),
+    db.from('event_state').select('ff_closes_at').maybeSingle(),
+  ]);
+  const ffCloses = ffState.data?.ff_closes_at as string | undefined;
+  const ffOpen = Boolean(ffCloses && Date.parse(ffCloses) > Date.now());
 
   return (
     <AdminShell organiser={organiser}>
@@ -94,6 +104,43 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
           {keeper && recordable && <button className="btn btn-primary w-full">Save envelopes</button>}
         </form>
       </section>
+
+      {/* ---------------------------------------------------------------- Force Fields */}
+      {keeper && (
+        <section className="panel mt-6 px-5 py-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="eyebrow">Force Field · one per finalist · ₹5 Cr</h2>
+            {ffOpen ? (
+              <span className="flex items-baseline gap-2 text-sm text-steel">
+                Window open <WindowClock closesAt={ffCloses!} serverNow={new Date().toISOString()} refreshOnClose className="text-2xl font-semibold text-glow" />
+              </span>
+            ) : (
+              <form action={openForceFieldWindow}>
+                <button disabled={!inVault} className="btn btn-primary">Open the 60-second window</button>
+              </form>
+            )}
+          </div>
+          <p className="mt-2 text-sm text-steel">
+            Open it once every finalist has seen its envelope. Finalists buy on My Agency; only organisers see this list. When a team
+            plays its Force Field to block a swap, mark it used.
+          </p>
+          {(shields.data ?? []).length === 0 ? (
+            <p className="mt-3 text-sm text-steel">No Force Fields bought yet.</p>
+          ) : (
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {(shields.data ?? []).map((f) => (
+                <li key={f.agency_id as string}>
+                  <form action={setForceFieldUsed.bind(null, f.agency_id as string, !f.used_at)} className="flex items-center gap-2 rounded-sm border border-line px-3 py-1.5 text-sm">
+                    <span className="num font-semibold text-glow">{f.agency_id as string}</span>
+                    <span className={f.used_at ? 'text-steel' : 'text-toxic'}>{f.used_at ? 'used' : 'ready'}</span>
+                    <button className="btn btn-ghost !min-h-0 !px-2 !py-1 !text-xs">{f.used_at ? 'Undo' : 'Mark used'}</button>
+                  </form>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
 
       {/* ---------------------------------------------------------------- money during the round */}
       {keeper && (

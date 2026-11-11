@@ -44,6 +44,9 @@ export type DossierData = {
     swaps: { mission: number; gave: string; got: string; with: string }[];
     forceFields: number[];
     currentMission: number | null;
+    /** The one Round 3 Force Field: null if none bought. */
+    forceField: null | { used: boolean };
+    ffWindow: { closesAt: string; serverNow: string } | null;
   };
   hero: null | { outcome: string; multiplier: number; hero: number };
 };
@@ -51,7 +54,7 @@ export type DossierData = {
 /** Everything an agency may see about itself on My Agency. Only ever called for the signed-in agency. */
 export async function loadDossier(agencyId: string): Promise<DossierData> {
   const db = serviceDb();
-  const [st, ledger, gear, power, tip, news, teamUps, scores, duels, towers, holder, moves, ffs, hero, names, cardNames] = await Promise.all([
+  const [st, ledger, gear, power, tip, news, teamUps, scores, duels, towers, holder, moves, ffs, shield, ffState, hero, names, cardNames] = await Promise.all([
     db.from('event_state').select('phase, step, tips_closes_at, prelim_published_at, round1_locked_at, round2_published_at, current_mission').single(),
     db.from('v_ledger').select('id, agency_id, amount, reason, ref, note, created_at, voided, void_reason').eq('agency_id', agencyId),
     db.from('v_held_gear').select('category, card_id, gear_name, power, price').eq('agency_id', agencyId),
@@ -66,6 +69,9 @@ export async function loadDossier(agencyId: string): Promise<DossierData> {
     db.from('envelope_moves').select('envelope_id, mission, from_agency, to_agency, move_group').eq('kind', 'swap').is('voided_at', null)
       .or(`from_agency.eq.${agencyId},to_agency.eq.${agencyId}`).order('id'),
     db.from('force_fields').select('mission').eq('agency_id', agencyId).is('voided_at', null),
+    // Separate, error-tolerant reads: these columns arrive with the 11 November database update.
+    db.from('force_fields').select('used_at').eq('agency_id', agencyId).is('mission', null).is('voided_at', null).maybeSingle(),
+    db.from('event_state').select('ff_closes_at').maybeSingle(),
     db.from('v_hero_scores').select('outcome_label, multiplier, hero_score').eq('agency_id', agencyId).maybeSingle(),
     db.from('agencies').select('id, name, is_test'),
     loadCardNames(),
@@ -163,8 +169,13 @@ export async function loadDossier(agencyId: string): Promise<DossierData> {
       swaps: [...groups.values()]
         .filter((g) => g.gave && g.got && g.with)
         .map((g) => ({ mission: g.mission, gave: g.gave!, got: g.got!, with: g.with! })),
-      forceFields: (ffs.data ?? []).map((f) => f.mission as number),
+      forceFields: (ffs.data ?? []).filter((f) => f.mission !== null).map((f) => f.mission as number),
       currentMission: (st.data?.current_mission as number | null) ?? null,
+      forceField: shield.data ? { used: Boolean(shield.data.used_at) } : null,
+      ffWindow:
+        st.data?.phase === 'round3' && ffState.data?.ff_closes_at && Date.parse(ffState.data.ff_closes_at) > Date.now()
+          ? { closesAt: ffState.data.ff_closes_at as string, serverNow: new Date().toISOString() }
+          : null,
     },
     // No result reaches a participant until the anchor has announced 1st place.
     hero: hero.data && placesAnnounced(st.data?.phase as string, st.data?.step as string | null) === 3
