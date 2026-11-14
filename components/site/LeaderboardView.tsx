@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { ROUNDS } from '@/lib/config';
 import { formatCrore } from '@/lib/money';
 import type { Leaderboard } from '@/lib/leaderboard';
+import { pollFetch } from '@/lib/poll';
 
 const CHOICE: Record<string, string> = { swap: 'Swap', xray: 'X-Ray', cash: 'took ₹5 Cr', none: 'no winner' };
 const fmt = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/0$/, ''));
@@ -15,8 +16,9 @@ export function LeaderboardView({ initial }: { initial: Leaderboard | null }) {
 
   useEffect(() => {
     const load = async () => {
+      if (document.visibilityState === 'hidden') return; // a phone in a pocket does not poll
       try {
-        const res = await fetch('/api/leaderboard');
+        const res = await pollFetch('/api/leaderboard');
         if (!res.ok) throw new Error();
         setLb((await res.json()) as Leaderboard);
         setStale(false);

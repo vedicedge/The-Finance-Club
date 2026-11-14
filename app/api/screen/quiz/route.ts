@@ -3,7 +3,7 @@ import { getOrganiser } from '@/lib/auth/organiser';
 import { canAccess } from '@/lib/auth/roles';
 import { serviceDb } from '@/lib/db/server';
 import { parseSettings } from '@/lib/settings';
-import { loadAnswerKeys, loadBoard, loadKahootState } from '@/lib/quiz/server';
+import { loadBoard } from '@/lib/quiz/server';
 
 /**
  * What the quiz projector shows. Organisers only (the projector laptop is signed in).
@@ -18,7 +18,7 @@ export async function GET() {
   const db = serviceDb();
   const { data: st, error } = await db
     .from('event_state')
-    .select('phase, step, current_question_id, prelim_published_at, prelim_frozen_at, settings')
+    .select('phase, step, current_question_id, prelim_published_at, prelim_frozen_at, prelim_kahoot, prelim_kahoot_pin, settings')
     .single();
   if (error || !st) return NextResponse.json({ error: 'unavailable' }, { status: 503, headers });
 
@@ -28,7 +28,7 @@ export async function GET() {
     st.current_question_id
       ? db
           .from('questions')
-          .select('id, segment, prompt, options, timer_s, weight, order_no, status, opened_at, revealed_at')
+          .select('id, segment, prompt, options, timer_s, weight, order_no, status, opened_at, revealed_at, intro_until')
           .eq('id', st.current_question_id)
           .single()
       : Promise.resolve({ data: null }),
@@ -44,23 +44,25 @@ export async function GET() {
   let distribution: number[] | null = null;
   let correctIndex: number | null = null;
   let revealLine: string | null = null;
-  // Read on its own: the column arrives with the 15 November database update.
-  const introUntil = q ? ((await db.from('questions').select('intro_until').eq('id', q.id).maybeSingle()).data?.intro_until as string | null) ?? null : null;
+  const introUntil = (q?.intro_until as string | null | undefined) ?? null;
+  const mode = st.step === 'board' ? 'board' : st.step === 'lobby' || !q ? 'lobby' : 'question';
+  const revealed = Boolean(q && q.revealed_at && q.status !== 'void');
+  const [answers, key, board] = await Promise.all([
+    q ? db.from('answers').select('option_index').eq('question_id', q.id) : { data: null },
+    // The key and the reveal line (whose company, or the working) go on the projector only after the reveal.
+    revealed && q ? db.from('question_keys').select('correct_index, working').eq('question_id', q.id).maybeSingle() : { data: null },
+    mode === 'board' ? loadBoard() : null,
+  ]);
   if (q) {
-    const { data: answers } = await db.from('answers').select('option_index').eq('question_id', q.id);
-    lockedCount = answers?.length ?? 0;
-    if (q.revealed_at && q.status !== 'void') {
-      correctIndex = (await loadAnswerKeys()).get(q.id) ?? null;
-      // The reveal line (whose company, or the working) goes on the projector only after the reveal.
-      revealLine = ((await db.from('question_keys').select('working').eq('question_id', q.id).maybeSingle()).data?.working as string | null) ?? null;
+    lockedCount = answers.data?.length ?? 0;
+    if (revealed) {
+      correctIndex = (key.data?.correct_index as number | undefined) ?? null;
+      revealLine = (key.data?.working as string | null | undefined) ?? null;
       distribution = [0, 0, 0, 0];
-      for (const a of answers ?? []) distribution[a.option_index] += 1;
+      for (const a of answers.data ?? []) distribution[a.option_index] += 1;
     }
   }
-
-  const mode = st.step === 'board' ? 'board' : st.step === 'lobby' || !q ? 'lobby' : 'question';
-  const board = mode === 'board' ? await loadBoard() : null;
-  const kahoot = await loadKahootState();
+  const kahoot = { on: Boolean(st.prelim_kahoot), pin: (st.prelim_kahoot_pin as string | null) ?? null };
 
   return NextResponse.json(
     {

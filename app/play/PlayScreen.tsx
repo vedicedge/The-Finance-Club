@@ -1,8 +1,9 @@
 'use client';
-import { FullscreenButton } from '@/components/site/FullscreenButton';
 
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { FullscreenButton } from '@/components/site/FullscreenButton';
+import { pollFetch } from '@/lib/poll';
 import { SEGMENTS } from '@/lib/scoring/quiz';
 import { OPTION_LETTERS, secondsLeft, secondsToStart, type PhoneState } from '@/lib/quiz/types';
 
@@ -11,6 +12,8 @@ type Q = Extract<NonNullable<Signed['question']>, { id: string }>;
 
 const POLL_LIVE_MS = 1000;
 const POLL_IDLE_MS = 2000;
+/** A poll stuck on bad Wi-Fi is dropped after this, so the next one always runs. */
+const POLL_TIMEOUT_MS = 4000;
 
 /** The phone quiz screen: waiting → read-in → question → locked → result → final board. */
 export function PlayScreen({ stateUrl = '/api/quiz/state' }: { stateUrl?: string }) {
@@ -26,7 +29,7 @@ export function PlayScreen({ stateUrl = '/api/quiz/state' }: { stateUrl?: string
   const poll = useCallback(async () => {
     const t0 = Date.now();
     try {
-      const res = await fetch(stateUrl, { cache: 'no-store' });
+      const res = await pollFetch(stateUrl, POLL_TIMEOUT_MS);
       const t1 = Date.now();
       const data = (await res.json()) as PhoneState;
       if ('now' in data && data.now) {
@@ -46,28 +49,42 @@ export function PlayScreen({ stateUrl = '/api/quiz/state' }: { stateUrl?: string
     }
   }, [stateUrl]);
 
-  // Polling loop: faster while a question is live.
+  // Polling loop: faster while a question is live. A hidden screen (phone locked, another app
+  // open) stops polling and catches up the moment it is shown again.
   useEffect(() => {
     let stopped = false;
+    let running = false;
     const loop = async () => {
+      if (timer.current) window.clearTimeout(timer.current);
+      timer.current = null;
+      if (stopped || running || document.visibilityState === 'hidden') return;
+      running = true;
       const data = await poll();
+      running = false;
       if (stopped) return;
       const q = data && data.signed_in ? data.question : null;
       const live = q && 'id' in q && !q.revealed && q.status === 'open';
       timer.current = window.setTimeout(loop, live ? POLL_LIVE_MS : POLL_IDLE_MS);
     };
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') loop();
+    };
     loop();
+    document.addEventListener('visibilitychange', onVisible);
     return () => {
       stopped = true;
+      document.removeEventListener('visibilitychange', onVisible);
       if (timer.current) window.clearTimeout(timer.current);
     };
   }, [poll]);
 
-  // Redraw the countdown smoothly between polls.
+  // Redraw the countdown smoothly between polls, only while a question is on screen.
+  const ticking = Boolean(state && state.signed_in && state.question && 'id' in state.question && !state.question.revealed);
   useEffect(() => {
+    if (!ticking) return;
     const id = window.setInterval(() => setTick((t) => t + 1), 200);
     return () => window.clearInterval(id);
-  }, []);
+  }, [ticking]);
 
   const answer = async (q: Q, option: number) => {
     if (pending) return;

@@ -1,4 +1,5 @@
 import 'server-only';
+import { cache } from 'react';
 import { connection } from 'next/server';
 import { serviceDb } from '@/lib/db/server';
 import { publicEnv } from '@/lib/env';
@@ -25,8 +26,11 @@ const OFFLINE: EventState = {
   live: false,
 };
 
-/** The live event state for public pages. Never throws: falls back to defaults if offline. */
-export async function getEventState(): Promise<EventState> {
+/**
+ * The live event state for public pages. Never throws: falls back to defaults if offline.
+ * Read once per request: the layout and the page share it (React cache).
+ */
+export const getEventState = cache(async (): Promise<EventState> => {
   await connection(); // always read at request time, never at build time
   if (!publicEnv() || !process.env.SUPABASE_SECRET_KEY) return OFFLINE;
   try {
@@ -47,7 +51,7 @@ export async function getEventState(): Promise<EventState> {
   } catch {
     return OFFLINE;
   }
-}
+});
 
 /** Whether new agencies can register right now, and why not. */
 export function registrationStatus(s: EventState): { open: boolean; reason?: 'closed' | 'deadline' | 'full' | 'phase' } {

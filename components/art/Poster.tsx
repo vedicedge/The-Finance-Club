@@ -58,11 +58,6 @@ export function KalyugImage({ className = '', sizes }: { className?: string; siz
   );
 }
 
-/** The DOOMSDAY lettering from the poster, on a transparent background. */
-export function Wordmark({ className = '', sizes, preload = false, alt = EVENT.name }: { className?: string; sizes: string; preload?: boolean; alt?: string }) {
-  return <Image src={wordmark} alt={alt} sizes={sizes} preload={preload} className={className} />;
-}
-
 /**
  * The event title as the poster sets it: the DOOMSDAY wordmark with "Multiverse of Money"
  * centred beneath it between two thin rules. Size it with the className width; the subtitle

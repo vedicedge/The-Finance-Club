@@ -3,8 +3,7 @@ import { cookies } from 'next/headers';
 import { getAgency } from '@/lib/auth/agency';
 import { AGENCY_SESSION_COOKIE, hashSessionToken } from '@/lib/auth/session-token';
 import { serviceDb } from '@/lib/db/server';
-import { loadCardNames, seriesOf } from '@/lib/cards';
-import { loadBidState, settleBidding } from '@/lib/round1/bidding';
+import { settleBidding } from '@/lib/round1/bidding';
 import { CATEGORIES } from '@/lib/round1/steps';
 
 const headers = { 'Cache-Control': 'no-store' };
@@ -12,24 +11,36 @@ const headers = { 'Cache-Control': 'no-store' };
 /**
  * My Agency during Secret Identity Bids: the card open for bidding, this agency's own bid, and
  * once the window has closed, who won. Never anyone else's bid while bidding is open.
+ * Every phone polls this each second: one read of the event state, and the database is asked to
+ * settle a window only once it has actually run out.
  */
 export async function GET() {
-  const agency = await getAgency();
-  if (!agency) return NextResponse.json({ error: 'not_signed_in' }, { status: 401, headers });
-  await settleBidding();
   const db = serviceDb();
-  const [st, bid] = await Promise.all([db.from('event_state').select('phase, step, round1_locked_at').single(), loadBidState()]);
-  const live = st.data?.phase === 'round1' && st.data?.step === 'secret' && !st.data?.round1_locked_at && agency.status === 'active';
+  const [agency, st] = await Promise.all([
+    getAgency(),
+    db.from('event_state').select('phase, step, round1_locked_at, bid_card_id, bid_closes_at, bid_settled_at').single(),
+  ]);
+  if (!agency) return NextResponse.json({ error: 'not_signed_in' }, { status: 401, headers });
   const now = new Date().toISOString();
+  const live = st.data?.phase === 'round1' && st.data?.step === 'secret' && !st.data?.round1_locked_at && agency.status === 'active';
   if (!live) return NextResponse.json({ live: false, now }, { headers });
 
-  const [fund, held, card, mine, sale, names] = await Promise.all([
+  const cardId = (st.data?.bid_card_id as string | null) ?? null;
+  const closesAt = (st.data?.bid_closes_at as string | null) ?? null;
+  let settled = Boolean(st.data?.bid_settled_at);
+  if (cardId && closesAt && !settled && Date.parse(closesAt) <= Date.now()) {
+    await settleBidding();
+    const after = await db.from('event_state').select('bid_settled_at').single();
+    settled = Boolean(after.data?.bid_settled_at);
+  }
+  const bid = cardId && closesAt ? { cardId, closesAt, settled } : null;
+
+  const [fund, held, card, mine, sale] = await Promise.all([
     db.from('v_fund_left').select('fund_left').eq('agency_id', agency.id).maybeSingle(),
     db.from('v_held_gear').select('category').eq('agency_id', agency.id),
-    bid ? db.from('gear_cards').select('id, category, gear_name, power, min_bid').eq('id', bid.cardId).single() : null,
+    bid ? db.from('gear_cards').select('id, category, gear_name, card_name, series_name, power, min_bid').eq('id', bid.cardId).single() : null,
     bid ? db.from('blind_bids').select('amount').eq('card_id', bid.cardId).eq('agency_id', agency.id).maybeSingle() : null,
     bid?.settled ? db.from('sales').select('agency_id, price, agencies(name)').eq('card_id', bid.cardId).is('voided_at', null).maybeSingle() : null,
-    loadCardNames(),
   ]);
   const heldCats = new Set((held.data ?? []).map((h) => h.category as string));
   const c = card?.data;
@@ -44,7 +55,7 @@ export async function GET() {
       card: c
         ? {
             id: c.id, category: c.category, power: c.power, minBid: Number(c.min_bid),
-            name: names.card.get(c.id) ?? c.gear_name, series: seriesOf(names, c.gear_name),
+            name: (c.card_name as string | null) ?? c.gear_name, series: (c.series_name as string | null) ?? c.gear_name,
           }
         : null,
       open: Boolean(bid && !bid.settled && Date.parse(bid.closesAt) > Date.now()),
