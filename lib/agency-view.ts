@@ -94,6 +94,16 @@ export async function loadDossier(agencyId: string): Promise<DossierData> {
     .map((s) => ({ id: s.agency_id as string, t: s.total_points as number, time: Number(s.correct_time_s) }));
   const me = all.find((s) => s.id === agencyId);
   if (me) rank = 1 + all.filter((s) => s.t > me.t || (s.t === me.t && s.time < me.time)).length;
+  // Red alert: the prelim moved to Kahoot, so the rank and points are Kahoot's.
+  let kahootTotal: number | null = null;
+  const kahoot = await serviceDb().from('event_state').select('prelim_kahoot').maybeSingle();
+  if (kahoot.data?.prelim_kahoot) {
+    const res = await serviceDb().from('prelim_kahoot_results').select('agency_id, score').order('kahoot_rank');
+    const mineK = (res.data ?? []).filter((r) => (isTest.get(r.agency_id as string) ?? false) === mine);
+    const at = mineK.findIndex((r) => r.agency_id === agencyId);
+    rank = at >= 0 ? at + 1 : null;
+    kahootTotal = at >= 0 ? (mineK[at].score as number) : 0;
+  }
 
   // Round 2: opponent once drawn; votes, tower and bonus only once published.
   const r2Published = Boolean(st.data?.round2_published_at);
@@ -121,7 +131,7 @@ export async function loadDossier(agencyId: string): Promise<DossierData> {
 
   const t = tip.data?.breaking_news as unknown as { id: string; headline: string; affects_gear: string; delta: number } | null;
   return {
-    prelim: { published: Boolean(st.data?.prelim_published_at), rank, total: me?.t ?? 0 },
+    prelim: { published: Boolean(st.data?.prelim_published_at), rank, total: kahootTotal ?? me?.t ?? 0 },
     ledger: [...withBalance].reverse(), // newest first on the page
     fund,
     gear: (gear.data ?? [])

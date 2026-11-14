@@ -143,13 +143,38 @@ function Body({
   pending: { question: string; option: number } | null;
   onAnswer: (q: Q, option: number) => void;
 }) {
+  // ---------------------------------------------------------------- red alert: the prelim on Kahoot
+  const k = s.kahoot;
+  if (k && !k.published && (s.phase === 'prelim' || s.phase === 'checkin')) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center bg-ember/15 px-6 text-center">
+        <p className="text-sm font-bold tracking-[0.3em] text-ember uppercase">Red alert</p>
+        <h1 className="display mt-3 text-4xl leading-tight text-bone">The prelim continues on Kahoot</h1>
+        <p className="mt-5 text-lg text-bone">
+          Open <span className="font-semibold text-glow">kahoot.it</span>
+          {k.pin ? (
+            <>
+              {' '}and enter the game PIN <span className="num block text-5xl font-semibold text-glow">{k.pin}</span>
+            </>
+          ) : ' and enter the game PIN shown on the projector.'}
+        </p>
+        <p className="mt-5 text-base text-bone">
+          Nickname: your agency ID first, e.g. <span className="num font-semibold">{s.agency.id} {s.agency.name}</span>
+        </p>
+        <p className="mt-3 text-sm text-steel">One phone per team. A nickname without your agency ID cannot be ranked.</p>
+      </div>
+    );
+  }
+
   // ---------------------------------------------------------------- after the prelim
   if (s.published || (s.phase !== 'prelim' && s.phase !== 'registration' && s.phase !== 'checkin')) {
     const qualified = s.agency.status === 'active';
     const out = s.agency.status === 'eliminated';
+    const rank = k ? k.rank : s.rank;
+    const points = k ? k.score ?? 0 : s.totals.points;
     return (
-      <Centered eyebrow="Prelim · final board" title={s.rank ? `Rank #${s.rank}` : 'Prelim complete'}>
-        <p className="num mt-2 text-xl text-bone">{s.totals.points.toLocaleString('en-IN')} points</p>
+      <Centered eyebrow={k ? 'Prelim · final board (Kahoot)' : 'Prelim · final board'} title={rank ? `Rank #${rank}` : 'Prelim complete'}>
+        <p className="num mt-2 text-xl text-bone">{points.toLocaleString('en-IN')} points</p>
         {qualified && <p className="stamp mt-6 text-toxic">Qualified for Power Bazaar</p>}
         {out && <p className="stamp mt-6 text-ember">Eliminated · Prelim</p>}
         {!s.frozen && <p className="mt-6 text-steel">The quiz host is confirming the top 16. Stay tuned to the projector.</p>}

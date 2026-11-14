@@ -14,6 +14,10 @@ export async function loadRoundProgress(phase: string): Promise<RoundProgress> {
     const q = await db.from('questions').select('id', { count: 'exact', head: true }).not('opened_at', 'is', null).neq('segment', 'sudden_death');
     out.quizStarted = (q.count ?? 0) > 0;
   }
+  if (phase === 'prelim' || phase === 'checkin') {
+    const k = await db.from('event_state').select('prelim_kahoot').maybeSingle();
+    out.kahoot = !k.error && Boolean(k.data?.prelim_kahoot);
+  }
   if (phase === 'round2') {
     const d = await db.from('poster_duels').select('id', { count: 'exact', head: true });
     out.duelsDrawn = (d.count ?? 0) > 0;

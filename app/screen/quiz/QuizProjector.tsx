@@ -16,6 +16,7 @@ type ScreenState = {
   mode: 'lobby' | 'question' | 'board';
   published: boolean;
   frozen: boolean;
+  kahoot?: { pin: string | null } | null;
   standingBy: number;
   eligibleCount: number;
   lockedCount: number;
@@ -85,6 +86,8 @@ export function QuizProjector({ stateUrl = '/api/screen/quiz' }: { stateUrl?: st
       <TopBar s={s} />
       {!s ? (
         <Center title={error ?? 'Establishing secure line…'} />
+      ) : s.kahoot && !(s.mode === 'board' && s.board) ? (
+        <RedAlert pin={s.kahoot.pin} />
       ) : s.mode === 'board' && s.board ? (
         <BoardView s={s} />
       ) : s.mode === 'question' && s.question ? (
@@ -105,11 +108,29 @@ function TopBar({ s }: { s: ScreenState | null }) {
       <p className="text-[1.25cqw] font-semibold tracking-[0.3em] text-steel uppercase">
         {EVENT.name} · Prelim · <span className="text-glow">{ROUNDS.prelim}</span>
       </p>
-      {s?.question?.number && s.mode === 'question' && (
+      {s?.question?.number && s.mode === 'question' && !s.kahoot && (
         <p className="num text-[1.4cqw] font-semibold tracking-[0.2em] text-steel uppercase">
           Question <span className="text-bone">{s.question.number}</span> / 15
         </p>
       )}
+    </div>
+  );
+}
+
+/** The red alert: the prelim continues on Kahoot. */
+function RedAlert({ pin }: { pin: string | null }) {
+  return (
+    <div className="flex h-full flex-col items-center justify-center bg-ember/10 px-[6cqw] text-center">
+      <p className="text-[1.6cqw] font-bold tracking-[0.4em] text-ember uppercase">Red alert</p>
+      <p className="display mt-[2cqh] text-[4.6cqw] leading-tight">The prelim continues on Kahoot</p>
+      <p className="mt-[4cqh] text-[2.2cqw] text-bone">
+        Go to <span className="font-semibold text-glow">kahoot.it</span> and enter the game PIN
+      </p>
+      <p className="num mt-[1cqh] text-[9cqw] leading-none font-semibold text-glow">{pin || '— — —'}</p>
+      <p className="mt-[4cqh] text-[1.9cqw] text-bone">
+        Nickname: <span className="font-semibold">your agency ID first</span>, e.g. <span className="num">A07 Rakshak Labs</span>
+      </p>
+      <p className="mt-[1.5cqh] text-[1.4cqw] text-steel">One phone per agency. A nickname without the agency ID cannot be ranked.</p>
     </div>
   );
 }

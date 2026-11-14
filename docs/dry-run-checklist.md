@@ -8,7 +8,7 @@ This file is generated from `lib/print/checklist.ts`; edit that file, then run `
 ## The day before
 
 - [ ] Merge the latest pull request on GitHub and wait until Vercel shows the new deployment as **Ready**.
-- [ ] In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (27 files; the last is `20261115002700_quiz_categories_rules_team_edits.sql`).
+- [ ] In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (28 files; the last is `20261115002800_kahoot_fallback.sql`).
 - [ ] If the secret seed has never been run, run `supabase/private/seed_secrets.sql` once.
 - [ ] Command centre: **Database updates** says “Up to date”, and Seed data says **OK** on every row.
 - [ ] Every crew member with a website job signs in once at `/admin/login`; an admin gives each their role in Crew & roles (quiz host, 2 ledger keepers, auctioneer, 2 scorers, social-media lead, anchor, 2 floaters).
@@ -78,6 +78,7 @@ This file is generated from `lib/print/checklist.ts`; edit that file, then run `
 - [ ] Wi-Fi down: move the projector laptop and a few phones to the hotspot. Pages recover by themselves (they poll every 1–5 s).
 - [ ] Projector laptop restarts: reopen `/projector`; it picks up the current state.
 - [ ] A phone dies mid-prelim: the captain signs in on another phone with ID + PIN.
+- [ ] Red alert (the website quiz fails): Quiz console → **Red alert: move to Kahoot** with a test Kahoot PIN. Phones and the projector turn red with the PIN. Run a 2-question Kahoot with nicknames like "A07 Rakshak Labs", download its results, upload them on the quiz console, publish, freeze. Then reset before the real event.
 - [ ] Lost PIN: Agencies & check-in → reset PIN; the new PIN shows once.
 - [ ] Time each segment against the run-sheet (prelim 15 min, Round 1 50, Round 2 35, Round 3 31, Zero Hour 20) and note where you ran over.
 

@@ -50,6 +50,11 @@ export async function loadGuideSnapshot({ withAnswers }: { withAnswers: boolean 
       no: q.order_no!, id: q.id, prompt: q.prompt, options: q.options, answer: keys.get(q.id) ?? null,
       openedAt: q.opened_at ? Date.parse(q.opened_at) : null, timerS: q.timer_s, revealed: Boolean(q.revealed_at),
     }));
+    const k = await db.from('event_state').select('prelim_kahoot').maybeSingle();
+    if (!k.error && k.data?.prelim_kahoot) {
+      const r = await db.from('prelim_kahoot_results').select('agency_id', { count: 'exact', head: true });
+      snap.quiz.kahoot = { on: true, results: r.count ?? 0 };
+    }
     if (snap.quiz.published && !snap.quiz.frozen) snap.quiz.suddenDeathPending = (await loadBoard()).qualifiers === null;
   }
 
