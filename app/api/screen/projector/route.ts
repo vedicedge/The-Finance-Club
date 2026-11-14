@@ -19,7 +19,7 @@ export async function GET() {
     return NextResponse.json({ error: 'not_signed_in' }, { status: 401, headers });
   }
   const db = serviceDb();
-  let row = await db.from('event_state').select('phase, step, projector, settings').maybeSingle();
+  let row = await db.from('event_state').select('phase, step, projector, settings, round2_published_at').maybeSingle();
   // Before the 8 November database update the projector column is missing: show auto.
   if (row.error) row = (await db.from('event_state').select('phase, settings').maybeSingle()) as typeof row;
   const phase: Phase = isPhase(row.data?.phase) ? row.data.phase : 'registration';
@@ -27,7 +27,7 @@ export async function GET() {
   const mode: ProjectorMode = isProjectorMode(raw) ? raw : 'auto';
   const settings = parseSettings(row.data?.settings);
   const agencies = await db.from('agencies').select('id', { count: 'exact', head: true }).eq('is_test', false);
-  const screen = projectorScreen(mode, phase);
+  const screen = projectorScreen(mode, phase, { round2Published: Boolean((row.data as { round2_published_at?: string | null } | null)?.round2_published_at) });
   const ff = screen === 'cover' ? await db.from('event_state').select('ff_closes_at').maybeSingle() : null;
   const ffCloses = (ff?.data?.ff_closes_at as string | undefined) ?? null;
   // The results screen gets only the places the anchor has announced, never the rest.

@@ -153,8 +153,8 @@ export function Guide({ guide, snap, organiser }: { guide: GuideData; snap: Guid
             <form action={guideDo.bind(null, 'r3-cash', String(r3m.no))} className="panel flex flex-col justify-between space-y-2 px-4 py-4">
               {key}
               <p className="text-sm font-semibold text-bone">Take the cash</p>
-              <p className="text-sm text-steel">+₹6 Cr to {r3m.winner}.</p>
-              <button disabled={!mayPress(organiser.roles, 'r3-cash')} className="btn btn-primary w-full">Take ₹6 Cr</button>
+              <p className="text-sm text-steel">+₹5 Cr to {r3m.winner}.</p>
+              <button disabled={!mayPress(organiser.roles, 'r3-cash')} className="btn btn-primary w-full">Take ₹5 Cr</button>
             </form>
           </div>
         )}

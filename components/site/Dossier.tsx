@@ -6,6 +6,10 @@ import { formatCrore } from '@/lib/money';
 import { REASON_LABEL, ledgerTime } from '@/lib/ledger';
 import { BuyTip } from '@/components/site/BuyTip';
 import { BuyForceField } from '@/components/site/BuyForceField';
+import { BlindBid } from '@/components/site/BlindBid';
+import { BudgetWarning } from '@/components/site/BudgetWarning';
+import { budgetWarning } from '@/lib/round1/budget';
+import { envNo } from '@/lib/round3/flow';
 import { Scene } from '@/components/art/Scene';
 import { GearCard } from '@/components/cards/GearCard';
 import { GearIcon } from '@/components/art/gear-icons';
@@ -135,6 +139,8 @@ export function Dossier({
 
       {/* ---------------------------------------------------------------- sections that unlock during the event */}
       <div className="mt-6 grid gap-4">
+        {/* Bidding first: it is what the team is doing right now. It hides itself outside Secret Identity Bids. */}
+        {data?.round1Live && agency.status === 'active' && <BlindBid />}
         {data?.prelim.published ? (
           <section className="panel px-5 py-5">
             <p className="eyebrow">Prelim · {ROUNDS.prelim}</p>
@@ -151,6 +157,11 @@ export function Dossier({
           <section className="panel px-5 py-5">
             <p className="eyebrow">Fund left</p>
             <p className="num mt-2 text-5xl font-semibold text-glow">{formatCrore(data.fund)}</p>
+            {data.round1Live && agency.status === 'active' && (() => {
+              const missing = 4 - new Set(data.gear.map((g) => g.category)).size;
+              const warn = budgetWarning(data.fund, missing);
+              return warn ? <BudgetWarning fund={data.fund} missing={missing} reserve={warn.reserve} className="mt-3" /> : null;
+            })()}
             <p className="mt-1 text-sm text-steel">Counts half in your Hero Score. Every credit and debit:</p>
             <ol className="mt-4 divide-y divide-line/60 border-y border-line/60 text-sm">
               {data.ledger.map((e) => (
@@ -321,11 +332,20 @@ export function Dossier({
           <Sealed eyebrow={`Round 2 · ${ROUNDS.round2}`} title="Poster duel and Tower Score" unlocks="Round 2 results are published" />
         )}
 
+        {/* The Force Field window opens before the envelopes are recorded on the site, so it does not wait for one. */}
+        {data?.round3.ffWindow && !data.round3.forceField && agency.status === 'active' && (
+          <BuyForceField closesAt={data.round3.ffWindow.closesAt} serverNow={data.round3.ffWindow.serverNow} fund={data.fund} />
+        )}
+        {data?.round3.forceField && !data.round3.envelope && (
+          <section className="panel px-5 py-4 text-sm">
+            Force Field: <span className="text-toxic">bought · play it once, when a winner tries to swap with you</span>
+          </section>
+        )}
         {data?.round3.envelope ? (
           <section className="panel px-5 py-5">
             <p className="eyebrow">Round 3 · {ROUNDS.round3}</p>
             <p className="mt-2 flex items-baseline gap-3">
-              <span className="num text-5xl font-semibold text-glow">{data.round3.envelope}</span>
+              <span className="num text-5xl font-semibold text-glow">{envNo(data.round3.envelope)}</span>
               <span className="text-sm text-steel">your Mission File · keep it sealed</span>
             </p>
             <p className="mt-2 text-sm">
@@ -336,15 +356,10 @@ export function Dossier({
                 <span className="text-steel">none</span>
               )}
             </p>
-            {data.round3.ffWindow && !data.round3.forceField && agency.status === 'active' && (
-              <div className="mt-4">
-                <BuyForceField closesAt={data.round3.ffWindow.closesAt} serverNow={data.round3.ffWindow.serverNow} fund={data.fund} />
-              </div>
-            )}
             {data.round3.swaps.length > 0 && (
               <ul className="mt-3 space-y-1 text-sm text-steel">
                 {data.round3.swaps.map((sw, i) => (
-                  <li key={i}>Mission {sw.mission}: swapped {sw.gave} for {sw.got} with <span className="num text-bone">{sw.with}</span></li>
+                  <li key={i}>Mini game {sw.mission}: swapped envelope {envNo(sw.gave)} for {envNo(sw.got)} with <span className="num text-bone">{sw.with}</span></li>
                 ))}
               </ul>
             )}

@@ -8,7 +8,7 @@ This file is generated from `lib/print/checklist.ts`; edit that file, then run `
 ## The day before
 
 - [ ] Merge the latest pull request on GitHub and wait until Vercel shows the new deployment as **Ready**.
-- [ ] In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (25 files; the last is `20261111002500_content_import.sql`).
+- [ ] In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (26 files; the last is `20261114002600_blind_bids_and_round3_flow.sql`).
 - [ ] If the secret seed has never been run, run `supabase/private/seed_secrets.sql` once.
 - [ ] Command centre: **Database updates** says “Up to date”, and Seed data says **OK** on every row.
 - [ ] Every crew member with a website job signs in once at `/admin/login`; an admin gives each their role in Crew & roles (quiz host, 2 ledger keepers, auctioneer, 2 scorers, social-media lead, anchor, 2 floaters).
@@ -44,25 +44,25 @@ This file is generated from `lib/print/checklist.ts`; edit that file, then run `
 - [ ] After freezing, press **Start Round 1 · Power Bazaar →** (quiz console). Power Bazaar console → credit starting funds (+₹50 Cr each, once).
 - [ ] Enter the Breaking News draw (or draw at random) before the first tip.
 - [ ] Insider Tips: press **Open the 60-second window**. The projector counts down; two testers buy a tip on My Agency (₹2 Cr, with a confirm step) and the console marks each purchase NEW. Only that agency’s page shows its tip; after 0:00 the Buy button disappears.
-- [ ] Marquee and Secret Identity Bids: record sales; the projector moves to the next lot. Try sales the site must refuse: below the minimum, above the fund left, not a ₹0.5 Cr step, a second card in the same category.
+- [ ] Marquee: record sales by hand; the projector moves to the next lot. Try sales the site must refuse: below the minimum, above the fund left, not a ₹0.5 Cr step, a second card in the same category.
+- [ ] Secret Identity Bids: press **Open bidding** for a card. Three testers bid on My Agency within the 20 seconds (two of them the same amount; one tries a bid below the minimum). At 0:00 the projector shows every bid and the highest wins (on a tie, the earlier bid). A tester with a low fund sees the Budget alert.
 - [ ] Undo the last entry, and void a sale with a reason: the card returns to the auction and the money to the fund.
 - [ ] Last Call, then Breaking News: reveal the headlines one at a time, then the Team-Ups.
 - [ ] **Apply Jugaad Kits & eliminations** (one kit at ₹8 Cr for each missing category; a team that cannot pay for all its kits is eliminated), then **Lock Round 1**. Press **Show all news & Team-Ups on the projector**: every headline and Team-Up, with who holds each card. Testers check gear, Power Level and fund left on My Agency, as at the real ledger check; then **Back to the normal view**.
 
 ### Round 2 · Operation: Skyline
 
-- [ ] After the lock, press **Start Round 2 →** on the Power Bazaar console. Social-media lead draws the duel pairings (an odd number gives one bye).
+- [ ] After the lock, press **Start Round 2 →** on the Power Bazaar console. The projector shows the Round 2 cover (and the board once Round 2 is published). Social-media lead draws the duel pairings (an odd number gives one bye).
 - [ ] At the cutoff, type each duel’s story-vote counts; make one a tie and enter the rock-paper-scissors winner.
 - [ ] Scorers enter tower results: correct blocks, reference blocks, build time as m:ss (make one a DNF = 10:00), frozen blocks, blocks fallen. Work one Tower Score by hand on the Round 2 sheet and compare.
 - [ ] Publish: the top 8 stay in, the rest are eliminated in Round 2, and each duel winner or bye in the top 8 gets +₹5 Cr.
 
-### Round 3 · The Doomsday Vault (runs offline)
+### Round 3 · The Doomsday Vault (step by step on its console)
 
-- [ ] After publishing, press **Start Round 3 →** on the Round 2 console. The projector shows only the Round 3 cover.
-- [ ] One admin enters a test multiplier map on the Round 3 console (any spread the spec allows). The reset deletes it.
-- [ ] Deal the envelopes. On the Round 3 console press **Open the 60-second window**: the projector counts down and two testers buy a Force Field on My Agency (₹5 Cr, once per team). Only the console lists who bought one; mark one **used**.
-- [ ] Run the missions on paper. On the Round 3 console, record one Chai Pe Charcha transfer and one ₹5 Cr fine; check the funds on My Agency.
-- [ ] After the last mission, record who holds which envelope (E1–E8) and press **Save envelopes**.
+- [ ] After publishing, press **Start Round 3 →** on the Round 2 console. The projector shows the Round 3 cover.
+- [ ] Round 3 console, one screen at a time: **Shuffle the map** (admin), then **Start the 60-second Force Field timer**; one tester buys a Force Field on My Agency (₹5 Cr, once).
+- [ ] Record who holds which envelope (1 to 8, or 10), then each mini game: winner and decision. Try a swap blocked by the Force Field, a real swap, an X-Ray and ₹5 Cr cash. Undo the last one once.
+- [ ] Record one Chai Pe Charcha transfer and one ₹5 Cr fine under Other tools; check the funds on My Agency.
 
 ### Zero Hour
 

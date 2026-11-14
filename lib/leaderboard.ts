@@ -74,6 +74,9 @@ export async function loadLeaderboard() {
       db.from('v_public_missions').select('no, name, winner_agency_id, choice, swap_target').order('no'),
       db.from('agencies').select('id, name'),
     ]);
+    // Read on its own: the column arrives with the 14 November database update.
+    const blocked = await db.from('v_public_missions').select('no, ff_blocked');
+    const blockedOf = new Map((blocked.data ?? []).map((m) => [m.no as number, Boolean(m.ff_blocked)]));
     const n = new Map((names.data ?? []).map((a) => [a.id as string, a.name as string]));
     round3 = {
       missions: (missions.data ?? []).map((m) => ({
@@ -83,6 +86,7 @@ export async function loadLeaderboard() {
         winnerName: m.winner_agency_id ? n.get(m.winner_agency_id) ?? null : null,
         choice: m.choice as string | null, // swap target is public; X-Ray target never is
         swapTarget: m.swap_target as string | null,
+        blocked: blockedOf.get(m.no as number) ?? false,
       })),
     };
   }

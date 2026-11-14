@@ -42,6 +42,11 @@ export type GuideSnapshot = {
     buyers: { id: string; name: string; fund: number }[];
     /** Agencies still missing a category (Jugaad Kits or elimination at the ledger check). */
     missing: number;
+    /** Phone bidding (Secret Identity Bids): the current or last window. */
+    bid: null | { cardId: string; closesAt: number; settled: boolean; count: number; winner: string | null; price: number | null };
+    /** The next card due for phone bidding, and how many are left. */
+    bidNext: null | { id: string; name: string };
+    bidLeft: number;
   };
   r2: { duels: number; duelsDecided: number; towersNeeded: number; towersEntered: number; cutoffPending: boolean; published: boolean };
   r3: {
@@ -57,7 +62,7 @@ export type GuideSnapshot = {
 /** Every button Simple mode can press. The server action maps each to the console's own logic. */
 export type GuideActionId =
   | 'start-checkin' | 'start-prelim' | 'quiz-shuffle' | 'quiz-open' | 'quiz-reveal' | 'quiz-publish' | 'quiz-freeze'
-  | 'start-round1' | 'r1-funds' | 'r1-draw' | 'r1-tips' | 'r1-marquee' | 'r1-first-lot' | 'r1-sale' | 'r1-skip'
+  | 'start-round1' | 'r1-funds' | 'r1-draw' | 'r1-tips' | 'r1-marquee' | 'r1-first-lot' | 'r1-sale' | 'r1-skip' | 'r1-bid'
   | 'r1-secret' | 'r1-lastcall' | 'r1-news' | 'r1-news-next' | 'r1-teamups' | 'r1-recap' | 'r1-check' | 'r1-jugaad' | 'r1-lock'
   | 'start-round2' | 'r2-draw' | 'r2-publish' | 'start-round3'
   | 'r3-ff-window' | 'r3-ff-buy' | 'r3-play' | 'r3-results' | 'r3-winner' | 'r3-choice-window' | 'r3-swap' | 'r3-xray' | 'r3-cash'
@@ -217,13 +222,25 @@ function round1(s: GuideSnapshot): Guide {
     }
     return { ...base, items: items(labels, 3), now: { key: 'r1-marquee', title: 'Start the Marquee Auction', body: `The tips window is closed (${r.tipsSold} bought). The 8 Marquee lots go next, live with paddles.`, ...AUCTION, buttons: [{ action: 'r1-marquee', label: 'Start the Marquee Auction' }] } };
   }
+  if (step === 'secret') {
+    // Secret Identity Bids run on phones: open a 20-second window per card; the highest bid wins.
+    const b = r.bid;
+    const finish: GuideButton = { action: 'r1-lastcall', label: 'Start Last Call' };
+    if (b && !b.settled && s.now < b.closesAt) {
+      return { ...base, items: items(labels, 4), now: { key: `r1-bid-wait-${b.cardId}`, title: `Bidding open on ${b.cardId}`, body: 'Teams type their blind bids on My Agency. When the countdown ends, every bid appears on the projector and the highest one wins automatically.', ...AUCTION, buttons: [], until: b.closesAt, progress: `${b.count} bid${b.count === 1 ? '' : 's'} in` } };
+    }
+    const last = b && b.settled ? (b.winner ? `Last card ${b.cardId}: sold to ${b.winner} for ₹${b.price} Cr. ` : `Last card ${b.cardId}: no valid bid, so it waits for Last Call. `) : '';
+    if (!r.bidNext) {
+      return { ...base, items: items(labels, 4), now: { key: 'r1-done-secret', title: 'Secret Identity Bids are finished', body: `${last}Every card has had its bidding window. Unsold cards go to Last Call.`, ...AUCTION, buttons: [finish] } };
+    }
+    return { ...base, items: items(labels, 4), now: { key: `r1-bid-${r.bidNext.id}`, title: `Open bidding: ${r.bidNext.id} · ${r.bidNext.name}`, body: `${last}The card goes on the projector and teams have 20 seconds to bid on their phones.`, ...AUCTION, buttons: [{ action: 'r1-bid', label: 'Open 20-second bidding' }, { ...finish, ghost: true, label: 'Finish early: start Last Call' }], progress: `${r.bidLeft} card${r.bidLeft === 1 ? '' : 's'} still to bid on` } };
+  }
   if (bidding) {
-    const idx = step === 'marquee' ? 3 : step === 'secret' ? 4 : 5;
-    const stepName = step === 'marquee' ? 'Marquee Auction' : step === 'secret' ? 'Secret Identity Bids' : 'Last Call';
+    // (Secret Identity Bids are handled above: they run on phones.)
+    const idx = step === 'marquee' ? 3 : 5;
+    const stepName = step === 'marquee' ? 'Marquee Auction' : 'Last Call';
     const nextAction: GuideButton =
-      step === 'marquee' ? { action: 'r1-secret', label: 'Start Secret Identity Bids' }
-        : step === 'secret' ? { action: 'r1-lastcall', label: 'Start Last Call' }
-          : { action: 'r1-news', label: 'Go to Breaking News' };
+      step === 'marquee' ? { action: 'r1-secret', label: 'Start Secret Identity Bids' } : { action: 'r1-news', label: 'Go to Breaking News' };
     // Finished when no lot in this step can still be bought by anyone (never cycle through dead lots).
     if (r.sellable === 0) {
       return { ...base, items: items(labels, idx), now: { key: `r1-done-${step}`, title: `${stepName} is finished`, body: r.lotsLeft === 0 ? 'No lots left in this step.' : `${r.lotsLeft} unsold lot${r.lotsLeft === 1 ? '' : 's'} left, but no team that still needs that category can pay for ${r.lotsLeft === 1 ? 'it' : 'them'}.`, ...AUCTION, buttons: [nextAction] } };
@@ -295,16 +312,17 @@ function round2(s: GuideSnapshot): Guide {
 
 function round3(s: GuideSnapshot): Guide {
   const r = s.r3;
-  const labels = ['Multiplier map', 'Run the round offline', 'Start Zero Hour'];
+  const labels = ['Shuffle the map', 'Run Round 3 on its console', 'Start Zero Hour'];
   const base = { phaseTitle: `Round 3 · ${ROUNDS.round3}` };
   const consoleLink = { href: '/admin/round3', label: 'Open the Round 3 console' };
   if (!r.multipliersEntered) {
-    return { ...base, items: items(labels, 0), now: { key: 'r3-map', title: 'Enter the multiplier map', body: 'What is inside each numbered envelope. Secret: an admin enters it, nobody else sees it.', ...ADMIN, buttons: [], link: { href: '/admin/round3', label: 'Enter the map' } } };
+    return { ...base, items: items(labels, 0), now: { key: 'r3-map', title: 'Shuffle the map', body: 'The Round 3 console shuffles what is inside each envelope. Secret: only admins see it.', ...ADMIN, buttons: [], link: consoleLink } };
   }
-  if (!r.dealt) {
-    return { ...base, items: items(labels, 1), now: { key: 'r3-offline', title: 'Run Round 3 offline', body: 'The projector shows the Round 3 cover. Record each Chai Pe Charcha transfer and each fine on the Round 3 console as it happens. After the last mission, record who holds which envelope.', ...R3, buttons: [], link: consoleLink } };
+  const left = r.missions.filter((m) => m.choice === null).length;
+  if (left > 0 || !r.dealt) {
+    return { ...base, items: items(labels, 1), now: { key: 'r3-console', title: 'Run Round 3 on its console', body: 'It goes one screen at a time: the Force Field window, who holds which envelope, then each mini game’s winner and decision (swap, X-Ray or ₹5 Cr).', ...R3, buttons: [], link: consoleLink, progress: `${4 - left} / 4 mini games recorded` } };
   }
-  return { ...base, items: items(labels, 2), now: { key: 'start-zero-hour', title: 'Start Zero Hour', body: 'Every finalist’s envelope is recorded. You can still correct it on the Round 3 console until the results are calculated.', ...ADMIN, buttons: [{ action: 'start-zero-hour', label: 'Start Zero Hour' }], link: consoleLink } };
+  return { ...base, items: items(labels, 2), now: { key: 'start-zero-hour', title: 'Start Zero Hour', body: 'All four mini games are recorded. Start Zero Hour, then announce the results on the Final leaderboard.', ...ADMIN, buttons: [{ action: 'start-zero-hour', label: 'Start Zero Hour' }], link: consoleLink } };
 }
 
 // ---------------------------------------------------------------- Zero Hour

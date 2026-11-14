@@ -10,8 +10,9 @@ import { buildGuide, type GuideActionId } from '@/lib/guide';
 import { mayPress, SIMPLE_COOKIE } from '@/lib/guide-rules';
 import { loadGuideSnapshot } from '@/lib/guide-server';
 import { dbMessage, loadRound1 } from '@/lib/round1/server';
+import { BID_WINDOW_SECONDS, loadBidState, settleBidding } from '@/lib/round1/bidding';
 import { isR1Step, TIPS_WINDOW_SECONDS, type R1Step } from '@/lib/round1/steps';
-import { lotPool, nextLot } from '@/lib/round1/lots';
+import { lotPool, nextLot, nextBidCard } from '@/lib/round1/lots';
 import { loadBoard } from '@/lib/quiz/server';
 import { loadRound2 } from '@/lib/round2/server';
 import { canAdvance, type NextPhase } from '@/lib/phase-flow';
@@ -132,6 +133,15 @@ export async function guideDo(action: GuideActionId, arg: string, formData: Form
     case 'r1-check': await startStep('ledger_check'); ok = 'Ledger check.'; break;
     case 'r1-first-lot':
     case 'r1-skip': { const id = await nextLotUp(); ok = id ? `${id} is on the projector.` : 'No lots left in this step.'; break; }
+    case 'r1-bid': {
+      await settleBidding();
+      const [r1, bid] = await Promise.all([loadRound1(), loadBidState()]);
+      const card = nextBidCard(r1.cards, r1.sold, r1.currentCardId, bid?.cardId ?? null);
+      if (!card) fail('Every Secret Identity card has had its bidding window. Start Last Call.');
+      await call(db.rpc('r1_open_bidding', { p_card: card!.id, p_seconds: BID_WINDOW_SECONDS, p_actor: actor }));
+      ok = `Bidding open on ${card!.id} for ${BID_WINDOW_SECONDS} seconds.`;
+      break;
+    }
     case 'r1-sale': {
       const card = String(formData.get('card') ?? '');
       const agency = String(formData.get('agency') ?? '');

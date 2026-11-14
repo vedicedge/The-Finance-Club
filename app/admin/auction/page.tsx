@@ -6,7 +6,8 @@ import { formatCrore } from '@/lib/money';
 import { GearCard } from '@/components/cards/GearCard';
 import { seriesLabel } from '@/lib/card-art';
 import { CATEGORIES, R1_STEPS, TIPS_WINDOW_SECONDS, isR1Step } from '@/lib/round1/steps';
-import { lotPool, needing } from '@/lib/round1/lots';
+import { bidCardsLeft, lotPool, needing, nextBidCard } from '@/lib/round1/lots';
+import { BID_WINDOW_SECONDS, loadBidState, loadBids, settleBidding } from '@/lib/round1/bidding';
 import { loadRound1 } from '@/lib/round1/server';
 import { AdminShell } from '@/components/admin/AdminShell';
 import { AutoRefresh } from '@/components/admin/AutoRefresh';
@@ -16,6 +17,7 @@ import {
   advanceLot,
   applyJugaad,
   buyTip,
+  openBidding,
   openTipsWindow,
   lockRound1,
   recordSale,
@@ -43,7 +45,8 @@ export default async function AuctionConsole({
 }) {
   const organiser = await requireOrganiser('auction');
   const sp = await searchParams;
-  const r1 = await loadRound1();
+  await settleBidding(); // a window that ran out becomes its sale before the page shows
+  const [r1, bid] = await Promise.all([loadRound1(), loadBidState()]);
   const canMoney = canAccess(organiser.roles, 'ledger');
   const step = isR1Step(r1.step) ? r1.step : null;
   const active = r1.agencies.filter((a) => a.status === 'active');
@@ -56,6 +59,14 @@ export default async function AuctionConsole({
   const allNewsOut = drawn.length > 0 && drawn.every((n) => n.revealed_at) && r1.teamUps.every((t) => t.revealed_at);
   const now = Date.parse(r1.now);
   const tipsOpen = step === 'tips' && r1.tipsClosesAt !== null && Date.parse(r1.tipsClosesAt) > now;
+  // Phone bidding (Secret Identity Bids): the current or last window, its bids once it has closed.
+  const bidOpen = step === 'secret' && bid !== null && !bid.settled && Date.parse(bid.closesAt) > now;
+  const bidCard = bid ? cardById.get(bid.cardId) ?? null : null;
+  const bids = bid ? await loadBids(bid.cardId) : [];
+  const bidSale = bid ? r1.recent.find((x) => x.card_id === bid.cardId) ?? null : null;
+  const nextBid = step === 'secret' ? nextBidCard(r1.cards, r1.sold, r1.currentCardId, bid?.cardId ?? null) : null;
+  const bidsLeft = step === 'secret' ? bidCardsLeft(r1.cards, r1.sold, r1.currentCardId, bid?.cardId ?? null).length : 0;
+  const nameOf = (id: string) => r1.agencies.find((a) => a.id === id)?.name ?? id;
   // Newest first; "new" for 20 seconds so the console flags each purchase as it lands.
   const tipBuyers = r1.agencies
     .filter((a) => a.tipNews)
@@ -66,7 +77,7 @@ export default async function AuctionConsole({
 
   return (
     <AdminShell organiser={organiser}>
-      <AutoRefresh ms={tipsOpen ? 2000 : 4000} />
+      <AutoRefresh ms={tipsOpen || bidOpen ? 1000 : 4000} />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">Round 1 · 50 min</p>
@@ -161,6 +172,73 @@ export default async function AuctionConsole({
           <p className="text-bone">Start of Round 1: credit the starting fund to every agency in the game.</p>
           <button className="btn btn-primary">Credit ₹50 Cr to {active.length} agencies</button>
         </form>
+      )}
+
+      {/* ---------------------------------------------------------------- phone bidding (Secret Identity Bids) */}
+      {r1.phase === 'round1' && !r1.locked && step === 'secret' && (
+        <section className={`panel mt-6 border-l-4 px-5 py-5 ${bidOpen ? 'border-l-glow' : 'border-l-line-strong'}`}>
+          <div className="flex flex-wrap items-baseline justify-between gap-3">
+            <h2 className="eyebrow">Phone bidding · {BID_WINDOW_SECONDS} s per card</h2>
+            <span className="text-xs text-steel">{bidsLeft} card{bidsLeft === 1 ? '' : 's'} still to bid on</span>
+          </div>
+          {bidOpen && bid && bidCard ? (
+            <div className="mt-3 flex flex-wrap items-center gap-6">
+              <p className="text-lg text-bone">
+                <span className="num font-semibold text-glow">{bidCard.id}</span> {bidCard.card_name} · min {formatCrore(bidCard.min_bid)}
+              </p>
+              <WindowClock closesAt={bid.closesAt} serverNow={r1.now} refreshOnClose className="text-4xl font-semibold text-glow" />
+              <p className="text-sm text-steel">
+                <span className="num text-bone">{bids.length}</span> bid{bids.length === 1 ? '' : 's'} in · amounts stay hidden until 0:00
+              </p>
+            </div>
+          ) : bid && bidCard ? (
+            <div className="mt-3">
+              <p className="text-sm text-steel">
+                Last window · <span className="num text-bone">{bidCard.id}</span> {bidCard.card_name}:{' '}
+                {bidSale ? (
+                  <span className="text-toxic">sold to {bidSale.agency_id} {nameOf(bidSale.agency_id)} for {formatCrore(bidSale.price)}</span>
+                ) : bid.settled ? (
+                  <span className="text-ember">no valid bid; it goes to Last Call</span>
+                ) : (
+                  'closing…'
+                )}
+              </p>
+              {bids.length > 0 && (
+                <ol className="mt-2 flex flex-wrap gap-2 text-sm">
+                  {bids.map((b) => (
+                    <li key={b.agency} className={`num rounded-sm border px-2 py-1 ${bidSale?.agency_id === b.agency ? 'border-toxic/60 text-toxic' : 'border-line text-steel'}`}>
+                      {b.agency} · {formatCrore(b.amount)}
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </div>
+          ) : (
+            <p className="mt-3 text-sm text-steel">No card has been bid on yet.</p>
+          )}
+          {!bidOpen && (
+            <div className="mt-4 flex flex-wrap items-end gap-2">
+              <form action={openBidding}>
+                <button disabled={!nextBid} className="btn btn-primary">
+                  {nextBid ? `Open bidding: ${nextBid.id} · ${nextBid.card_name}` : 'Every card has had its window'}
+                </button>
+              </form>
+              <form action={openBidding} className="flex items-end gap-2">
+                <select name="card" defaultValue="" className="rounded-sm border border-line-strong bg-vault-2 px-2 py-2 text-sm">
+                  <option value="" disabled>Or pick a card…</option>
+                  {lotPool(r1.cards, r1.sold, 'secret').map((c) => (
+                    <option key={c.id} value={c.id}>{c.id} · {c.card_name} · min {c.min_bid}</option>
+                  ))}
+                </select>
+                <button className={`${small} btn-ghost`}>Open</button>
+              </form>
+            </div>
+          )}
+          <p className="mt-3 text-xs text-steel">
+            Teams type their bid on My Agency while the timer runs; the projector shows the countdown, then every bid. The highest valid
+            bid wins at once (a tie goes to the earlier bid). If a phone fails, record the sale by hand below.
+          </p>
+        </section>
       )}
 
       {/* ---------------------------------------------------------------- lot + sale */}

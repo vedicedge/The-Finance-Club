@@ -5,7 +5,7 @@ import { ROUNDS } from '@/lib/config';
 import { formatCrore } from '@/lib/money';
 import type { Leaderboard } from '@/lib/leaderboard';
 
-const CHOICE: Record<string, string> = { swap: 'Swap', xray: 'X-Ray', cash: 'took ₹6 Cr', none: 'no winner' };
+const CHOICE: Record<string, string> = { swap: 'Swap', xray: 'X-Ray', cash: 'took ₹5 Cr', none: 'no winner' };
 const fmt = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/0$/, ''));
 
 /** Public leaderboard, newest stage first. Polls every 5 s (spec: simple polling for /leaderboard). */
@@ -73,18 +73,18 @@ export function LeaderboardView({ initial }: { initial: Leaderboard | null }) {
       )}
 
       {lb.round3 && lb.round3.missions.some((m) => m.winner || m.choice) && (
-        <Block eyebrow={`Round 3 · ${ROUNDS.round3}`} title="Mission log">
+        <Block eyebrow={`Round 3 · ${ROUNDS.round3}`} title="Mini games">
           <ol className="divide-y divide-line/60 border-y border-line/60">
             {lb.round3.missions.map((m) => (
               <li key={m.no} className="flex flex-wrap items-baseline justify-between gap-2 py-2.5">
-                <span><span className="text-steel">Mission {m.no}</span> · {m.name}</span>
+                <span className="text-steel">Mini game {m.no}</span>
                 <span className="text-sm">
                   {m.choice === 'none' ? (
                     <span className="text-steel">No winner</span>
                   ) : m.winner ? (
                     <>
                       <span className="num font-semibold text-glow">{m.winner}</span> {m.winnerName}
-                      {m.choice && <span className="text-steel"> · {CHOICE[m.choice]}{m.choice === 'swap' && m.swapTarget ? ` with ${m.swapTarget}` : ''}</span>}
+                      {m.choice && <span className="text-steel"> · {CHOICE[m.choice]}{m.choice === 'swap' && m.swapTarget ? ` with ${m.swapTarget}` : ''}{m.blocked ? ' · blocked by a Force Field' : ''}</span>}
                     </>
                   ) : (
                     <span className="text-steel">—</span>

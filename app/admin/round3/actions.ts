@@ -47,36 +47,42 @@ export async function randomEnvelopeMap() {
 
 export async function saveDeal(formData: FormData) {
   const map = Object.fromEntries([...formData.entries()].filter(([k]) => k.startsWith('deal_')).map(([k, v]) => [k.slice(5), String(v)]));
-  await run(['ledger_keeper'], 'r3.deal', { map }, (actor) => serviceDb().rpc('r3_deal', { p_map: map, p_actor: actor }), 'Envelopes recorded.');
+  await run(['ledger_keeper', 'scorer'], 'r3.deal', { map }, (actor) => serviceDb().rpc('r3_deal', { p_map: map, p_actor: actor }), 'Envelopes recorded.');
 }
 
-export async function setMissionStep(mission: number, step: string) {
-  await run(['ledger_keeper', 'scorer'], 'r3.step', { mission, step }, () => serviceDb().rpc('r3_set_mission', { p_mission: mission, p_step: step }),
-    `Mission ${mission}: ${step.replace('_', ' ')}.`);
+/**
+ * One mini game's result: the winner (or "none") and the winner's decision. Swap moves the two
+ * envelopes on the site, unless the target played its Force Field (then the swap is blocked and
+ * the choice is used up); X-Ray is logged; cash is +₹5 Cr.
+ */
+export async function recordMinigame(no: number, formData: FormData) {
+  const winner = String(formData.get('winner') ?? '');
+  const choice = String(formData.get('choice') ?? '');
+  if (!winner) back({ error: `Pick mini game ${no}'s winner (or "No winner").` });
+  const none = winner === 'none';
+  if (!none && !['swap', 'xray', 'cash'].includes(choice)) back({ error: 'Pick the winner’s decision: Swap, X-Ray or ₹5 Cr.' });
+  const target = choice === 'swap' ? String(formData.get('swap_target') ?? '') : choice === 'xray' ? String(formData.get('xray_target') ?? '') : '';
+  if (!none && choice !== 'cash' && !target) back({ error: choice === 'swap' ? 'Pick the team to swap with.' : 'Pick the team to X-Ray.' });
+  const ff = choice === 'swap' && formData.get('ff_played') === 'on';
+  const ok = none
+    ? `Mini game ${no}: no winner.`
+    : choice === 'cash'
+      ? `Mini game ${no}: +₹5 Cr to ${winner}.`
+      : choice === 'xray'
+        ? `Mini game ${no}: ${winner} X-Rays ${target}'s envelope. Show it to them privately.`
+        : ff
+          ? `Mini game ${no}: ${target} played its Force Field. The swap is blocked and ${winner}'s choice is used up.`
+          : `Mini game ${no}: ${winner} and ${target} swapped envelopes.`;
+  await run(['ledger_keeper', 'scorer'], 'r3.minigame', { no, winner, choice: none ? 'none' : choice, target: target || null, ff }, (actor) =>
+    serviceDb().rpc('r3_record_minigame', {
+      p_mission: no, p_winner: none ? null : winner, p_choice: none ? 'none' : choice, p_target: target || null, p_ff_played: ff, p_actor: actor,
+    }), ok);
 }
 
-export async function buyForceField(agency: string) {
-  await run(['ledger_keeper'], 'r3.force_field', { agency }, (actor) => serviceDb().rpc('r3_force_field', { p_agency: agency, p_actor: actor }),
-    `Force Field up for ${agency} (−₹5 Cr).`);
-}
-
-export async function setWinner(mission: number, formData: FormData) {
-  const agency = String(formData.get('winner') ?? '');
-  await run(['scorer'], 'r3.winner', { mission, agency: agency || null }, (actor) =>
-    serviceDb().rpc('r3_set_winner', { p_mission: mission, p_agency: agency === 'none' ? null : agency, p_actor: actor }),
-  agency === 'none' ? `Mission ${mission}: no correct sheet, no winner.` : `Mission ${mission} winner: ${agency}.`);
-}
-
-export async function makeChoice(mission: number, choice: 'swap' | 'xray' | 'cash', formData: FormData) {
-  const target = String(formData.get('target') ?? '') || null;
-  await run(['ledger_keeper'], 'r3.choice', { mission, choice, target }, (actor) =>
-    serviceDb().rpc('r3_choose', { p_mission: mission, p_choice: choice, p_target: target, p_actor: actor }),
-  choice === 'swap' ? `Swapped with ${target}.` : choice === 'xray' ? `X-Ray logged (secret). The marshal shows ${target}'s envelope.` : 'Cash: +₹6 Cr.');
-}
-
-export async function undoChoice(mission: number) {
-  await run(['ledger_keeper'], 'r3.undo_choice', { mission }, (actor) => serviceDb().rpc('r3_undo_choice', { p_mission: mission, p_actor: actor }),
-    `Mission ${mission} choice undone.`);
+/** Takes back the last recorded mini game (its swap, Force Field use or cash). */
+export async function undoMinigame(no: number) {
+  await run(['ledger_keeper', 'scorer'], 'r3.minigame_undo', { no }, (actor) => serviceDb().rpc('r3_undo_minigame', { p_mission: no, p_actor: actor }),
+    `Mini game ${no} undone.`);
 }
 
 export async function transfer(formData: FormData) {
