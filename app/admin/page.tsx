@@ -13,6 +13,7 @@ import { loadSchemaStatus } from '@/lib/schema-version-server';
 import { NextPhase } from '@/components/admin/NextPhase';
 import { ProjectorPanel } from '@/components/admin/ProjectorPanel';
 import { isProjectorMode } from '@/lib/projector';
+import { loadRoundProgress } from '@/lib/projector-server';
 
 export const metadata: Metadata = { title: 'Command centre' };
 
@@ -132,7 +133,7 @@ export default async function CommandCentre({ searchParams }: { searchParams: Pr
         </div>
       </dl>
 
-      {connected && <ProjectorPanel organiser={organiser} phase={phase} step={(state.data?.step as string | null) ?? null} mode={projectorMode} available={!projectorRow.error} />}
+      {connected && <ProjectorPanel organiser={organiser} phase={phase} step={(state.data?.step as string | null) ?? null} mode={projectorMode} available={!projectorRow.error} progress={await loadRoundProgress(phase)} />}
 
       {isAdmin && connected && (
         <section

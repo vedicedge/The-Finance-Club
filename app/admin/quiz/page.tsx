@@ -129,7 +129,7 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
             <>
               <p className={`mt-3 text-sm font-semibold ${liveStatus(current, now).tone}`}>
                 {current.segment === 'sudden_death' ? 'Sudden death' : `Slot ${current.order_no}`} · {current.id} ·{' '}
-                {SEGMENTS[current.segment].label} · {liveStatus(current, now).label}
+                <span style={{ color: SEGMENTS[current.segment].color }}>{SEGMENTS[current.segment].label}</span> · {liveStatus(current, now).label}
               </p>
               <p className="font-serif mt-2 text-2xl text-bone">{current.prompt}</p>
               <ol className="mt-3 grid gap-1.5 sm:grid-cols-2">
@@ -198,7 +198,7 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
                 Open question {next.order_no} · {next.id}
               </button>
               <p className="mt-2 text-xs text-steel">
-                {SEGMENTS[next.segment].label} · {next.timer_s} s. Read-in, then the clock starts on every phone at once.
+                <span style={{ color: SEGMENTS[next.segment].color }}>{SEGMENTS[next.segment].label}</span> · {next.timer_s} s. Read-in, then the clock starts on every phone at once (the first question of a category gets a 5-second category intro first).
               </p>
             </form>
           ) : (
@@ -250,7 +250,7 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
                     {q ? (
                       <>
                         <span className="num font-semibold text-glow">{q.id}</span>{' '}
-                        <span className="text-xs text-steel">{SEGMENTS[q.segment].label}</span>
+                        <span className="text-xs" style={{ color: SEGMENTS[q.segment].color }}>{SEGMENTS[q.segment].label}</span>
                         <span className="block max-w-md truncate text-bone/85">{q.prompt}</span>
                       </>
                     ) : (

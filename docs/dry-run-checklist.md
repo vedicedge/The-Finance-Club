@@ -8,13 +8,14 @@ This file is generated from `lib/print/checklist.ts`; edit that file, then run `
 ## The day before
 
 - [ ] Merge the latest pull request on GitHub and wait until Vercel shows the new deployment as **Ready**.
-- [ ] In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (26 files; the last is `20261114002600_blind_bids_and_round3_flow.sql`).
+- [ ] In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (27 files; the last is `20261115002700_quiz_categories_rules_team_edits.sql`).
 - [ ] If the secret seed has never been run, run `supabase/private/seed_secrets.sql` once.
 - [ ] Command centre: **Database updates** says “Up to date”, and Seed data says **OK** on every row.
 - [ ] Every crew member with a website job signs in once at `/admin/login`; an admin gives each their role in Crew & roles (quiz host, 2 ledger keepers, auctioneer, 2 scorers, social-media lead, anchor, 2 floaters).
 - [ ] Settings: start time, venue, registration deadline, read-in (3 s) and PIN lock look right.
 - [ ] Testers are crew only: the rehearsal plays the real quiz questions, Breaking News and Team-Ups.
 - [ ] Pick a quiet slot (e.g. late evening). While dry run mode is on, the register page offers the name-only test form (real teams use `/register?full=1`) and the leaderboard shows test agencies; once the rehearsal moves past Registration, real registration is closed until the reset.
+- [ ] Upload the final prelim questions: Settings → Questions & cards → Upload (exactly 15 Live = Yes).
 - [ ] Print this checklist and one set of backup sheets (Command centre → Print & backups).
 
 ## Set up the room (30 minutes before)
@@ -24,14 +25,14 @@ This file is generated from `lib/print/checklist.ts`; edit that file, then run `
 - [ ] Phone hotspot charged and switched on as the backup network.
 - [ ] Command centre → **Start dry run mode**. Every page shows the DRY RUN strip.
 - [ ] Each tester opens the site on their own phone → Register → types a name. The phone is signed in and the test agency is checked in. Write each ID and PIN (shown once) on the check-in sheet. Aim for 10 or more phones.
-- [ ] Agencies & check-in lists every test agency with a TEST badge.
+- [ ] Agencies & check-in lists every test agency with a TEST badge. On a real team, open “Change team members” and check the form (do not save).
 
 ## Run the event, phase by phase
 
 ### Prelim · Hero Ya Zero?
 
-- [ ] Command centre → phase **Prelim**. Phones show the waiting screen.
-- [ ] Quiz host: shuffle the live 15, open question 1. The 3-2-1 read-in shows on the projector and every phone, then the timer runs.
+- [ ] Command centre → phase **Prelim**. The projector shows the prelim rules page with the four colour category cards; phones show the waiting screen.
+- [ ] Quiz host: shuffle the live 15 (they play category by category), open question 1. A 5-second category intro, then the 3-2-1 read-in, show on the projector and every phone, then the timer runs. Each category has its own colour.
 - [ ] Testers answer at different speeds; one answers after the timer ends and sees "late" (0 points).
 - [ ] Reveal: only now do phones show right/wrong and points.
 - [ ] Practise: void a question and bring in a spare; reload a phone mid-question; put a phone in airplane mode for 10 s and back.

@@ -5,6 +5,7 @@ import { serviceDb } from '@/lib/db/server';
 import { isPhase, type Phase } from '@/lib/phases';
 import { isProjectorMode, projectorScreen, type ProjectorMode } from '@/lib/projector';
 import { parseSettings } from '@/lib/settings';
+import { loadRoundProgress } from '@/lib/projector-server';
 import { loadReveal } from '@/lib/zero-hour-server';
 import { placesAnnounced, podium, resultStage } from '@/lib/zero-hour';
 
@@ -27,7 +28,7 @@ export async function GET() {
   const mode: ProjectorMode = isProjectorMode(raw) ? raw : 'auto';
   const settings = parseSettings(row.data?.settings);
   const agencies = await db.from('agencies').select('id', { count: 'exact', head: true }).eq('is_test', false);
-  const screen = projectorScreen(mode, phase, { round2Published: Boolean((row.data as { round2_published_at?: string | null } | null)?.round2_published_at) });
+  const screen = projectorScreen(mode, phase, await loadRoundProgress(phase));
   const ff = screen === 'cover' ? await db.from('event_state').select('ff_closes_at').maybeSingle() : null;
   const ffCloses = (ff?.data?.ff_closes_at as string | undefined) ?? null;
   // The results screen gets only the places the anchor has announced, never the rest.

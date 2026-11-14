@@ -17,6 +17,18 @@ describe('projector', () => {
     ]);
   });
 
+  it('each round opens on its rules page until its first step', () => {
+    expect(projectorScreen('auto', 'prelim', { quizStarted: false })).toBe('rules');
+    expect(projectorScreen('auto', 'prelim', { quizStarted: true })).toBe('quiz');
+    expect(projectorScreen('auto', 'round1', { r1Step: null })).toBe('rules');
+    expect(projectorScreen('auto', 'round1', { r1Step: 'tips' })).toBe('auction');
+    expect(projectorScreen('auto', 'round2', { duelsDrawn: false })).toBe('rules');
+    expect(projectorScreen('auto', 'round2', { duelsDrawn: true })).toBe('cover');
+    expect(projectorScreen('auto', 'round3', { ffOpened: false })).toBe('rules');
+    expect(projectorScreen('auto', 'round3', { ffOpened: true })).toBe('cover');
+    expect(projectorScreen('rules', 'round3', { ffOpened: true })).toBe('rules');
+  });
+
   it('Round 2 shows its cover, then the board once the results are published', () => {
     expect(projectorScreen('auto', 'round2')).toBe('cover');
     expect(projectorScreen('auto', 'round2', { round2Published: true })).toBe('board');
@@ -30,7 +42,7 @@ describe('projector', () => {
   });
 
   it('accepts only the modes the database allows', () => {
-    expect(PROJECTOR_MODES).toEqual(['auto', 'welcome', 'quiz', 'auction', 'board', 'cover', 'reveal', 'holding', 'blank']);
+    expect(PROJECTOR_MODES).toEqual(['auto', 'welcome', 'rules', 'quiz', 'auction', 'board', 'cover', 'reveal', 'holding', 'blank']);
     expect(isProjectorMode('board')).toBe(true);
     expect(isProjectorMode('party')).toBe(false);
     expect(isProjectorMode(null)).toBe(false);
