@@ -3,7 +3,7 @@ import { requireOrganiser } from '@/lib/auth/organiser';
 import { serviceDb } from '@/lib/db/server';
 import { getEventState } from '@/lib/event-state';
 import { AdminShell } from '@/components/admin/AdminShell';
-import { FounderEditor, ResetPinButton } from './AgencyTools';
+import { FounderEditor, ResetPinButton, TeamEditor } from './AgencyTools';
 import { removeAgency, setCheckedIn } from './actions';
 
 export const metadata: Metadata = { title: 'Agencies & check-in' };
@@ -57,6 +57,9 @@ export default async function AgenciesPage({ searchParams }: { searchParams: Pro
     Date.now() < Date.parse(state.settings.registration.closesAt)
   );
   const canRemove = !foundersLocked;
+  // Last-minute team changes at the desk: allowed until the first prelim question opens.
+  const opened = await serviceDb().from('questions').select('id', { count: 'exact', head: true }).not('opened_at', 'is', null).neq('segment', 'sudden_death');
+  const teamChangesOpen = (opened.count ?? 0) === 0;
 
   return (
     <AdminShell organiser={organiser}>
@@ -110,6 +113,15 @@ export default async function AgenciesPage({ searchParams }: { searchParams: Pro
                       <FounderEditor key={f.id} founder={f} locked={foundersLocked} />
                     ))}
                 </div>
+                {!a.is_test && teamChangesOpen && (
+                  <details className="border-t border-line">
+                    <summary className="py-2 text-sm text-glow hover:text-bone">Change team members (until the prelim starts)</summary>
+                    <TeamEditor
+                      agencyId={a.id}
+                      members={[...a.founders].sort((x, y) => Number(y.is_captain) - Number(x.is_captain) || x.id - y.id)}
+                    />
+                  </details>
+                )}
                 {canRemove && (
                   <form action={removeAgency.bind(null, a.id)} className="flex flex-wrap items-center gap-2 border-t border-line py-3 text-sm">
                     <span className="text-steel">Remove this registration (duplicates and tests only). Type {a.id}:</span>

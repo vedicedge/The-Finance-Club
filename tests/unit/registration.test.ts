@@ -4,6 +4,7 @@ import {
   normalizePhone,
   registrationErrorMessage,
   validateRegistration,
+  validateTeamEdit,
 } from '@/lib/registration';
 
 const valid = (): Record<string, string> => ({
@@ -91,5 +92,22 @@ describe('normalisers', () => {
     expect(registrationErrorMessage('duplicate key value violates unique constraint "agencies_name_key"').field).toBe('agency_name');
     expect(registrationErrorMessage('registration_full').text).toMatch(/slots/);
     expect(registrationErrorMessage('duplicate key value violates unique constraint "founders_email_key"').text).toMatch(/email/);
+  });
+});
+
+describe('last-minute team change at the desk', () => {
+  const row = (i: number, name: string, phone: string, email: string) => ({
+    [`f${i}_name`]: name, [`f${i}_section`]: 'E', [`f${i}_phone`]: phone, [`f${i}_email`]: email,
+  });
+  it('keeps the filled rows (a blank row is a member removed) and the chosen captain', () => {
+    const r = validateTeamEdit({ ...row(0, 'Riya Sen', '9876543210', 'riya@imi.edu'), ...row(2, 'Kabir Das', '9876543211', 'kabir@imi.edu'), captain: '2', reason: 'Member unwell' }, 'imi.edu');
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.value.founders.map((f) => [f.name, f.isCaptain])).toEqual([['Riya Sen', false], ['Kabir Das', true]]);
+  });
+  it('needs a captain among the members, IMI emails and a reason', () => {
+    expect(validateTeamEdit({ ...row(0, 'Riya Sen', '9876543210', 'riya@imi.edu'), captain: '1', reason: 'x change' }, 'imi.edu').ok).toBe(false);
+    expect(validateTeamEdit({ ...row(0, 'Riya Sen', '9876543210', 'riya@gmail.com'), captain: '0', reason: 'swap' }, 'imi.edu').ok).toBe(false);
+    expect(validateTeamEdit({ ...row(0, 'Riya Sen', '9876543210', 'riya@imi.edu'), captain: '0', reason: '' }, 'imi.edu').ok).toBe(false);
+    expect(validateTeamEdit({ captain: '0', reason: 'all gone' }, 'imi.edu').ok).toBe(false);
   });
 });

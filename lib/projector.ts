@@ -5,7 +5,7 @@
  */
 import type { Phase } from '@/lib/phases';
 
-export const PROJECTOR_SCREENS = ['welcome', 'quiz', 'auction', 'board', 'cover', 'reveal', 'holding', 'blank'] as const;
+export const PROJECTOR_SCREENS = ['welcome', 'rules', 'quiz', 'auction', 'board', 'cover', 'reveal', 'holding', 'blank'] as const;
 export type ProjectorScreen = (typeof PROJECTOR_SCREENS)[number];
 
 export const PROJECTOR_MODES = ['auto', ...PROJECTOR_SCREENS] as const;
@@ -17,6 +17,7 @@ export function isProjectorMode(v: unknown): v is ProjectorMode {
 
 export const SCREEN_LABEL: Record<ProjectorScreen, string> = {
   welcome: 'Welcome',
+  rules: 'Round rules',
   quiz: 'Prelim quiz',
   auction: 'Power Bazaar',
   board: 'Leaderboard',
@@ -39,8 +40,24 @@ export const AUTO_SCREEN: Record<Phase, ProjectorScreen> = {
 };
 
 /** The screen to show now: the pinned one, or the phase's own on auto. */
-export function projectorScreen(mode: ProjectorMode, phase: Phase, opts: { round2Published?: boolean } = {}): ProjectorScreen {
+/** What has happened in the round so far: on automatic, each round opens on its rules page. */
+export type RoundProgress = {
+  round2Published?: boolean;
+  /** Prelim: the first question has opened. */
+  quizStarted?: boolean;
+  /** Round 1: the auction step (null or 'rules' = not started yet). */
+  r1Step?: string | null;
+  /** Round 2: the poster duels have been drawn. */
+  duelsDrawn?: boolean;
+  /** Round 3: the Force Field window has been opened. */
+  ffOpened?: boolean;
+};
+
+export function projectorScreen(mode: ProjectorMode, phase: Phase, opts: RoundProgress = {}): ProjectorScreen {
   if (mode !== 'auto') return mode;
-  if (phase === 'round2' && opts.round2Published) return 'board';
+  if (phase === 'prelim' && opts.quizStarted === false) return 'rules';
+  if (phase === 'round1' && (opts.r1Step === null || opts.r1Step === 'rules')) return 'rules';
+  if (phase === 'round2') return opts.round2Published ? 'board' : opts.duelsDrawn === false ? 'rules' : 'cover';
+  if (phase === 'round3' && opts.ffOpened === false) return 'rules';
   return AUTO_SCREEN[phase];
 }

@@ -27,6 +27,8 @@ export type PhoneState =
             revealed: boolean;
             correct_index: number | null;
             my_answer: null | { option_index: number; late: boolean; is_correct: boolean | null; points: number | null };
+            /** First question of a category: the category intro shows until then. */
+            intro_until?: string | null;
           };
       totals: { points: number; correct: number; answered: number };
       revealed_count: number;

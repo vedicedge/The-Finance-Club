@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { canAccess } from '@/lib/auth/roles';
 import type { Organiser } from '@/lib/auth/organiser';
-import { AUTO_SCREEN, PROJECTOR_SCREENS, SCREEN_LABEL, projectorScreen, type ProjectorMode } from '@/lib/projector';
+import { AUTO_SCREEN, PROJECTOR_SCREENS, SCREEN_LABEL, projectorScreen, type ProjectorMode, type RoundProgress } from '@/lib/projector';
 import { PHASE_INFO, type Phase } from '@/lib/phases';
 import { setProjector } from '@/app/admin/actions';
 import { announceNext } from '@/app/admin/results/actions';
@@ -18,6 +18,7 @@ export function ProjectorPanel({
   step,
   mode,
   available,
+  progress,
 }: {
   organiser: Organiser;
   phase: Phase;
@@ -25,9 +26,11 @@ export function ProjectorPanel({
   mode: ProjectorMode;
   /** False until the 8 November database update has been run. */
   available: boolean;
+  /** How far the round has got (each round opens on its rules page). */
+  progress?: RoundProgress;
 }) {
   if (!canAccess(organiser.roles, 'projector')) return null;
-  const screen = projectorScreen(mode, phase);
+  const screen = projectorScreen(mode, phase, progress);
   const canReveal = canAccess(organiser.roles, 'reveal');
   const stage = resultStage(phase, step);
   const btn = 'btn !min-h-0 !px-3 !py-2 !text-[0.7rem]';
@@ -71,7 +74,7 @@ export function ProjectorPanel({
           ))}
         </div>
         <p className="mt-3 text-xs text-steel">
-          Automatic: Welcome before the prelim, then the quiz, Power Bazaar, a Round 2 cover (then its results), the Round 3 cover,
+          Automatic: Welcome before the prelim; each round opens on its rules page until its first step; then the quiz, Power Bazaar, a Round 2 cover (then its results), the Round 3 cover,
           and the Zero Hour results (3rd, 2nd, then 1st). Pin a screen for breaks or announcements; Blackout shows nothing. Now on automatic it would show{' '}
           {SCREEN_LABEL[AUTO_SCREEN[phase]]}.
         </p>

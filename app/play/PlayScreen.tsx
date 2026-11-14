@@ -201,15 +201,28 @@ function Body({
   const mine = q.my_answer?.option_index ?? (pending?.question === q.id ? pending.option : null);
   const answerable = !q.revealed && toStart <= 0 && left > 0 && mine === null;
 
+  // The first question of a category opens with the category intro.
+  if (q.intro_until && Date.now() + offset < Date.parse(q.intro_until)) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center px-6 text-center" style={{ background: `radial-gradient(80% 60% at 50% 40%, ${seg.color}33, transparent 75%)` }}>
+        <p className="text-xs font-semibold tracking-[0.3em] text-bone uppercase">New category · {seg.order} of 4</p>
+        <h1 className="display mt-3 text-4xl leading-tight" style={{ color: seg.color }}>{seg.label}</h1>
+        <p className="mt-4 text-lg text-bone">{seg.instruction}</p>
+        <p className="num mt-4 text-sm text-steel">{q.timer_s} s per question{q.weight > 1 ? ` · ×${q.weight} points` : ''}</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-1 flex-col px-4 pt-4 pb-6">
-      <p className="eyebrow">
-        Question {q.number} of 15 · {seg.label}
-      </p>
-      <p className="num mt-1 text-xs text-steel">
-        {q.timer_s} s{q.weight > 1 ? ` · ×${q.weight} points` : ''}
-      </p>
-      <h1 className="font-serif mt-3 text-[1.65rem] leading-snug text-bone">{q.prompt}</h1>
+    <div className="flex flex-1 flex-col px-4 pt-4 pb-6" style={{ background: `linear-gradient(${seg.color}1f, transparent 40%)` }}>
+      <div className="border-l-4 pl-3" style={{ borderColor: seg.color }}>
+        <p className="num text-xs font-semibold tracking-[0.2em] text-steel uppercase">
+          Question {q.number} of 15 · {q.timer_s} s{q.weight > 1 ? ` · ×${q.weight} points` : ''}
+        </p>
+        <p className="display mt-1 text-xl leading-tight" style={{ color: seg.color }}>{seg.label}</p>
+        <p className="mt-1 text-sm text-bone/85">{seg.instruction}</p>
+      </div>
+      <h1 className="font-serif mt-4 text-[1.65rem] leading-snug text-bone">{q.prompt}</h1>
 
       {/* Timer */}
       {!q.revealed && (

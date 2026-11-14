@@ -11,6 +11,12 @@ export async function GET() {
   try {
     const { data, error } = await serviceDb().rpc('quiz_phone_state', { p_token_hash: hashSessionToken(token) });
     if (error) return NextResponse.json({ error: 'unavailable' }, { status: 503, headers });
+    // The category intro (first question of a category): read on its own, tolerant of an older database.
+    const qid = (data as { question?: { id?: string } | null } | null)?.question?.id;
+    if (qid) {
+      const intro = await serviceDb().from('questions').select('intro_until').eq('id', qid).maybeSingle();
+      (data as { question: Record<string, unknown> }).question.intro_until = (intro.data?.intro_until as string | null) ?? null;
+    }
     return NextResponse.json(data, { status: data?.signed_in ? 200 : 401, headers });
   } catch {
     return NextResponse.json({ error: 'unavailable' }, { status: 503, headers });

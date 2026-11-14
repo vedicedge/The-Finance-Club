@@ -43,11 +43,16 @@ export async function GET() {
   let lockedCount = 0;
   let distribution: number[] | null = null;
   let correctIndex: number | null = null;
+  let revealLine: string | null = null;
+  // Read on its own: the column arrives with the 15 November database update.
+  const introUntil = q ? ((await db.from('questions').select('intro_until').eq('id', q.id).maybeSingle()).data?.intro_until as string | null) ?? null : null;
   if (q) {
     const { data: answers } = await db.from('answers').select('option_index').eq('question_id', q.id);
     lockedCount = answers?.length ?? 0;
     if (q.revealed_at && q.status !== 'void') {
       correctIndex = (await loadAnswerKeys()).get(q.id) ?? null;
+      // The reveal line (whose company, or the working) goes on the projector only after the reveal.
+      revealLine = ((await db.from('question_keys').select('working').eq('question_id', q.id).maybeSingle()).data?.working as string | null) ?? null;
       distribution = [0, 0, 0, 0];
       for (const a of answers ?? []) distribution[a.option_index] += 1;
     }
@@ -80,6 +85,8 @@ export async function GET() {
             revealed: Boolean(q.revealed_at),
             correct_index: correctIndex,
             distribution,
+            intro_until: introUntil,
+            reveal_line: revealLine,
           }
         : null,
       board: board

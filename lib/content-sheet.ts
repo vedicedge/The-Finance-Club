@@ -7,9 +7,9 @@
 export const LETTERS = ['A', 'B', 'C', 'D'] as const;
 
 export const SEGMENT_BY_PREFIX = {
-  M: { segment: 'marvel_ya_dc', label: 'Marvel Ya DC?', options: 2, timer: 10, weight: 1 },
+  M: { segment: 'marvel_ya_dc', label: 'Marvel Ya DC? Company Edition', options: 2, timer: 10, weight: 1 },
   T: { segment: 'teen_clue', label: 'Teen Clue, Ek Hero', options: 4, timer: 10, weight: 1 },
-  B: { segment: 'box_office', label: 'Box Office Ka Hisaab (finance)', options: 4, timer: 20, weight: 2 },
+  B: { segment: 'box_office', label: 'Superhero Share Bazaar (finance)', options: 4, timer: 20, weight: 2 },
   H: { segment: 'hero_business', label: 'Hero Ka Business', options: 4, timer: 10, weight: 1 },
   S: { segment: 'sudden_death', label: 'Sudden death (16th place tie only)', options: 4, timer: 20, weight: 1 },
 } as const;
@@ -120,8 +120,8 @@ export const INSTRUCTIONS: string[][] = [
   ['5. After uploading questions, shuffle the live 15 again on the quiz console.'],
   [''],
   ['QUESTIONS sheet'],
-  ['ID: the first letter sets the segment. M = Marvel Ya DC? (2 options, 10 s), T = Teen Clue, Ek Hero (4 options, 10 s), B = Box Office Ka Hisaab (4 options, 20 s, double points), H = Hero Ka Business (4 options, 10 s), S = sudden death (4 options, 20 s, never live).'],
-  ['Prompt: the question text. Option A–D: the answers (Marvel Ya DC? uses only A and B; leave C and D empty).'],
+  ['ID: the first letter sets the segment. M = Marvel Ya DC? Company Edition (2 options, 10 s), T = Teen Clue, Ek Hero (4 options, 10 s), B = Superhero Share Bazaar (4 options, 20 s, double points), H = Hero Ka Business (4 options, 10 s), S = sudden death (4 options, 20 s, never live).'],
+  ['Prompt: the question text. Option A–D: the answers (Marvel Ya DC? Company Edition uses only A and B: A = Marvel, B = DC; leave C and D empty).'],
   ['Correct (A-D): the letter of the right answer. Secret: it is never shown to participants.'],
   ['Live (Yes/No): Yes = one of the 15 questions played (4 M + 4 T + 4 B + 3 H). No = a spare. Exactly 15 must be live.'],
   ['Side (Marvel/DC): optional label. Working (optional): a note for the quiz host.'],

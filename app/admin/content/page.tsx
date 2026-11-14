@@ -39,7 +39,7 @@ export default async function ContentPage({ searchParams }: { searchParams: Prom
 
       <section className="panel mt-6 space-y-3 px-5 py-5 text-sm text-steel">
         <h2 className="eyebrow">The format</h2>
-        <p><span className="text-bone">Sheet “Questions”:</span> {QUESTION_HEADINGS.join(' · ')}. The ID’s first letter sets the segment: M Marvel Ya DC? (options A–B only), T Teen Clue, B Box Office (20 s, double points), H Hero Ka Business, S sudden death. Exactly 15 must be Live = Yes.</p>
+        <p><span className="text-bone">Sheet “Questions”:</span> {QUESTION_HEADINGS.join(' · ')}. The ID’s first letter sets the segment: M Marvel Ya DC? Company Edition (options A–B only), T Teen Clue, Ek Hero, B Superhero Share Bazaar (20 s, double points), H Hero Ka Business, S sudden death. Exactly 15 must be Live = Yes.</p>
         <p><span className="text-bone">Sheet “Cards”:</span> {CARD_HEADINGS.join(' · ')}. IDs H01–H15, S01–S15, G01–G15, K01–K15 and JK1–JK4. Phase is marquee, secret or jugaad.</p>
         <p>The downloaded file has a “How to fill this in” sheet with every rule.</p>
       </section>

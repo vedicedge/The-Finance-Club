@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { QuizProjector } from '@/app/screen/quiz/QuizProjector';
 import { AuctionProjector } from '@/app/screen/auction/AuctionProjector';
 import { BoardProjector } from '@/app/screen/board/BoardProjector';
+import { RulesScreen } from '@/components/screen/RulesScreen';
 import { CoverScreen, EventCover, HoldingScreen, PodiumScreen, WelcomeScreen } from '@/components/screen/Slides';
 import type { ProjectorScreen } from '@/lib/projector';
 
@@ -76,6 +77,8 @@ function Screen({ state }: { state: State }) {
       return <CoverScreen phase={state.phase} ffClosesAt={state.ffClosesAt ?? null} serverNow={state.now} />;
     case 'reveal':
       return state.finale === 'cover' ? <EventCover /> : <PodiumScreen places={state.places ?? []} final={state.finale === 'podium'} />;
+    case 'rules':
+      return <RulesScreen phase={state.phase} />;
     case 'welcome':
       return <WelcomeScreen startsAt={state.startsAt} serverNow={state.now} agencies={state.agencies} />;
     case 'holding':

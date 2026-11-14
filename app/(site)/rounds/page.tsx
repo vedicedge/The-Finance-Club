@@ -43,17 +43,21 @@ export default async function RoundsPage() {
           worked out on the server, and faster correct answers score more. 7 of the 15 questions are finance.
         </p>
         <Table
-          head={['Segment', 'Questions', 'Options', 'Timer', 'Weight', 'Max points']}
+          head={['Category (in this order)', 'Questions', 'Options', 'Timer', 'Weight', 'Max points']}
           numeric={[1, 2, 5]}
           wide
           rows={[
-            ['Marvel Ya DC?', '4', '2', '10 s', '×1', '4,000'],
-            ['Teen Clue, Ek Hero', '4', '4', '10 s', '×1', '4,000'],
-            ['Box Office Ka Hisaab (finance)', '4', '4', '20 s', '×2', '8,000'],
-            ['Hero Ka Business (finance + business)', '3', '4', '10 s', '×1', '3,000'],
+            ['Marvel Ya DC? Company Edition (violet)', '4', '2', '10 s', '×1', '4,000'],
+            ['Teen Clue, Ek Hero (blue)', '4', '4', '10 s', '×1', '4,000'],
+            ['Superhero Share Bazaar (green)', '4', '4', '20 s', '×2', '8,000'],
+            ['Hero Ka Business (white)', '3', '4', '10 s', '×1', '3,000'],
             [<strong key="t">Total</strong>, <strong key="q">15</strong>, '', '', '', <strong key="m">19,000</strong>],
           ]}
         />
+        <p>
+          The quiz plays one category at a time, in the order above. Each category has its own colour on the projector
+          and your phone, and opens with a short intro saying what to do.
+        </p>
         <H3>Scoring</H3>
         <p>
           A correct answer earns <strong>1,000 × weight</strong> instantly, falling evenly to <strong>500 × weight</strong>{' '}
@@ -61,8 +65,8 @@ export default async function RoundsPage() {
           the question opens, not by your phone.
         </p>
         <Note>
-          Example: a Marvel Ya DC? answer that is right at 2.0 s scores 900. A Box Office answer that is right at 12.0 s
-          scores 1,400.
+          Example: a Marvel Ya DC? answer that is right at 2.0 s scores 900. A Superhero Share Bazaar answer that is right
+          at 12.0 s scores 1,400.
         </Note>
         <H3>What you do</H3>
         <ul>
