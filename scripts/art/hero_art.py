@@ -9,6 +9,8 @@ Reads (in assets/art):
                          city carrying on across the left, as quiet space for the title
 
 Writes:
+  Both are graded to the site's palette (palette.py: the November poster's calm greens).
+
   hero.jpg          phones and tablets: the portrait, with the site's grain. The page frames it
                     on the hood and eclipse (object-position).
   hero-desktop.jpg  laptops and desktops: the wide art, upscaled to 2880 px (sharp on a 1440 px
@@ -18,6 +20,9 @@ import os
 import sys
 
 from PIL import Image, ImageChops, ImageFilter
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from palette import calm  # noqa: E402
 
 DESKTOP_WIDTH = 2880
 
@@ -29,10 +34,10 @@ def grain(im: Image.Image, amount: float) -> Image.Image:
 
 def main():
     art = sys.argv[1]
-    portrait = Image.open(os.path.join(art, 'kalyug-character.webp')).convert('RGB')
+    portrait = calm(Image.open(os.path.join(art, 'kalyug-character.webp')))
     grain(portrait, 0.1).save(os.path.join(art, 'hero.jpg'), quality=82, optimize=True, progressive=True)
 
-    wide = Image.open(os.path.join(art, 'kalyug-wide.webp')).convert('RGB')
+    wide = calm(Image.open(os.path.join(art, 'kalyug-wide.webp')))
     if wide.width < DESKTOP_WIDTH:
         wide = wide.resize((DESKTOP_WIDTH, round(wide.height * DESKTOP_WIDTH / wide.width)), Image.LANCZOS)
         wide = wide.filter(ImageFilter.UnsharpMask(radius=2, percent=55, threshold=2))

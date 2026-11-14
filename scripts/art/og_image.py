@@ -37,7 +37,7 @@ except Exception:
     pass
 # The tagline, with the poster's four-point star drawn between the phrases (the font has no ★).
 x, y = 80, top + wm.height + 18
-ink, star_ink = (198, 206, 178), (169, 207, 110)
+ink, star_ink = (226, 220, 196), (214, 196, 142)
 for i, part in enumerate(['Fund it', 'Build it', 'Save the city.']):
     d.text((x, y), part, font=font, fill=ink)
     x += d.textlength(part, font=font)

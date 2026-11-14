@@ -30,7 +30,7 @@ export async function AdminShell({ organiser, children, guideHome = false }: { o
           runs the newer files from <code>supabase/migrations/</code> in the Supabase SQL editor before the event continues.
         </p>
       )}
-      <header className="border-b border-line bg-abyss/85 shadow-[0_1px_0_rgb(169_207_110/0.12)] backdrop-blur-md">
+      <header className="border-b border-line bg-abyss/85 shadow-[0_1px_0_rgb(214_196_142/0.12)] backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-[var(--gutter)] py-4">
           <Link href="/admin" className="flex items-baseline gap-3">
             <span className="font-deco metal text-2xl leading-none">{EVENT.name}</span>

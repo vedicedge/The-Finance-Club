@@ -2,9 +2,10 @@
 
 /* ==========================================================================
    Doomsday — design tokens
-   Everything is graded to the event poster (assets/art/poster.jpg): near-black with a green
-   cast, moss and olive mid-tones, a pale lichen-green glow from the eclipse, silver-bone
-   lettering. Green carries the brand; ember red is kept for danger only.
+   Everything follows the November event poster: a calm, deep emerald night, quiet grey-green
+   mid-tones and champagne-gold lettering and hairlines. Green is the atmosphere and gold the
+   accent (the `glow` tokens are the gold); ember red is kept for danger only. Effects are kept
+   quiet: soft light, fine grain, thin rules.
    Type follows the poster: Cinzel (titles, the poster's Trajan-like capitals), Cormorant
    Garamond (long-form serif and italic flourishes), Inter (UI and every number).
    The site is dark by design; there is no light theme.
@@ -15,19 +16,19 @@
 @custom-variant short (@media (max-height: 860px));
 
 @theme {
-  --color-abyss: #080a07;
-  --color-vault: #0e130d;
-  --color-vault-2: #151c13;
-  --color-moss: #1f2a1b;
-  --color-line: rgb(170 184 150 / 0.15);
-  --color-line-strong: rgb(170 184 150 / 0.32);
-  --color-glow: #a9cf6e;
-  --color-glow-deep: #6e8f45;
-  --color-toxic: #6fdca6;
-  --color-steel: #9fa993;
-  --color-bone: #ebe8da;
-  --color-silver: #c6ceb2;
-  --color-ember: #e5574a;
+  --color-abyss: #08110d;
+  --color-vault: #0f1a15;
+  --color-vault-2: #15221b;
+  --color-moss: #1d2d24;
+  --color-line: rgb(206 196 160 / 0.13);
+  --color-line-strong: rgb(206 196 160 / 0.28);
+  --color-glow: #d6c48e;
+  --color-glow-deep: #a08a52;
+  --color-toxic: #9cc9a8;
+  --color-steel: #9ba89f;
+  --color-bone: #eee8d6;
+  --color-silver: #d3d0bd;
+  --color-ember: #d9644f;
 
   --font-display: var(--font-cinzel), 'Cinzel', 'Trajan Pro', 'Iowan Old Style', Georgia, serif;
   --font-deco: var(--font-cinzel-deco), var(--font-cinzel), 'Cinzel Decorative', Georgia, serif;
@@ -54,13 +55,13 @@ body {
   font-family: var(--font-sans);
   font-feature-settings: 'cv11', 'ss01';
   background:
-    radial-gradient(110% 60% at 50% -12%, rgb(169 207 110 / 0.1), transparent 60%),
-    radial-gradient(90% 50% at 50% 112%, rgb(110 143 69 / 0.16), transparent 70%),
+    radial-gradient(110% 60% at 50% -12%, rgb(52 84 66 / 0.35), transparent 60%),
+    radial-gradient(90% 50% at 50% 112%, rgb(31 56 44 / 0.45), transparent 70%),
     var(--color-abyss);
 }
 
 ::selection {
-  background: rgb(169 207 110 / 0.35);
+  background: rgb(214 196 142 / 0.35);
   color: var(--color-bone);
 }
 
@@ -105,19 +106,19 @@ body {
     line-height: 0.98;
   }
 
-  /* Cracked-silver lettering, after the DOOMSDAY title on the poster. */
+  /* Brushed champagne-gold lettering, after the DOOMSDAY title and the prize on the poster. */
   .metal {
-    color: var(--color-silver);
-    background: linear-gradient(178deg, #f4f2e6 8%, #c9d2b4 42%, #8fa37a 62%, #dfe5cc 86%);
+    color: var(--color-glow);
+    background: linear-gradient(178deg, #fbf5dc 6%, #e4d29e 40%, #a98d50 60%, #efe2b4 88%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 18px rgb(169 207 110 / 0.22));
+    filter: drop-shadow(0 0 14px rgb(214 196 142 / 0.12));
   }
 
-  /* The pale green of the eclipse corona, as a soft glow on text. */
+  /* The eclipse's warm rim light, as a faint glow on text. */
   .glow-text {
-    text-shadow: 0 0 22px rgb(169 207 110 / 0.45);
+    text-shadow: 0 0 20px rgb(214 196 142 / 0.22);
   }
 }
 
@@ -151,21 +152,22 @@ body {
     cursor: not-allowed;
   }
   .btn-primary {
-    background: linear-gradient(180deg, #c3e48f, var(--color-glow) 55%, #93bb5b);
+    background: linear-gradient(180deg, #efe2b4, var(--color-glow) 55%, #b89d5c);
     color: var(--color-abyss);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35), 0 0 0 1px rgb(169 207 110 / 0.55), 0 10px 34px -10px rgb(169 207 110 / 0.7);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.3), 0 0 0 1px rgb(214 196 142 / 0.45), 0 8px 26px -14px rgb(214 196 142 / 0.55);
   }
   .btn-primary:hover {
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.4), 0 0 0 1px rgb(195 228 143 / 0.9), 0 12px 44px -8px rgb(169 207 110 / 0.85);
+    background: linear-gradient(180deg, #f6ecc6, #e0cf9c 55%, #c4a96a);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35), 0 0 0 1px rgb(239 226 180 / 0.7), 0 10px 30px -12px rgb(214 196 142 / 0.6);
   }
   .btn-ghost {
     border: 1px solid var(--color-line-strong);
-    background: rgb(8 10 7 / 0.35);
+    background: rgb(8 17 13 / 0.35);
     color: var(--color-bone);
   }
   .btn-ghost:hover {
     border-color: var(--color-glow);
-    background: rgb(169 207 110 / 0.07);
+    background: rgb(214 196 142 / 0.07);
     color: var(--color-glow);
   }
 
@@ -177,18 +179,18 @@ body {
     padding: 0.7rem 0.9rem;
     border: 1px solid var(--color-line-strong);
     border-radius: 2px;
-    background: rgb(21 28 19 / 0.85);
+    background: rgb(21 34 27 / 0.85);
     color: var(--color-bone);
     font-size: 1rem; /* 16px stops phones zooming in on focus */
     transition: border-color 160ms ease, box-shadow 160ms ease;
   }
   .field::placeholder {
-    color: rgb(159 169 147 / 0.55);
+    color: rgb(155 168 159 / 0.55);
   }
   .field:focus {
     outline: none;
     border-color: var(--color-glow);
-    box-shadow: 0 0 0 3px rgb(169 207 110 / 0.18);
+    box-shadow: 0 0 0 3px rgb(214 196 142 / 0.18);
   }
   .field[aria-invalid='true'] {
     border-color: var(--color-ember);
@@ -197,8 +199,8 @@ body {
   .panel {
     border: 1px solid var(--color-line);
     border-radius: 2px;
-    background: linear-gradient(180deg, rgb(21 28 19 / 0.86), rgb(14 19 13 / 0.86));
-    box-shadow: inset 0 1px 0 rgb(235 232 218 / 0.04);
+    background: linear-gradient(180deg, rgb(21 34 27 / 0.86), rgb(15 26 21 / 0.86));
+    box-shadow: inset 0 1px 0 rgb(238 232 214 / 0.04);
   }
 
   /*
@@ -207,8 +209,8 @@ body {
    */
   .corners {
     position: relative;
-    --c: var(--corner-color, rgb(235 232 218 / 0.55));
-    --s: var(--corner-size, 18px);
+    --c: var(--corner-color, rgb(214 196 142 / 0.3));
+    --s: var(--corner-size, 14px);
   }
   .corners::before {
     content: '';
@@ -227,29 +229,28 @@ body {
       linear-gradient(var(--c), var(--c)) bottom right / 1px var(--s) no-repeat;
   }
 
-  /* A cinema frame: rounded, black-edged, with the image filling it (the film-strip references). */
+  /* A picture frame: softly rounded, dark-edged, with the image filling it (the film-strip references). */
   .frame {
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    border-radius: 14px;
-    background: #050605;
-    box-shadow: 0 0 0 1px rgb(170 184 150 / 0.12), 0 30px 80px -30px rgb(0 0 0 / 0.9);
+    border-radius: 6px;
+    background: #050a08;
+    box-shadow: 0 0 0 1px rgb(206 196 160 / 0.12), 0 30px 80px -30px rgb(0 0 0 / 0.9);
   }
 
   /* Rubber stamp for status changes: QUALIFIED, SOLD, ELIMINATED… */
   .stamp {
     display: inline-block;
     padding: 0.25em 0.7em;
-    border: 2px solid currentColor;
-    border-radius: 3px;
+    border: 1px solid currentColor;
+    border-radius: 2px;
     font-family: var(--font-display);
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    transform: rotate(-3deg);
-    animation: stamp-in 380ms cubic-bezier(0.2, 1.5, 0.4, 1) both;
+    animation: stamp-in 420ms ease-out both;
   }
 
   /* Threat-level strip on every public page. */
@@ -259,21 +260,20 @@ body {
     align-items: center;
     gap: 0.75rem;
     border-bottom: 1px solid var(--color-line);
-    background: rgb(8 10 7 / 0.92);
+    background: rgb(8 17 13 / 0.92);
     font-size: 0.66rem;
     font-weight: 600;
     letter-spacing: 0.24em;
     text-transform: uppercase;
   }
-  .threat[data-tone='warn'] { --tone: #d8e27a; }
+  .threat[data-tone='warn'] { --tone: #e2c56e; }
   .threat[data-tone='danger'],
   .threat[data-tone='critical'] { --tone: var(--color-ember); }
   .threat-stripes {
     align-self: stretch;
     width: 44px;
     flex: none;
-    background: repeating-linear-gradient(-45deg, var(--tone) 0 5px, transparent 5px 11px);
-    opacity: 0.75;
+    display: none; /* the striped hazard tab, retired for the calmer look */
   }
   .threat-level {
     color: var(--tone);
@@ -283,8 +283,8 @@ body {
     height: 6px;
     border-radius: 999px;
     background: var(--tone);
-    box-shadow: 0 0 10px var(--tone);
-    animation: siren 2.4s ease-in-out infinite;
+    box-shadow: 0 0 8px var(--tone);
+    animation: siren 4s ease-in-out infinite;
   }
   .threat[data-tone='critical'] .threat-level,
   .threat[data-tone='critical'] .threat-dot {
@@ -298,8 +298,8 @@ body {
 }
 
 @keyframes stamp-in {
-  from { opacity: 0; transform: rotate(-3deg) scale(1.6); }
-  to { opacity: 1; transform: rotate(-3deg) scale(1); }
+  from { opacity: 0; transform: scale(1.08); }
+  to { opacity: 1; transform: none; }
 }
 @keyframes siren {
   0%, 100% { opacity: 1; }
@@ -317,7 +317,7 @@ body {
   inset: 0;
   pointer-events: none;
   z-index: 60;
-  opacity: 0.085;
+  opacity: 0.05;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
@@ -329,8 +329,8 @@ body {
   height: 120%;
   pointer-events: none;
   background:
-    radial-gradient(38% 30% at 50% 0%, rgb(169 207 110 / 0.16), transparent 70%),
-    conic-gradient(from 180deg at 50% 0%, transparent 166deg, rgb(169 207 110 / 0.12) 180deg, transparent 194deg);
+    radial-gradient(38% 30% at 50% 0%, rgb(214 196 142 / 0.08), transparent 70%),
+    conic-gradient(from 180deg at 50% 0%, transparent 166deg, rgb(214 196 142 / 0.05) 180deg, transparent 194deg);
   filter: blur(18px);
   animation: beam-breathe 9s ease-in-out infinite;
 }
@@ -343,14 +343,15 @@ body {
 /* Thin vertical light lines over a picture (the rain-streak lines in the references). */
 .streaks {
   pointer-events: none;
+  opacity: 0.45;
   background:
-    linear-gradient(90deg, transparent calc(14% - 0.5px), rgb(235 232 218 / 0.09) 14%, transparent calc(14% + 0.5px)),
-    linear-gradient(90deg, transparent calc(31% - 0.5px), rgb(235 232 218 / 0.06) 31%, transparent calc(31% + 0.5px)),
-    linear-gradient(90deg, transparent calc(38% - 0.5px), rgb(235 232 218 / 0.1) 38%, transparent calc(38% + 0.5px)),
-    linear-gradient(90deg, transparent calc(57% - 0.5px), rgb(235 232 218 / 0.07) 57%, transparent calc(57% + 0.5px)),
-    linear-gradient(90deg, transparent calc(66% - 0.5px), rgb(235 232 218 / 0.1) 66%, transparent calc(66% + 0.5px)),
-    linear-gradient(90deg, transparent calc(83% - 0.5px), rgb(235 232 218 / 0.06) 83%, transparent calc(83% + 0.5px)),
-    linear-gradient(90deg, transparent calc(91% - 0.5px), rgb(235 232 218 / 0.08) 91%, transparent calc(91% + 0.5px));
+    linear-gradient(90deg, transparent calc(14% - 0.5px), rgb(238 232 214 / 0.09) 14%, transparent calc(14% + 0.5px)),
+    linear-gradient(90deg, transparent calc(31% - 0.5px), rgb(238 232 214 / 0.06) 31%, transparent calc(31% + 0.5px)),
+    linear-gradient(90deg, transparent calc(38% - 0.5px), rgb(238 232 214 / 0.1) 38%, transparent calc(38% + 0.5px)),
+    linear-gradient(90deg, transparent calc(57% - 0.5px), rgb(238 232 214 / 0.07) 57%, transparent calc(57% + 0.5px)),
+    linear-gradient(90deg, transparent calc(66% - 0.5px), rgb(238 232 214 / 0.1) 66%, transparent calc(66% + 0.5px)),
+    linear-gradient(90deg, transparent calc(83% - 0.5px), rgb(238 232 214 / 0.06) 83%, transparent calc(83% + 0.5px)),
+    linear-gradient(90deg, transparent calc(91% - 0.5px), rgb(238 232 214 / 0.08) 91%, transparent calc(91% + 0.5px));
   mask-image: linear-gradient(180deg, transparent, #000 18%, #000 70%, transparent);
 }
 
@@ -383,9 +384,9 @@ body {
   display: block;
   padding: 0.45em;
   border-radius: 0.7em;
-  border: 0.1em solid rgb(169 207 110 / 0.55);
-  background: linear-gradient(180deg, #121a10, #080b07);
-  box-shadow: 0 0 0 0.06em rgb(0 0 0 / 0.6), 0 0 1.4em -0.2em rgb(169 207 110 / 0.45), inset 0 0.06em 0 rgb(235 232 218 / 0.06);
+  border: 0.08em solid rgb(214 196 142 / 0.4);
+  background: linear-gradient(180deg, #13201a, #08100c);
+  box-shadow: 0 0 0 0.06em rgb(0 0 0 / 0.6), 0 0 1.2em -0.3em rgb(214 196 142 / 0.25), inset 0 0.06em 0 rgb(238 232 214 / 0.06);
 }
 
 /* A card turning over (FlipReveal): face down first, then face up. */
@@ -427,8 +428,8 @@ html.projector-idle * {
 .fog {
   pointer-events: none;
   background:
-    radial-gradient(40% 30% at 20% 60%, rgb(169 207 110 / 0.1), transparent 70%),
-    radial-gradient(35% 25% at 80% 40%, rgb(169 207 110 / 0.08), transparent 70%);
+    radial-gradient(40% 30% at 20% 60%, rgb(120 150 130 / 0.08), transparent 70%),
+    radial-gradient(35% 25% at 80% 40%, rgb(214 196 142 / 0.04), transparent 70%);
   animation: fog-drift 24s ease-in-out infinite alternate;
 }
 @keyframes fog-drift {

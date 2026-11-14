@@ -3,7 +3,7 @@ The scene art for the rounds and pages, from the club's 16:9 pictures.
 
     python3 scripts/art/round_art.py "path/to/Round Images/Cover" assets/art
 
-Reads the club's pictures by name and writes assets/art/scene-<name>.jpg (2400 x 1350, light
+Reads the club's pictures by name, grades them to the site's palette (palette.py) and writes assets/art/scene-<name>.jpg (2400 x 1350, light
 film grain), which <Scene name="..."> shows:
 
     Prelims.png           -> scene-prelim.jpg     Prelim (Hero Ya Zero?)
@@ -25,6 +25,9 @@ import sys
 
 import numpy as np
 from PIL import Image, ImageChops, ImageDraw, ImageFilter
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from palette import calm  # noqa: E402
 
 OUT_W, OUT_H = 2400, 1350
 
@@ -112,7 +115,7 @@ def main():
         # crop to exactly 16:9 (the sources are a pixel or two off)
         top = (im.height - OUT_H) // 2
         im = im.crop((0, top, OUT_W, top + OUT_H))
-        im = im.filter(ImageFilter.UnsharpMask(radius=1.6, percent=35, threshold=3))
+        im = calm(im).filter(ImageFilter.UnsharpMask(radius=1.6, percent=35, threshold=3))
         grain(im, 0.08).save(os.path.join(out_dir, f'scene-{name}.jpg'), quality=80, optimize=True, progressive=True)
         print(f'scene-{name}.jpg')
 

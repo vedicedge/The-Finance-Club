@@ -42,7 +42,7 @@ export function Stage({
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              'radial-gradient(70% 55% at 50% -5%, rgb(169 207 110 / 0.12), transparent 70%), radial-gradient(80% 45% at 50% 115%, rgb(110 143 69 / 0.26), transparent 70%), radial-gradient(75% 75% at 50% 50%, transparent 40%, rgb(8 10 7 / 0.85))',
+              'radial-gradient(70% 55% at 50% -5%, rgb(214 196 142 / 0.12), transparent 70%), radial-gradient(80% 45% at 50% 115%, rgb(160 138 82 / 0.26), transparent 70%), radial-gradient(75% 75% at 50% 50%, transparent 40%, rgb(8 17 13 / 0.85))',
           }}
         />
         <div aria-hidden="true" className="streaks pointer-events-none absolute inset-0 opacity-60" />

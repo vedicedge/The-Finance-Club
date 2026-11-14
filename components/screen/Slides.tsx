@@ -25,7 +25,7 @@ export function WelcomeScreen({ startsAt, serverNow, agencies }: { startsAt: str
           <Image src={heroDesktop} alt="" fill sizes="100vw" className="pointer-events-none object-cover object-[60%_30%]" aria-hidden="true" />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,var(--color-abyss)_0%,rgb(8_10_7/0.85)_32%,rgb(8_10_7/0.2)_55%,transparent_68%)]"
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,var(--color-abyss)_0%,rgb(8_17_13/0.85)_32%,rgb(8_17_13/0.2)_55%,transparent_68%)]"
           />
         </>
       }

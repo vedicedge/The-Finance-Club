@@ -39,7 +39,7 @@ export function Countdown({ target, after }: { target: string; after: React.Reac
       {cells.map(([label, value]) => (
         <div
           key={label}
-          className="corners border border-line bg-abyss/60 px-1 pt-2 pb-1.5 text-center backdrop-blur-sm [--corner-color:rgb(169_207_110/0.7)] [--corner-inset:-1px] [--corner-size:9px] sm:pt-3 sm:pb-2.5 lg:short:pt-2 lg:short:pb-2"
+          className="corners border border-line bg-abyss/60 px-1 pt-2 pb-1.5 text-center backdrop-blur-sm [--corner-color:rgb(214_196_142/0.7)] [--corner-inset:-1px] [--corner-size:9px] sm:pt-3 sm:pb-2.5 lg:short:pt-2 lg:short:pb-2"
         >
           <span className="num block text-[clamp(1.7rem,7.5vw,2.2rem)] leading-none font-extralight text-bone sm:text-[2.6rem] lg:text-[3.1rem] lg:short:text-[2.5rem]" aria-hidden={label === 'Sec'}>
             {value === null ? '––' : String(value).padStart(2, '0')}

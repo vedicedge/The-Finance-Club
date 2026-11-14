@@ -73,7 +73,7 @@ export function StarRule({ className = '' }: { className?: string }) {
   return (
     <div className={`flex items-center gap-3 ${className}`} aria-hidden="true">
       <span className="h-px flex-1 bg-gradient-to-r from-transparent via-glow/45 to-glow/70" />
-      <svg viewBox="0 0 24 24" className="size-5 flex-none text-glow drop-shadow-[0_0_6px_rgb(169_207_110/0.8)]">
+      <svg viewBox="0 0 24 24" className="size-4 flex-none text-glow drop-shadow-[0_0_5px_rgb(214_196_142/0.45)]">
         <path d="M12 0 L13.4 10.6 L24 12 L13.4 13.4 L12 24 L10.6 13.4 L0 12 L10.6 10.6 Z" fill="currentColor" />
       </svg>
       <span className="h-px flex-1 bg-gradient-to-l from-transparent via-glow/45 to-glow/70" />
