@@ -15,12 +15,12 @@ function EclipseMark() {
     <svg viewBox="0 0 32 32" className="size-7 flex-none" aria-hidden="true">
       <defs>
         <radialGradient id="mark-corona" cx="16" cy="16" r="16" gradientUnits="userSpaceOnUse">
-          <stop offset="0.6" stopColor="#a9cf6e" stopOpacity="0.95" />
-          <stop offset="1" stopColor="#a9cf6e" stopOpacity="0" />
+          <stop offset="0.6" stopColor="#d6c48e" stopOpacity="0.95" />
+          <stop offset="1" stopColor="#d6c48e" stopOpacity="0" />
         </radialGradient>
       </defs>
       <circle cx="16" cy="16" r="16" fill="url(#mark-corona)" />
-      <circle cx="16" cy="16" r="9.6" fill="#080a07" stroke="#dcedbf" strokeWidth="0.8" />
+      <circle cx="16" cy="16" r="9.6" fill="#08110d" stroke="#efe6c8" strokeWidth="0.8" />
     </svg>
   );
 }

@@ -9,7 +9,7 @@ or money mechanic.
 
 | # | Decision | Default in use | Setting |
 |---|---|---|---|
-| 1 | Registration rules | IMI Delhi students only, **@imi.edu emails required** (amendment A3); free; closes 23 Nov 2026 23:59 IST; cap 60 agencies | `registration.eligibility`, `.email_domain` (`imi.edu`; clear it to turn the check off), `.email_hint`, `.fee`, `.closes_at`, `.max_agencies`, `.open` |
+| 1 | Registration rules | IMI Delhi students only, **@imi.edu emails required** (amendment A3); free; event on 23 Nov 2026 at 17:30 IST; registration closes 23 Nov 18:00 IST (walk-ins on the day); cap 60 agencies | `registration.eligibility`, `.email_domain` (`imi.edu`; clear it to turn the check off), `.email_hint`, `.fee`, `.closes_at`, `.max_agencies`, `.open` |
 | 2 | Start time and venue | 5:30 pm IST, auditorium | `event.starts_at`, `event.venue` |
 | 3 | Hero Score tie for 1st/2nd | Higher fund left, then higher Power Level, then coin toss (anchor enters it) | `zero_hour.hero_tiebreak` |
 | 4 | Others' fund left public in Round 1 | Hidden until Round 1 locks; each agency sees only its own | `round1.show_fund_publicly` |

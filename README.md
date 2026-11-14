@@ -1,6 +1,6 @@
 # Doomsday — The Finance Club
 
-The in-house website for **Doomsday**, the finance club's 3-hour event on 25 November 2026.
+The in-house website for **Doomsday**, the finance club's 3-hour event on 23 November 2026.
 Professor Kalyug has announced a doomsday attack on Mahanagar; hero agencies race to fund, build
 and save the city.
 
@@ -20,7 +20,7 @@ Row Level Security), deployed on Vercel. The event name lives in one place: `lib
 | 3. Prelim quiz | 15 Nov | **Done** |
 | 4. Auction + ledger | 18 Nov | **Done** |
 | 5. Rounds 2–3, leaderboard, reveal | 21 Nov | **Done** |
-| 6. Dry run | 23 Nov | Next — **Dry run mode**, the [dry-run checklist](docs/dry-run-checklist.md) and printable backup sheets are ready |
+| 6. Dry run | by 21 Nov | Next — **Dry run mode**, the [dry-run checklist](docs/dry-run-checklist.md) and printable backup sheets are ready |
 
 ## How the security works
 

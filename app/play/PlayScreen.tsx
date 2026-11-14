@@ -378,7 +378,7 @@ function Shell({
   return (
     <main
       id="main"
-      className="mx-auto flex min-h-dvh max-w-lg flex-col bg-[radial-gradient(120%_45%_at_50%_0%,rgb(169_207_110/0.13),transparent_70%)]"
+      className="mx-auto flex min-h-dvh max-w-lg flex-col bg-[radial-gradient(120%_45%_at_50%_0%,rgb(214_196_142/0.13),transparent_70%)]"
     >
       {dryRun && (
         <p className="bg-glow px-4 py-1 text-center text-[0.65rem] font-bold tracking-[0.24em] text-abyss uppercase">Dry run · rehearsal</p>
@@ -425,7 +425,7 @@ function Centered({
         <span className={`absolute -inset-2 rounded-full blur-xl ${tone === 'ember' ? 'bg-ember/30' : 'bg-glow/30'}`} />
         <span
           className={`absolute inset-0 rounded-full border bg-abyss ${
-            tone === 'ember' ? 'border-ember/80 shadow-[0_0_44px_rgb(229_87_74/0.55)]' : 'border-[#dcedbf]/80 shadow-[0_0_44px_rgb(169_207_110/0.55)]'
+            tone === 'ember' ? 'border-ember/80 shadow-[0_0_44px_rgb(229_87_74/0.55)]' : 'border-[#efe6c8]/80 shadow-[0_0_44px_rgb(214_196_142/0.55)]'
           }`}
         />
       </span>

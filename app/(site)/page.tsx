@@ -29,35 +29,29 @@ export default async function Landing() {
           title block is placed, so the button never falls below the fold. On wide screens the
           title column sits beside Professor Kalyug and tightens on short laptop screens. */}
       <section className="relative isolate overflow-hidden">
-        <div className="streaks absolute inset-0 -z-10" aria-hidden="true" />
         <div className="fog absolute inset-0 -z-10" aria-hidden="true" />
-
-        {/* viewfinder notes in the corners, on wide screens */}
-        <div className="pointer-events-none absolute inset-6 hidden text-[0.62rem] font-semibold tracking-[0.3em] text-steel/80 uppercase xl:block" aria-hidden="true">
-          <span className="absolute top-0 left-0">{EVENT.city} · Sector zero</span>
-          <span className="absolute top-0 right-0">Transmission · live</span>
-          <span className="absolute bottom-0 left-0">Scroll · mission briefing ↓</span>
-          <span className="absolute right-0 bottom-0">Threat · total</span>
-        </div>
 
         <div className="flex min-h-[calc(100svh-6.25rem)] flex-col lg:block lg:min-h-0">
           {/* Professor Kalyug before the eclipse: the portrait on phones, the wide scene on laptops */}
           <div className="relative -z-20 min-h-[13rem] flex-1 overflow-hidden lg:absolute lg:inset-0" aria-hidden="true">
             <HeroArt className="hero-drift object-cover object-[center_22%] lg:object-[50%_30%]" />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(8_10_7/0.3),transparent_14%,transparent_62%,var(--color-abyss))] lg:bg-[linear-gradient(90deg,rgb(8_10_7/0.7)_0%,rgb(8_10_7/0.5)_30%,rgb(8_10_7/0.12)_50%,transparent_62%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(8_17_13/0.3),transparent_14%,transparent_62%,var(--color-abyss))] lg:bg-[linear-gradient(90deg,rgb(8_17_13/0.7)_0%,rgb(8_17_13/0.5)_30%,rgb(8_17_13/0.12)_50%,transparent_62%)]" />
             <div className="absolute inset-x-0 bottom-0 hidden h-28 bg-gradient-to-b from-transparent to-abyss lg:block" />
           </div>
 
           <div className="relative mx-auto w-full max-w-7xl px-[var(--gutter)] pb-5 sm:pb-8 lg:flex lg:min-h-[min(54rem,calc(100svh-6.25rem))] lg:items-center lg:py-20 lg:short:py-8">
             <div className="mx-auto -mt-14 w-full max-w-xl text-center sm:-mt-20 lg:mx-0 lg:mt-0 lg:text-left">
-              <p className="eyebrow hidden text-glow lg:block">Incoming transmission · {EVENT.city}</p>
-              <h1 className="lg:mt-5 lg:short:mt-3">
+              <h1>
                 <TitleLockup
                   sizes="(min-width: 1024px) 560px, (min-width: 640px) 420px, 80vw"
                   preload
                   className="mx-auto w-[min(80vw,21rem)] sm:w-[26rem] lg:mx-0 lg:-ml-2 lg:w-[min(100%,35rem)] lg:short:w-[27rem]"
                 />
               </h1>
+              <p className="mt-3 flex items-baseline justify-center gap-3 lg:mt-5 lg:justify-start lg:short:mt-3">
+                <span className="kicker !text-[0.68rem] !text-steel">Cash prize</span>
+                <span className="display metal num text-[1.7rem] sm:text-[2rem] lg:text-[2.4rem]">{EVENT.prizePool}</span>
+              </p>
               <p className="mt-4 hidden max-w-md text-[0.95rem] leading-relaxed text-steel lg:block lg:short:hidden">
                 {EVENT.villain} has announced a doomsday attack on {EVENT.city}. Three founders, ₹50 crore, one evening to build a hero.
               </p>
@@ -103,15 +97,14 @@ export default async function Landing() {
       <section className="relative">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-[var(--gutter)] py-20 md:grid-cols-[1.05fr_1fr] md:py-28">
           <figure className="rise relative">
-            <div className="frame corners [--corner-inset:14px]">
+            <div className="frame">
               <KalyugCloseUp sizes="(min-width: 768px) 560px, 92vw" className="block h-auto w-full" />
             </div>
             <figcaption className="mt-4 flex flex-wrap items-center justify-between gap-3">
               <span>
-                <span className="eyebrow block !text-[0.6rem] text-glow">Subject</span>
+                <span className="eyebrow block !text-[0.6rem] text-glow">The villain</span>
                 <span className="font-display block text-lg font-semibold tracking-[0.08em] text-bone">{EVENT.villain}</span>
               </span>
-              <span className="stamp !animate-none !text-[0.66rem] whitespace-nowrap text-ember sm:!text-[0.78rem]">Threat: total</span>
             </figcaption>
           </figure>
           <div className="rise">
@@ -133,7 +126,7 @@ export default async function Landing() {
               {[
                 ['Target', EVENT.city],
                 ['Strike', shortDate(event.startsAt)],
-                ['Defenders', 'Agencies of 3'],
+                ['Defenders', registration.smallTeams ? 'Agencies of 1–3' : 'Agencies of 3'],
               ].map(([k, v]) => (
                 <div key={k} className="border-r border-line py-4 pr-3 last:border-r-0 [&:not(:first-child)]:pl-4">
                   <dt className="eyebrow !text-[0.6rem]">{k}</dt>
@@ -173,7 +166,7 @@ export default async function Landing() {
                       flip ? 'md:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]' : 'md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]'
                     }`}
                   >
-                    <div className={`corners relative aspect-video [--corner-inset:12px] ${flip ? 'md:order-2' : ''}`}>
+                    <div className={`relative aspect-video ${flip ? 'md:order-2' : ''}`}>
                       <Scene
                         name={s.scene}
                         className="absolute inset-0"
@@ -182,16 +175,10 @@ export default async function Landing() {
                       />
                     </div>
                     <div className={`relative px-6 pt-6 pb-7 sm:px-8 md:py-8 lg:px-12 ${flip ? 'md:order-1' : ''}`}>
-                      <span
-                        className="num pointer-events-none absolute top-2 right-5 font-display text-[4.5rem] leading-none font-bold text-glow/[0.07] select-none lg:text-[6rem]"
-                        aria-hidden="true"
-                      >
-                        {String(i + 1).padStart(2, '0')}
-                      </span>
                       <p className="num text-[0.68rem] font-semibold tracking-[0.3em] text-glow uppercase">
                         {String(i + 1).padStart(2, '0')} / 05 · {s.tag}
                       </p>
-                      <h3 className="display metal mt-3 text-[clamp(2rem,4vw,3.1rem)] leading-[0.98]">{s.name}</h3>
+                      <h3 className="display mt-3 text-[clamp(2rem,4vw,3.1rem)] leading-[0.98] text-bone">{s.name}</h3>
                       <p className="num font-display mt-3 text-sm font-semibold tracking-[0.18em] text-bone uppercase">{s.cut}</p>
                       <p className="mt-3 max-w-md text-[0.95rem] leading-relaxed text-bone/85">{s.line}</p>
                       <p className="font-display mt-5 inline-flex items-center gap-2 text-[0.72rem] font-semibold tracking-[0.2em] text-glow uppercase">
@@ -216,10 +203,10 @@ export default async function Landing() {
           <p className="eyebrow">How the city is saved</p>
           <h2 className="display metal mt-4 text-[clamp(2.4rem,6vw,4rem)]">The Hero Score</h2>
           <div className="mt-12 grid items-stretch gap-3 md:grid-cols-[1fr_auto_1fr_auto_1fr] md:gap-4">
-            <div className="panel corners px-5 py-6 [--corner-inset:6px] [--corner-size:12px]">
+            <div className="panel px-5 py-6">
               <div className="flex justify-center gap-2.5" aria-hidden="true">
                 {(['HQ', 'Suit', 'Gadget', 'Sidekick'] as const).map((k) => (
-                  <svg key={k} viewBox="0 0 48 48" className="size-9 rounded-sm border border-glow/40 bg-abyss p-1.5" fill="none" stroke="#a9cf6e" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
+                  <svg key={k} viewBox="0 0 48 48" className="size-9 rounded-sm border border-glow/40 bg-abyss p-1.5" fill="none" stroke="#d6c48e" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
                     <GearIcon kind={k} />
                   </svg>
                 ))}
@@ -230,12 +217,12 @@ export default async function Landing() {
             <p className="display self-center text-4xl text-steel" aria-hidden="true">
               ×
             </p>
-            <div className="panel corners px-5 py-6 [--corner-inset:6px] [--corner-size:12px]">
+            <div className="panel px-5 py-6">
               <div className="flex justify-center" aria-hidden="true">
                 <svg viewBox="0 0 64 44" className="h-9 w-14">
-                  <rect x="1" y="1" width="62" height="42" rx="3" fill="#1c2418" stroke="#a9cf6e" strokeOpacity="0.6" />
-                  <path d="M1 1 L32 26 L63 1" fill="none" stroke="#a9cf6e" strokeOpacity="0.6" />
-                  <circle cx="32" cy="26" r="6" fill="#a9cf6e" />
+                  <rect x="1" y="1" width="62" height="42" rx="3" fill="#18261f" stroke="#d6c48e" strokeOpacity="0.6" />
+                  <path d="M1 1 L32 26 L63 1" fill="none" stroke="#d6c48e" strokeOpacity="0.6" />
+                  <circle cx="32" cy="26" r="6" fill="#d6c48e" />
                 </svg>
               </div>
               <p className="display mt-5 text-2xl text-toxic">Battle Outcome</p>
@@ -244,7 +231,7 @@ export default async function Landing() {
             <p className="display self-center text-4xl text-steel" aria-hidden="true">
               +
             </p>
-            <div className="panel corners px-5 py-6 [--corner-inset:6px] [--corner-size:12px]">
+            <div className="panel px-5 py-6">
               <p className="num font-display text-[2.2rem] leading-9 text-glow" aria-hidden="true">
                 ₹
               </p>
@@ -263,7 +250,7 @@ export default async function Landing() {
       </section>
 
       {/* ---------------------------------------------------------------- enlist: the three founders */}
-      <section className="torn-top relative isolate -mt-px overflow-hidden">
+      <section className="relative isolate -mt-px overflow-hidden">
         {/* Phones and tablets: the founders above the words. Laptops: the founders fill the right
             half and fade in from its left edge; the words keep the left half, clear of the picture. */}
         <Scene
@@ -285,7 +272,7 @@ export default async function Landing() {
             </h2>
             <ul className="mt-7 space-y-2.5 text-bone/85">
               <li className="flex gap-3">
-                <Star className="mt-1.5 flex-none" /> Exactly 3 founders, named at registration — no changes later
+                <Star className="mt-1.5 flex-none" /> {registration.smallTeams ? '1 to 3 founders' : 'Exactly 3 founders'}, named at registration — no changes later
               </li>
               <li className="flex gap-3">
                 <Star className="mt-1.5 flex-none" />

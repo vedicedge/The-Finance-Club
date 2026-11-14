@@ -9,7 +9,7 @@ export type ChecklistSection = { title: string; intro?: string; groups: Checklis
 
 export const CHECKLIST_TITLE = 'Dry-run checklist';
 export const CHECKLIST_INTRO =
-  'A full rehearsal with the crew, on real phones and the auditorium Wi-Fi, before 25 Nov. Tick each line as you go. ' +
+  'A full rehearsal with the crew, on real phones and the auditorium Wi-Fi, before 23 Nov (aim for 21 Nov). Tick each line as you go. ' +
   'Allow about 3 hours for the full run, or run the prelim and Round 1 only if time is short.';
 
 export const CHECKLIST: ChecklistSection[] = [
@@ -135,7 +135,7 @@ export const CHECKLIST: ChecklistSection[] = [
     ],
   },
   {
-    title: 'Event day pre-flight (25 Nov)',
+    title: 'Event day pre-flight (23 Nov)',
     groups: [
       {
         items: [

@@ -16,7 +16,7 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: P
   return (
     <main id="main" className="relative isolate flex min-h-dvh flex-col justify-center overflow-hidden px-[var(--gutter)] py-16">
       <Ambient className="-z-20 opacity-40" />
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(55%_60%_at_50%_50%,rgb(8_10_7/0.6),rgb(8_10_7/0.95))]" aria-hidden="true" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(55%_60%_at_50%_50%,rgb(8_17_13/0.6),rgb(8_17_13/0.95))]" aria-hidden="true" />
       <div className="panel corners mx-auto w-full max-w-md px-6 py-8 [--corner-inset:8px] [--corner-size:14px] sm:px-8">
       <p className="eyebrow text-glow">{EVENT.name} · Crew only</p>
       <h1 className="display metal mt-4 text-5xl">Command centre</h1>

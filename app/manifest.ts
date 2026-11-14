@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: EVENT.name,
     start_url: '/me',
     display: 'fullscreen',
-    background_color: '#080a07',
-    theme_color: '#080a07',
+    background_color: '#08110d',
+    theme_color: '#08110d',
     icons: [{ src: '/icon.svg', sizes: 'any', type: 'image/svg+xml' }],
   };
 }

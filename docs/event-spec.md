@@ -45,7 +45,7 @@ organisers entering results so every agency can track its status and the leaderb
 
 ## Story, theme and tone
 
-Professor Kalyug has announced a doomsday attack on the city of Mahanagar for 25 November. Each
+Professor Kalyug has announced a doomsday attack on the city of Mahanagar for 23 November. Each
 team is a newly founded hero agency with ₹50 crore of funding; it must build a hero, win public
 support and survive the final battle. Tagline: **Fund it ★ Build it ★ Save the city.**
 
@@ -398,7 +398,7 @@ live status and the leaderboard. Everything else happens on the floor.
 
 | Stage | What the agency does | What it sees on the website |
 |---|---|---|
-| Before 25 Nov | Registers: agency name + 3 founders' names, sections, phone numbers, emails; one founder is captain | Confirmation with agency ID (A07) and a 4-digit PIN; rules, rounds and schedule pages |
+| Before 23 Nov | Registers: agency name + 3 founders' names, sections, phone numbers, emails; one founder is captain | Confirmation with agency ID (A07) and a 4-digit PIN; rules, rounds and schedule pages |
 | Check-in | All 3 founders report at the desk | — |
 | Prelim (0:10) | Captain logs in on one phone; answers 15 questions | Question options, lock-in, right/wrong + points after each; final rank |
 | After prelim | Top 16 move to auction seats; others join the Fan Club | "Qualified for Power Bazaar" or "Welcome to the Fan Club" |

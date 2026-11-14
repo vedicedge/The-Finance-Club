@@ -1,6 +1,6 @@
 # Dry-run checklist
 
-A full rehearsal with the crew, on real phones and the auditorium Wi-Fi, before 25 Nov. Tick each line as you go. Allow about 3 hours for the full run, or run the prelim and Round 1 only if time is short.
+A full rehearsal with the crew, on real phones and the auditorium Wi-Fi, before 23 Nov (aim for 21 Nov). Tick each line as you go. Allow about 3 hours for the full run, or run the prelim and Round 1 only if time is short.
 
 Printable copy: Command centre → Print & backups → Dry-run checklist (`/admin/print/checklist`).
 This file is generated from `lib/print/checklist.ts`; edit that file, then run `npm run docs:checklist`.
@@ -89,7 +89,7 @@ This file is generated from `lib/print/checklist.ts`; edit that file, then run `
 - [ ] Check: phase is Registration, `/leaderboard` is empty, Agencies & check-in shows only real teams, Seed data says OK.
 - [ ] Write down what went wrong, who fixes it, and by when.
 
-## Event day pre-flight (25 Nov)
+## Event day pre-flight (23 Nov)
 
 - [ ] No DRY RUN strip anywhere (dry run mode is off).
 - [ ] Registration closed (deadline passed, or closed in Settings); phase **Check-in** when the doors open.

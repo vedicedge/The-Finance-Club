@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
   openGraph: {
     title: `${EVENT.fullName} — ${EVENT.club}`,
-    description: `${EVENT.fullName} · 25 November 2026.`,
+    description: `${EVENT.fullName} · 23 November 2026 · Cash prize ${EVENT.prizePool}.`,
     type: 'website',
   },
 };
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#080a07',
+  themeColor: '#08110d',
   colorScheme: 'dark',
 };
 

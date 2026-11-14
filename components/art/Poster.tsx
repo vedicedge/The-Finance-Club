@@ -59,23 +59,14 @@ export function KalyugImage({ className = '', sizes }: { className?: string; siz
 }
 
 /**
- * The event title as the poster sets it: the DOOMSDAY wordmark with "Multiverse of Money"
- * centred beneath it between two thin rules. Size it with the className width; the subtitle
- * scales with the lockup (container units), so it looks the same on a phone and a projector.
+ * The event title as the poster sets it: the gold DOOMSDAY wordmark with "The Multiverse of
+ * Money" beneath it, cut from the November poster as one image. Size it with the className width.
  */
 export function TitleLockup({ className = '', sizes, preload = false, star = false }: { className?: string; sizes: string; preload?: boolean; star?: boolean }) {
   return (
     <div className={`[container-type:inline-size] ${className}`}>
+      {/* The lettering image carries "The Multiverse of Money" and its rule, as on the poster. */}
       <Image src={wordmark} alt={EVENT.fullName} sizes={sizes} preload={preload} className="block h-auto w-full" />
-      <div className="mt-[0.6cqw] flex items-center gap-[2cqw] px-[3cqw]" aria-hidden="true">
-        <span className="h-px flex-1 bg-gradient-to-r from-transparent to-glow/80" />
-        <span className="size-[0.9cqw] flex-none rotate-45 bg-glow/90" />
-        <span className="font-display text-[4.3cqw] leading-none font-semibold tracking-[0.2em] whitespace-nowrap text-[#dfe8cf] uppercase [text-shadow:0_0_1.6cqw_rgb(169_207_110/0.45)]">
-          {EVENT.tagline}
-        </span>
-        <span className="size-[0.9cqw] flex-none rotate-45 bg-glow/90" />
-        <span className="h-px flex-1 bg-gradient-to-l from-transparent to-glow/80" />
-      </div>
       {star && <StarRule className="mx-auto mt-[2.4cqw] w-[70%]" />}
     </div>
   );
@@ -91,7 +82,7 @@ export function StarRule({ className = '' }: { className?: string }) {
   return (
     <div className={`flex items-center gap-3 ${className}`} aria-hidden="true">
       <span className="h-px flex-1 bg-gradient-to-r from-transparent via-glow/45 to-glow/70" />
-      <svg viewBox="0 0 24 24" className="size-5 flex-none text-glow drop-shadow-[0_0_6px_rgb(169_207_110/0.8)]">
+      <svg viewBox="0 0 24 24" className="size-4 flex-none text-glow drop-shadow-[0_0_5px_rgb(214_196_142/0.45)]">
         <path d="M12 0 L13.4 10.6 L24 12 L13.4 13.4 L12 24 L10.6 13.4 L0 12 L10.6 10.6 Z" fill="currentColor" />
       </svg>
       <span className="h-px flex-1 bg-gradient-to-l from-transparent via-glow/45 to-glow/70" />

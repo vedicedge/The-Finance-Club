@@ -37,7 +37,7 @@ export function GearCard({
   const series = showSeries && card.series ? seriesLabel(card.series) : null;
   return (
     <figure className={`gear-card ${className}`}>
-      <div className="relative aspect-[3/4] overflow-hidden rounded-[0.45em] bg-[#070a06]">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-[0.45em] bg-[#07100c]">
         {art ? (
           <Image src={art} alt={card.name} fill sizes={sizes} className="object-cover" />
         ) : (
@@ -59,16 +59,16 @@ export function GearCard({
 export function GearCardBack({ className = '', sizes }: { className?: string; sizes: string }) {
   return (
     <div className={`gear-card ${className}`} aria-label="Sealed card">
-      <div className="relative aspect-[3/4] overflow-hidden rounded-[0.45em] bg-[radial-gradient(circle_at_50%_45%,#1d2a16,#070a06_70%)]">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-[0.45em] bg-[radial-gradient(circle_at_50%_45%,#1a2b22,#07100c_70%)]">
         {cardBackArt ? (
           <Image src={cardBackArt} alt="" fill sizes={sizes} className="object-cover" />
         ) : (
           <svg viewBox="0 0 120 160" className="absolute inset-0 size-full" aria-hidden="true">
-            <rect x="8" y="8" width="104" height="144" rx="6" fill="none" stroke="#a9cf6e" strokeOpacity="0.35" />
-            <rect x="13" y="13" width="94" height="134" rx="4" fill="none" stroke="#a9cf6e" strokeOpacity="0.15" />
-            <circle cx="60" cy="78" r="30" fill="#a9cf6e" opacity="0.12" />
-            <circle cx="60" cy="78" r="21" fill="#080a07" stroke="#dcedbf" strokeWidth="1.6" />
-            <path d="M60 46 L63 75 L92 78 L63 81 L60 110 L57 81 L28 78 L57 75 Z" fill="#e4f2c9" />
+            <rect x="8" y="8" width="104" height="144" rx="6" fill="none" stroke="#d6c48e" strokeOpacity="0.35" />
+            <rect x="13" y="13" width="94" height="134" rx="4" fill="none" stroke="#d6c48e" strokeOpacity="0.15" />
+            <circle cx="60" cy="78" r="30" fill="#d6c48e" opacity="0.12" />
+            <circle cx="60" cy="78" r="21" fill="#08110d" stroke="#efe6c8" strokeWidth="1.6" />
+            <path d="M60 46 L63 75 L92 78 L63 81 L60 110 L57 81 L28 78 L57 75 Z" fill="#f3ecd2" />
           </svg>
         )}
       </div>
@@ -83,9 +83,9 @@ export function GearCardBack({ className = '', sizes }: { className?: string; si
 /** No picture yet: the category's icon, glowing on the card's dark face. */
 function Placeholder({ category }: { category: string }) {
   return (
-    <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_50%_42%,#22301b,#070a06_72%)]" aria-hidden="true">
+    <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_50%_42%,#1f3228,#07100c_72%)]" aria-hidden="true">
       <div className="absolute inset-[6%] rounded-[0.3em] border border-glow/20" />
-      <svg viewBox="0 0 48 48" className="w-[46%] drop-shadow-[0_0_0.4em_rgb(169_207_110/0.6)]" fill="none" stroke="#a9cf6e" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round">
+      <svg viewBox="0 0 48 48" className="w-[46%] drop-shadow-[0_0_0.4em_rgb(214_196_142/0.6)]" fill="none" stroke="#d6c48e" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round">
         {isKind(category) ? <GearIcon kind={category} /> : <path d="M8 40 L24 8 L40 40 Z M24 20 V30 M24 35 V36" />}
       </svg>
     </div>

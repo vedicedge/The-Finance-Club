@@ -37,7 +37,6 @@ export function PageHero({
       <header className="corners relative isolate overflow-hidden border-b border-line/60 [--corner-inset:16px] [--corner-size:22px]">
         <Ambient className="-z-20 opacity-80" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-abyss via-abyss/55 to-abyss/10" aria-hidden="true" />
-        <div className="streaks absolute inset-0 -z-10" aria-hidden="true" />
         <div className="mx-auto flex min-h-[22rem] max-w-4xl flex-col justify-end px-[var(--gutter)] pt-24 pb-12 sm:min-h-[27rem] sm:pb-14">
           <p className="eyebrow text-glow">{eyebrow}</p>
           <h1 className="display metal mt-4 text-[clamp(2.9rem,10vw,6rem)]">{title}</h1>

@@ -17,7 +17,7 @@ K15-v2.webp, made later for the three cards it lacked) came with three kinds of 
    painted out (SMUDGE below), since the cards carry no text.
 
 Every picture is then cropped to 3:4 around its subject and graded to the site's look: the poster's
-green (near-black shadows, moss mid-tones, a pale lichen-green glow), with a little of its own
+calm green (emerald-black shadows, grey-green mid-tones, an ivory-gold light), with a little of its own
 colour kept so cards stay easy to tell apart, a vignette, light from above like the eclipse, and
 film grain. Output: 768 × 1024 WebP.
 """
@@ -61,16 +61,10 @@ SMUDGE = {
     'JK': [(180, 560, 470, 760)],
 }
 
-# The site's green, from shadow to highlight (the poster and the round art).
-STOPS = [
-    (0.00, (5, 7, 5)),
-    (0.18, (14, 21, 12)),
-    (0.40, (38, 54, 31)),
-    (0.62, (88, 116, 66)),
-    (0.82, (160, 196, 118)),
-    (0.94, (210, 232, 176)),
-    (1.00, (240, 247, 226)),
-]
+# The site's palette (palette.py: the November poster's calm greens and ivory-gold light).
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from palette import STOPS  # noqa: E402
+
 KEEP_COLOUR = 0.2  # how much of the picture's own colour survives the grade
 
 
@@ -131,15 +125,16 @@ def grade(im: Image.Image, seed: int) -> Image.Image:
     lum = np.clip(lum, 0, 1)
     lum = lum * lum * (3 - 2 * lum) * 0.6 + lum * 0.4
     mapped = gradient_map(lum)
-    # keep a little of the original colour, pulled toward green
+    # keep a little of the original colour, at half saturation
     own = a * 255
-    own = own * np.array([0.82, 1.0, 0.78], np.float32)
+    grey = own.mean(axis=-1, keepdims=True)
+    own = grey + (own - grey) * 0.5
     out = mapped * (1 - KEEP_COLOUR) + own * KEEP_COLOUR
 
     yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
-    # light from above (the eclipse), a soft green bloom at the top
+    # light from above (the eclipse), a soft warm bloom at the top
     glow = np.exp(-(((xx - W / 2) / (W * 0.55)) ** 2 + ((yy + H * 0.1) / (H * 0.45)) ** 2))
-    out = out + glow[..., None] * np.array([22, 32, 14], np.float32)
+    out = out + glow[..., None] * np.array([20, 19, 13], np.float32)
     # vignette
     v = 1 - 0.5 * np.clip(((xx - W / 2) / (W * 0.62)) ** 2 + ((yy - H * 0.48) / (H * 0.62)) ** 2, 0, 1) ** 1.4
     out = out * v[..., None]

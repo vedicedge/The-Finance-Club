@@ -1,20 +1,21 @@
 # Site art
 
-Everything here is original art graded to the event poster. No Marvel/DC characters, logos or
-real people (spec, tone rules).
+Everything here is original art graded to the November event poster: `palette.py` holds the
+shared grade (emerald-black shadows, grey-green mid-tones, an ivory-gold light, half of each
+picture's own colour). No Marvel/DC characters, logos or real people (spec, tone rules).
 
 | File (`assets/art/`) | What it is | Made by |
 |---|---|---|
-| `poster.jpg` | The event poster: the source of the wordmark, hood close-up and haze below. It is not shown on the site (its details are still being finalised) | Supplied by the club; `fix_poster.py` corrects "PRESENCES" → "PRESENTS" |
+| `poster.jpg` | The first (October) poster, kept for reference only; no script reads it now. Not shown on the site | Supplied by the club; `fix_poster.py` corrects "PRESENCES" → "PRESENTS" |
 | `kalyug-character.webp` | The club's character art, portrait: Professor Kalyug from hood to waist before the eclipse (no lettering) | Supplied by the club |
 | `kalyug-wide.webp` | The same scene, 21 : 9: the figure on the right, the ruined city across the left for the title | Supplied by the club |
-| `hero.jpg` | The landing hero on phones and tablets: the portrait, with grain | `hero_art.py` |
-| `hero-desktop.jpg` | The landing hero on laptops and desktops: the wide scene, upscaled to 2880 px, with grain | `hero_art.py` |
-| `kalyug.jpg` | Professor Kalyug: the hooded figure and eclipse, cropped from the poster | `derive_from_poster.py` |
+| `hero.jpg` | The landing hero on phones and tablets: the portrait, graded, with grain | `hero_art.py` |
+| `hero-desktop.jpg` | The landing hero on laptops and desktops: the wide scene, graded, upscaled to 2880 px, with grain | `hero_art.py` |
+| `kalyug.jpg` | Professor Kalyug: the hooded figure, eclipse and skyline, cut from the November poster (portrait version) without its lettering. The poster itself stays out of the repository: it carries the date, contact numbers and a QR code | `derive_from_poster.py` |
 | `kalyug-hood.jpg` | A close-up of the hood (the synopsis "dossier photo") | `derive_from_poster.py` |
-| `wordmark.webp` | The DOOMSDAY lettering, keyed onto transparency | `derive_from_poster.py` |
-| `ambient.jpg` | The poster blurred into a green haze (page banners, projector and crew sign-in backdrops) | `derive_from_poster.py` |
-| `scene-*.jpg` | The seven scenes: the five rounds, the three founders and the leaderboard chessboard (club's own pictures, 16 : 9) | `round_art.py` |
+| `wordmark.webp` | The gold DOOMSDAY lettering, its swoosh and "The Multiverse of Money", keyed onto transparency | `derive_from_poster.py` |
+| `ambient.jpg` | The poster's sky blurred into a soft haze (page banners, projector and crew sign-in backdrops) | `derive_from_poster.py` |
+| `scene-*.jpg` | The seven scenes: the five rounds, the three founders and the leaderboard chessboard (club's own pictures, 16 : 9, graded) | `round_art.py` |
 | `app/opengraph-image.jpg` | The link preview (WhatsApp, Instagram DMs): the desktop hero art, wordmark and tagline (no date or venue) | `og_image.py` |
 
 ## Scenes
