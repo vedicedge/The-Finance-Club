@@ -10,7 +10,9 @@ export const EVENT = {
   city: 'Mahanagar',
   winnerTitle: "Mahanagar's Hero Agency of the Year",
   /** Default start; the live value is the admin setting `event.starts_at`. */
-  defaultStartsAt: '2026-11-25T17:30:00+05:30',
+  defaultStartsAt: '2026-11-23T17:30:00+05:30',
+  /** The cash prize pool, as on the poster. */
+  prizePool: '₹13,000',
   timeZone: 'Asia/Kolkata',
 } as const;
 

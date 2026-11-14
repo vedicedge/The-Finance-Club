@@ -51,6 +51,10 @@ export default async function Landing() {
               <p className="mt-1 font-serif text-[1.15rem] leading-snug text-silver italic sm:text-[1.45rem] lg:mt-4 lg:text-[clamp(1.45rem,3vw,1.95rem)] lg:short:mt-2">
                 {EVENT.tagline}
               </p>
+              <p className="mt-3 flex items-baseline justify-center gap-3 lg:mt-5 lg:justify-start lg:short:mt-3">
+                <span className="kicker !text-[0.68rem] !text-steel">Cash prize</span>
+                <span className="display metal num text-[1.7rem] sm:text-[2rem] lg:text-[2.4rem]">{EVENT.prizePool}</span>
+              </p>
               <p className="mt-4 hidden max-w-md text-[0.95rem] leading-relaxed text-steel lg:block lg:short:hidden">
                 {EVENT.villain} has announced a doomsday attack on {EVENT.city}. Three founders, ₹50 crore, one evening to build a hero.
               </p>

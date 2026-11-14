@@ -43,16 +43,16 @@ export const DEFAULT_SETTINGS: EventSettings = {
     emailDomain: 'imi.edu',
     emailHint: 'Use your IMI email ID (ending in @imi.edu) for every founder. Other email addresses will not be accepted.',
     fee: 'Free',
-    closesAt: '2026-11-23T23:59:00+05:30',
+    closesAt: '2026-11-23T18:00:00+05:30',
     maxAgencies: 60,
     smallTeams: false,
   },
-  event: { startsAt: '2026-11-25T17:30:00+05:30', venue: 'Auditorium' },
+  event: { startsAt: '2026-11-23T17:30:00+05:30', venue: 'Auditorium' },
   prelim: { requiresCheckin: true, leadInSeconds: 3 },
   round1: { showFundPublicly: false, insiderTipAssignment: 'random' },
   round2: { cutoffTiebreak: 'Rock-paper-scissors' },
   zeroHour: { heroTiebreak: ['fund_left', 'power_level', 'coin_toss'], revealOrderTiebreak: 'agency_id' },
-  prizes: { winner: null, runnerUp: null },
+  prizes: { winner: 'Cash prize from the ₹13,000 pool', runnerUp: 'Cash prize from the ₹13,000 pool' },
   security: { pinMaxAttempts: 5, pinLockSeconds: 60 },
   dryRun: { enabled: false },
 };
@@ -108,7 +108,11 @@ export function parseSettings(raw: unknown): EventSettings {
       heroTiebreak: tiebreak.length ? tiebreak : d.zeroHour.heroTiebreak,
       revealOrderTiebreak: 'agency_id',
     },
-    prizes: { winner: strOrNull(pz.winner), runnerUp: strOrNull(pz.runner_up) },
+    // An explicit blank means "to be announced".
+    prizes: {
+      winner: 'winner' in pz ? strOrNull(pz.winner) : d.prizes.winner,
+      runnerUp: 'runner_up' in pz ? strOrNull(pz.runner_up) : d.prizes.runnerUp,
+    },
     security: {
       pinMaxAttempts: int(sec.pin_max_attempts, d.security.pinMaxAttempts, 1, 50),
       pinLockSeconds: int(sec.pin_lock_seconds, d.security.pinLockSeconds, 5, 3600),
