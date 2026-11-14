@@ -22,7 +22,7 @@ export default async function RulesPage() {
         Registration closes {longDate(r.closesAt)} or when {r.maxAgencies} agencies have signed up.
       </>,
     ],
-    ['Can we change a founder later?', 'No. The three founders are fixed at registration. Organisers can only correct typos while registration is open.'],
+    ['Can we change a founder later?', 'Only at the registration desk, for a reason, until the prelim starts: the organisers can replace a founder, add or remove one (1 to 3 per team) or change the captain. A new founder must be an IMI student who is not in another team.'],
     ['We lost our PIN.', 'Come to the check-in desk or contact an organiser. They will reset it and show you a new PIN once.'],
     ['How many phones do we need?', 'One per agency for the quiz. Your captain logs in with the agency ID and PIN. During the prelim, signing in on a new phone signs the old one out.'],
     ['What if our phone dies during the quiz?', 'Log back in on any phone with the same agency ID and PIN. Questions you missed score 0.'],
@@ -62,7 +62,7 @@ export default async function RulesPage() {
 
       <Section eyebrow="Your agency" title="Agency rules">
         <ul>
-          <li>{r.smallTeams ? '1 to 3' : 'Exactly 3'} founders, named at registration; no changes after that. All founders should be present from Round 1 onward.</li>
+          <li>{r.smallTeams ? '1 to 3' : 'Exactly 3'} founders, named at registration. Changes only at the desk, until the prelim starts. All founders should be present from Round 1 onward.</li>
           <li>Each agency picks a name and gets an ID (A01, A02…) used on the quiz, paddles, posters, forms and the ledger.</li>
           <li>One phone per agency for the quiz.</li>
         </ul>
@@ -83,9 +83,9 @@ export default async function RulesPage() {
             ['Round 1', '−₹2 Cr', 'Optional sealed Insider Tip'],
             ['Round 1', '−winning bid', 'Each gear card won'],
             ['Round 1', '−₹8 Cr each', 'Forced Jugaad Kit (Power 2) for every category still missing after Last Call'],
-            ['Round 2', '+₹5 Cr', 'Poster duel winner (or a bye), only if it also reaches the top 8 in the tower game'],
-            ['Round 3', '−₹5 Cr', 'Force Field for one mission'],
-            ['Round 3', '+₹6 Cr', "Mission winner's cash option, instead of Swap or X-Ray"],
+            ['Round 2', '+₹5 Cr', 'Poster duel winner (or a bye), only if it also reaches the top 10 in the tower game'],
+            ['Round 3', '−₹5 Cr', 'Force Field: one per finalist, for the whole round'],
+            ['Round 3', '+₹5 Cr', "Mini game winner's cash option, instead of Swap or X-Ray"],
             ['Round 3', '± any', 'Chai Pe Charcha deals between agencies, reported to the ledger'],
             ['Round 3', '−₹5 Cr', "Fine for opening another agency's Mission File"],
           ]}

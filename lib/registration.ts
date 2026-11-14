@@ -99,3 +99,30 @@ export function registrationErrorMessage(message: string): { field?: string; tex
   if (message.includes('must be @')) return { text: 'Every founder must use an IMI email ID.' };
   return { text: 'The registration could not be saved. Please try again.' };
 }
+
+/**
+ * A last-minute team change at the desk (organisers' request, 15 November): 1 to 3 members,
+ * one captain (the slot picked in `captain`). A row left completely blank is a member removed.
+ */
+export function validateTeamEdit(form: Record<string, string>, emailDomain: string | null): RegistrationResult & { reason?: string } {
+  const errors: Record<string, string> = {};
+  const filled = FOUNDER_SLOTS.filter((i) => ['name', 'section', 'phone', 'email'].some((k) => (form[`f${i}_${k}`] ?? '').trim() !== ''));
+  if (filled.length === 0) errors.form = 'A team needs at least one member.';
+  const captain = Number(form.captain ?? '-1');
+  if (filled.length > 0 && !filled.includes(captain as 0 | 1 | 2)) errors.captain = 'Pick the captain among the members you kept.';
+  const founders: FounderInput[] = filled.map((i) => {
+    const name = collapse(form[`f${i}_name`] ?? '');
+    const section = collapse(form[`f${i}_section`] ?? '');
+    const phone = normalizePhone(form[`f${i}_phone`] ?? '');
+    const email = normalizeEmail(form[`f${i}_email`] ?? '');
+    if (name.length < 2 || name.length > 60 || !PERSON_NAME.test(name)) errors[`f${i}_name`] = `Member ${i + 1}: enter the full name (letters only).`;
+    if (section.length < 1 || section.length > 20 || !SECTION.test(section)) errors[`f${i}_section`] = `Member ${i + 1}: enter the section.`;
+    if (!phone) errors[`f${i}_phone`] = `Member ${i + 1}: enter a 10-digit Indian mobile number.`;
+    if (!EMAIL.test(email)) errors[`f${i}_email`] = `Member ${i + 1}: enter a valid email address.`;
+    else if (!emailMatchesDomain(email, emailDomain)) errors[`f${i}_email`] = `Member ${i + 1}: use the IMI email ID ending in @${emailDomain}.`;
+    return { name, section, phone: phone ?? '', email, isCaptain: i === captain };
+  });
+  const reason = collapse(form.reason ?? '');
+  if (reason.length < 3) errors.reason = 'Write a short reason for the change.';
+  return Object.keys(errors).length ? { ok: false, errors } : { ok: true, value: { agencyName: '', founders }, reason };
+}

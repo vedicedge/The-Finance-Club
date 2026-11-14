@@ -20,7 +20,7 @@ export const CONSOLE_FOR: Record<Phase, { href: string; label: string }> = {
   round1: { href: '/admin/auction', label: 'Power Bazaar console' },
   round2: { href: '/admin/round2', label: 'Round 2 console' },
   round3: { href: '/admin/round3', label: 'Round 3 console' },
-  zero_hour: { href: '/admin/round3', label: 'Round 3 console' },
+  zero_hour: { href: '/admin/results', label: 'Final leaderboard' },
   ended: { href: '/admin/print', label: 'Print & backups' },
 };
 
@@ -51,6 +51,11 @@ export function Guide({ guide, snap, organiser }: { guide: GuideData; snap: Guid
         Simple mode · {guide.phaseTitle}
         {snap.dryRun && <span className="ml-2 text-glow">· dry run</span>}
       </p>
+      {(snap.phase === 'checkin' || snap.phase === 'prelim') && !snap.quiz.frozen && !snap.quiz.kahoot?.on && opens('/admin/quiz') && (
+        <Link href="/admin/quiz#red-alert" className="mt-2 inline-block text-sm font-semibold text-ember underline-offset-4 hover:underline">
+          Website quiz failing? Red alert → move the prelim to Kahoot
+        </Link>
+      )}
 
       <section data-step={now.key} className="panel mt-4 border-l-4 border-l-glow px-6 py-7 sm:px-8">
         <p className="text-xs font-semibold tracking-[0.24em] text-glow uppercase">Do this now</p>
@@ -153,8 +158,8 @@ export function Guide({ guide, snap, organiser }: { guide: GuideData; snap: Guid
             <form action={guideDo.bind(null, 'r3-cash', String(r3m.no))} className="panel flex flex-col justify-between space-y-2 px-4 py-4">
               {key}
               <p className="text-sm font-semibold text-bone">Take the cash</p>
-              <p className="text-sm text-steel">+₹6 Cr to {r3m.winner}.</p>
-              <button disabled={!mayPress(organiser.roles, 'r3-cash')} className="btn btn-primary w-full">Take ₹6 Cr</button>
+              <p className="text-sm text-steel">+₹5 Cr to {r3m.winner}.</p>
+              <button disabled={!mayPress(organiser.roles, 'r3-cash')} className="btn btn-primary w-full">Take ₹5 Cr</button>
             </form>
           </div>
         )}

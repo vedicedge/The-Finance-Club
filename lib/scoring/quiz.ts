@@ -38,11 +38,44 @@ export function quizPoints({ responseTimeS, timerS, weight, correct }: QuizAnswe
   return Math.floor((2 * 1000 * weight * (twoT - t10) + twoT) / (2 * twoT));
 }
 
-/** Segment settings from the spec table (questions also store timer_s and weight). */
-export const SEGMENTS: Record<QuizSegment, { label: string; timerS: number; weight: number }> = {
-  marvel_ya_dc: { label: 'Marvel Ya DC?', timerS: 10, weight: 1 },
-  teen_clue: { label: 'Teen Clue, Ek Hero', timerS: 10, weight: 1 },
-  box_office: { label: 'Box Office Ka Hisaab', timerS: 20, weight: 2 },
-  hero_business: { label: 'Hero Ka Business', timerS: 10, weight: 1 },
-  sudden_death: { label: 'Sudden Death', timerS: 20, weight: 1 },
+/**
+ * The prelim's categories (segments): settings from the spec table, plus how screens show them.
+ * The quiz plays one category at a time, in `order`; each has its own colour on the projector
+ * and the phones, and a one-line instruction (organisers' request, 15 November).
+ */
+export type SegmentInfo = {
+  label: string;
+  timerS: number;
+  weight: number;
+  order: number;
+  /** Colour on the projector and phones. */
+  color: string;
+  colorName: string;
+  /** One line telling teams what to do. */
+  instruction: string;
 };
+export const SEGMENTS: Record<QuizSegment, SegmentInfo> = {
+  marvel_ya_dc: {
+    label: 'Marvel Ya DC? Company Edition', timerS: 10, weight: 1, order: 1, color: '#b794f6', colorName: 'violet',
+    instruction: 'A company name appears. Tap the universe that owns it: Marvel or DC.',
+  },
+  teen_clue: {
+    label: 'Teen Clue, Ek Hero', timerS: 10, weight: 1, order: 2, color: '#63b3ed', colorName: 'blue',
+    instruction: 'Three clues, one character. Pick who it is.',
+  },
+  box_office: {
+    label: 'Superhero Share Bazaar', timerS: 20, weight: 2, order: 3, color: '#a9cf6e', colorName: 'green',
+    instruction: 'A finance idea or a quick sum in a superhero story. 20 seconds, double points.',
+  },
+  hero_business: {
+    label: 'Hero Ka Business', timerS: 10, weight: 1, order: 4, color: '#f4f2e8', colorName: 'white',
+    instruction: 'A business term with a superhero setup. Pick the right term.',
+  },
+  sudden_death: {
+    label: 'Sudden Death', timerS: 20, weight: 1, order: 5, color: '#e5574a', colorName: 'red',
+    instruction: 'Tie for 16th place: the first correct answer wins.',
+  },
+};
+
+/** The four categories teams play, in order (sudden death is a tie-break, not a category). */
+export const PLAY_SEGMENTS = (['marvel_ya_dc', 'teen_clue', 'box_office', 'hero_business'] as const).map((id) => ({ id, ...SEGMENTS[id] }));

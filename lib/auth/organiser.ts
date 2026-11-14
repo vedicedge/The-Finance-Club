@@ -1,4 +1,5 @@
 import 'server-only';
+import { cache } from 'react';
 import { redirect } from 'next/navigation';
 import { serviceDb } from '@/lib/db/server';
 import { bootstrapAdminEmails } from '@/lib/env';
@@ -16,8 +17,9 @@ export type Organiser = {
  * The signed-in organiser, or null. Identity comes from a verified Supabase Auth token;
  * roles come from the organisers table (read with the service client).
  * An email listed in BOOTSTRAP_ADMIN_EMAILS gets an admin row on first sign-in.
+ * Read once per request: the console shell and the page share it (React cache).
  */
-export async function getOrganiser(): Promise<Organiser | null> {
+export const getOrganiser = cache(async (): Promise<Organiser | null> => {
   const auth = await supabaseAuthClient();
   const { data, error } = await auth.auth.getClaims();
   const claims = data?.claims;
@@ -56,7 +58,7 @@ export async function getOrganiser(): Promise<Organiser | null> {
     displayName: row.display_name,
     roles: (row.roles as string[]).filter(isRole),
   };
-}
+});
 
 /**
  * Use at the top of every organiser page and server action.

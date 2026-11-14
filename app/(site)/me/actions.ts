@@ -26,3 +26,23 @@ export async function buyInsiderTip(_prev: BuyTipState, _form: FormData): Promis
   revalidatePath('/me');
   return { done: true };
 }
+
+const FF_MESSAGES: Record<string, string> = {
+  ff_closed: 'The Force Field window has closed.',
+  ff_already_bought: 'Your agency already has its Force Field (a teammate may have just bought it).',
+  insufficient_fund: 'You need ₹5 Cr in your fund to buy a Force Field.',
+  not_signed_in: MESSAGES.not_signed_in,
+};
+
+/** A finalist buys its one Round 3 Force Field during the window. Only the organisers see who bought one. */
+export async function buyForceField(_prev: BuyTipState, _form: FormData): Promise<BuyTipState> {
+  const token = (await cookies()).get(AGENCY_SESSION_COOKIE)?.value;
+  if (!token) return { error: FF_MESSAGES.not_signed_in };
+  const { error } = await serviceDb().rpc('r3_agency_buy_ff', { p_token_hash: hashSessionToken(token) });
+  if (error) {
+    const code = Object.keys(FF_MESSAGES).find((k) => error.message?.includes(k));
+    return { error: code ? FF_MESSAGES[code] : 'Only finalists can buy a Force Field.' };
+  }
+  revalidatePath('/me');
+  return { done: true };
+}

@@ -6,7 +6,7 @@ import { serviceDb } from '@/lib/db/server';
 import { audit } from '@/lib/audit';
 import { generatePin, hashPin } from '@/lib/auth/pin';
 import { getEventState } from '@/lib/event-state';
-import { emailMatchesDomain, normalizeEmail, normalizePhone } from '@/lib/registration';
+import { emailMatchesDomain, normalizeEmail, normalizePhone, validateTeamEdit } from '@/lib/registration';
 
 export type PinResetState = { kind: 'idle' } | { kind: 'done'; pin: string } | { kind: 'error'; message: string };
 export type FounderEditState = { kind: 'idle' } | { kind: 'ok' } | { kind: 'error'; message: string };
@@ -67,6 +67,35 @@ export async function updateFounder(founderId: number, _prev: FounderEditState, 
   await audit(me, 'founder.update', { founder_id: founderId, name, section, phone, email });
   revalidatePath('/admin/agencies');
   return { kind: 'ok' };
+}
+
+export type TeamEditState = { kind: 'idle' } | { kind: 'ok'; message: string } | { kind: 'error'; message: string };
+
+/**
+ * A last-minute team change at the desk: replace, add or remove members and pick the captain,
+ * until the prelim starts. The reason and the members before and after go in the audit log.
+ */
+export async function editTeam(agencyId: string, _prev: TeamEditState, formData: FormData): Promise<TeamEditState> {
+  const me = await requireOrganiser('agencies');
+  const { settings } = await getEventState();
+  const form = Object.fromEntries([...formData.entries()].map(([k, v]) => [k, String(v)]));
+  const v = validateTeamEdit(form, settings.registration.emailDomain);
+  if (!v.ok) return { kind: 'error', message: Object.values(v.errors)[0] ?? 'Check the form.' };
+  const founders = v.value.founders.map((f) => ({ name: f.name, section: f.section, phone: f.phone, email: f.email, is_captain: f.isCaptain }));
+  const { data: before, error } = await serviceDb().rpc('admin_edit_team', { p_agency: agencyId, p_founders: founders, p_reason: v.reason, p_actor: me.userId });
+  if (error) {
+    const msg = error.hint
+      ? error.hint
+      : error.message.includes('_key')
+        ? 'That email or phone already belongs to someone else.'
+        : error.message.includes('@')
+          ? `Every email must end in @${settings.registration.emailDomain}.`
+          : error.message;
+    return { kind: 'error', message: msg };
+  }
+  await audit(me, 'agency.team_edit', { agency_id: agencyId, reason: v.reason, before, after: founders });
+  revalidatePath('/admin/agencies');
+  return { kind: 'ok', message: `${agencyId}: team updated (${founders.length} member${founders.length === 1 ? '' : 's'}).` };
 }
 
 /** Remove a duplicate or test registration. Only while registration is open. */

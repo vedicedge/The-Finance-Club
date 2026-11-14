@@ -4,6 +4,7 @@ import { canAccess } from '@/lib/auth/roles';
 import { isR1Step } from '@/lib/round1/steps';
 import { needing } from '@/lib/round1/lots';
 import { loadRound1 } from '@/lib/round1/server';
+import { loadBidState, loadBids, settleBidding } from '@/lib/round1/bidding';
 
 /**
  * What the auction projector shows. Only public facts leave this handler: the current lot,
@@ -16,13 +17,19 @@ export async function GET() {
   if (!organiser || !canAccess(organiser.roles, 'screens')) {
     return NextResponse.json({ error: 'not_signed_in' }, { status: 401, headers });
   }
-  const r1 = await loadRound1();
+  await settleBidding(); // the projector polls constantly, so it is what closes a window at 0:00
+  const [r1, bid] = await Promise.all([loadRound1(), loadBidState()]);
   const step = isR1Step(r1.step) ? r1.step : r1.locked ? 'locked' : null;
   const active = r1.agencies.filter((a) => a.status === 'active');
   const lotCard = r1.currentCardId ? r1.cards.find((c) => c.id === r1.currentCardId) : undefined;
   const last = r1.recent[0];
   const name = (id: string) => r1.agencies.find((a) => a.id === id)?.name ?? id;
   const showFunds = r1.locked || r1.settings.round1.showFundPublicly;
+  // Phone bidding for the lot on the projector: while open only the countdown and how many have
+  // bid; every amount only once the window has closed and settled.
+  const bidHere = step === 'secret' && bid && bid.cardId === r1.currentCardId ? bid : null;
+  const bids = bidHere ? await loadBids(bidHere.cardId) : [];
+  const bidSale = bidHere?.settled ? r1.recent.find((x) => x.card_id === bidHere.cardId) ?? null : null;
   // The cards of a series (what a revealed headline affects), to show them on screen. Series are
   // matched on their key (gear_name) and shown by their display name (series_name).
   const seriesCards = (series: string) =>
@@ -91,6 +98,17 @@ export async function GET() {
                 }),
             }
           : null,
+      bidding: bidHere
+        ? {
+            open: !bidHere.settled && Date.parse(bidHere.closesAt) > Date.parse(r1.now),
+            closesAt: bidHere.closesAt,
+            now: r1.now,
+            count: bids.length,
+            results: bidHere.settled
+              ? bids.map((b) => ({ agency: b.agency, name: name(b.agency), amount: b.amount, winner: bidSale?.agency_id === b.agency }))
+              : null,
+          }
+        : null,
       locked: r1.locked,
     },
     { headers },

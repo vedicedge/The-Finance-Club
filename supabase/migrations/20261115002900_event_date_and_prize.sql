@@ -1,4 +1,4 @@
--- Doomsday — 14 November: the event moves to 23 November 2026, 5:30 pm, and the prize is set.
+-- Doomsday — 15 November: the event moves to 23 November 2026, 5:30 pm, and the prize is set.
 --
 -- Event start: 23 Nov 2026, 17:30 India time (the countdown and every date on the site follow it).
 -- Registration: stays open until 18:00 India time on the event day, so walk-in teams can register.
@@ -22,7 +22,7 @@ create or replace function public.schema_version()
 returns text
 language sql
 immutable
-as $$ select '20261114002100'::text $$;
+as $$ select '20261115002900'::text $$;
 
 revoke all on function public.schema_version() from public, anon, authenticated;
 grant execute on function public.schema_version() to service_role;

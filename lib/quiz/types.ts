@@ -27,6 +27,8 @@ export type PhoneState =
             revealed: boolean;
             correct_index: number | null;
             my_answer: null | { option_index: number; late: boolean; is_correct: boolean | null; points: number | null };
+            /** First question of a category: the category intro shows until then. */
+            intro_until?: string | null;
           };
       totals: { points: number; correct: number; answered: number };
       revealed_count: number;
@@ -34,6 +36,8 @@ export type PhoneState =
       frozen: boolean;
       rank: number | null;
       dry_run?: boolean;
+      /** Red alert: the prelim moved to Kahoot. */
+      kahoot?: { pin: string | null; published: boolean; rank: number | null; score: number | null };
     };
 
 /** Seconds left on a question, using the server's clock (offset = server time − phone time). */

@@ -3,15 +3,15 @@ import { EVENT, ROUNDS } from '@/lib/config';
 import { getEventState, registrationStatus } from '@/lib/event-state';
 import { longDate, posterDate, shortDate } from '@/lib/schedule';
 import { Countdown } from '@/components/site/Countdown';
-import { HeroArt, KalyugCloseUp, Star, StarRule, Wordmark } from '@/components/art/Poster';
+import { HeroArt, KalyugCloseUp, Star, StarRule, TitleLockup } from '@/components/art/Poster';
 import { Scene, type SceneName } from '@/components/art/Scene';
 import { GearIcon } from '@/components/art/gear-icons';
 
 const STAGES: { tag: string; name: string; cut: string; line: string; scene: SceneName; href: string }[] = [
   { tag: 'Prelim', name: ROUNDS.prelim, cut: '50+ → 16', line: 'A 15-question live quiz on your phone. Fast and right beats slow and right.', scene: 'prelim', href: '/rounds#prelim' },
   { tag: 'Round 1', name: ROUNDS.round1, cut: '16 → round 2', line: 'Spend ₹50 Cr at a live auction to sign an HQ, a Suit, a Gadget and a Sidekick.', scene: 'bazaar', href: '/rounds#round-1' },
-  { tag: 'Round 2', name: ROUNDS.round2, cut: '→ top 8', line: 'Win the poster duel on Instagram stories, then rebuild a tower from memory and knock it down.', scene: 'skyline', href: '/rounds#round-2' },
-  { tag: 'Round 3', name: ROUNDS.round3, cut: '8 finalists', line: 'Sealed Mission Files, four puzzle races, swaps, X-Rays and Chai Pe Charcha deals.', scene: 'vault', href: '/rounds#round-3' },
+  { tag: 'Round 2', name: ROUNDS.round2, cut: '→ top 10', line: 'Win the poster duel on Instagram stories, then rebuild a tower from memory and knock it down.', scene: 'skyline', href: '/rounds#round-2' },
+  { tag: 'Round 3', name: ROUNDS.round3, cut: '10 finalists', line: 'Sealed Mission Files, four mini games, swaps, X-Rays, Force Fields and Chai Pe Charcha deals.', scene: 'vault', href: '/rounds#round-3' },
   { tag: 'Finale', name: ROUNDS.zeroHour, cut: '→ 1 Hero Agency', line: 'Envelopes open on stage. The highest Hero Score saves Mahanagar.', scene: 'zerohour', href: '/rounds#zero-hour' },
 ];
 
@@ -42,15 +42,12 @@ export default async function Landing() {
           <div className="relative mx-auto w-full max-w-7xl px-[var(--gutter)] pb-5 sm:pb-8 lg:flex lg:min-h-[min(54rem,calc(100svh-6.25rem))] lg:items-center lg:py-20 lg:short:py-8">
             <div className="mx-auto -mt-14 w-full max-w-xl text-center sm:-mt-20 lg:mx-0 lg:mt-0 lg:text-left">
               <h1>
-                <Wordmark
+                <TitleLockup
                   sizes="(min-width: 1024px) 560px, (min-width: 640px) 420px, 80vw"
                   preload
-                  className="mx-auto h-auto w-[min(80vw,21rem)] sm:w-[26rem] lg:mx-0 lg:-ml-2 lg:w-[min(100%,35rem)] lg:short:w-[27rem]"
+                  className="mx-auto w-[min(80vw,21rem)] sm:w-[26rem] lg:mx-0 lg:-ml-2 lg:w-[min(100%,35rem)] lg:short:w-[27rem]"
                 />
               </h1>
-              <p className="mt-1 font-serif text-[1.15rem] leading-snug text-silver italic sm:text-[1.45rem] lg:mt-4 lg:text-[clamp(1.45rem,3vw,1.95rem)] lg:short:mt-2">
-                {EVENT.tagline}
-              </p>
               <p className="mt-3 flex items-baseline justify-center gap-3 lg:mt-5 lg:justify-start lg:short:mt-3">
                 <span className="kicker !text-[0.68rem] !text-steel">Cash prize</span>
                 <span className="display metal num text-[1.7rem] sm:text-[2rem] lg:text-[2.4rem]">{EVENT.prizePool}</span>
@@ -223,7 +220,7 @@ export default async function Landing() {
             <div className="panel px-5 py-6">
               <div className="flex justify-center" aria-hidden="true">
                 <svg viewBox="0 0 64 44" className="h-9 w-14">
-                  <rect x="1" y="1" width="62" height="42" rx="3" fill="#1c2418" stroke="#d6c48e" strokeOpacity="0.6" />
+                  <rect x="1" y="1" width="62" height="42" rx="3" fill="#18261f" stroke="#d6c48e" strokeOpacity="0.6" />
                   <path d="M1 1 L32 26 L63 1" fill="none" stroke="#d6c48e" strokeOpacity="0.6" />
                   <circle cx="32" cy="26" r="6" fill="#d6c48e" />
                 </svg>

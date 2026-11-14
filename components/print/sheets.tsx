@@ -528,7 +528,7 @@ export function Round2Sheets({ base, r2 }: { base: Base; r2: R2 }) {
 
 // ---------------------------------------------------------------- Round 3
 
-const CHOICE_LABEL: Record<string, string> = { swap: 'Swap', xray: 'X-Ray', cash: '₹6 Cr cash', none: 'No winner' };
+const CHOICE_LABEL: Record<string, string> = { swap: 'Swap', xray: 'X-Ray', cash: '₹5 Cr cash', none: 'No winner' };
 
 export function Round3Sheets({ base, r3 }: { base: Base; r3: R3 }) {
   const final = finalists(base.agencies, r3.envelopeOf, base.flags.round2Published);
@@ -602,7 +602,7 @@ export function Round3Sheets({ base, r3 }: { base: Base; r3: R3 }) {
                     .join(', ')}
                 </td>
                 <td className="num font-bold">{m.winner_agency_id ?? ''}</td>
-                <td>{m.choice ? CHOICE_LABEL[m.choice] ?? m.choice : 'Swap · X-Ray · ₹6 Cr'}</td>
+                <td>{m.choice ? CHOICE_LABEL[m.choice] ?? m.choice : 'Swap · X-Ray · ₹5 Cr'}</td>
                 <td className="num">{m.swap_target ?? ''}</td>
                 <td />
               </tr>
@@ -674,7 +674,7 @@ export function Round3Sheets({ base, r3 }: { base: Base; r3: R3 }) {
             <BlankRows n={6} cols={6} />
           </tbody>
         </table>
-        <p className="muted !mt-2">Force Field payments and the ₹6 Cr mission cash go on the mission table and the backup ledger.</p>
+        <p className="muted !mt-2">Force Field payments and the ₹5 Cr mission cash go on the mission table and the backup ledger.</p>
       </Sheet>
     </>
   );

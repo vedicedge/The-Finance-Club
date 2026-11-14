@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { EVENT } from '@/lib/config';
-import { Wordmark, StarRule } from '@/components/art/Poster';
+import { TitleLockup, StarRule } from '@/components/art/Poster';
 import { Skyline } from '@/components/Skyline';
 
 export function SiteFooter() {
@@ -10,8 +10,7 @@ export function SiteFooter() {
       <div className="mx-auto max-w-6xl px-[var(--gutter)] pt-4 pb-12">
         <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <div>
-            <Wordmark sizes="(min-width: 640px) 320px, 240px" className="h-auto w-60 sm:w-80" alt={EVENT.name} />
-            <p className="mt-3 font-serif text-xl text-silver italic">{EVENT.tagline}</p>
+            <TitleLockup sizes="(min-width: 640px) 320px, 240px" className="w-60 sm:w-80" />
           </div>
           <nav aria-label="Footer" className="grid grid-cols-2 gap-x-10 gap-y-2.5 sm:grid-cols-3">
             {[

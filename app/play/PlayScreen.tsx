@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { FullscreenButton } from '@/components/site/FullscreenButton';
+import { pollFetch } from '@/lib/poll';
 import { SEGMENTS } from '@/lib/scoring/quiz';
 import { OPTION_LETTERS, secondsLeft, secondsToStart, type PhoneState } from '@/lib/quiz/types';
 
@@ -10,6 +12,8 @@ type Q = Extract<NonNullable<Signed['question']>, { id: string }>;
 
 const POLL_LIVE_MS = 1000;
 const POLL_IDLE_MS = 2000;
+/** A poll stuck on bad Wi-Fi is dropped after this, so the next one always runs. */
+const POLL_TIMEOUT_MS = 4000;
 
 /** The phone quiz screen: waiting → read-in → question → locked → result → final board. */
 export function PlayScreen({ stateUrl = '/api/quiz/state' }: { stateUrl?: string }) {
@@ -25,7 +29,7 @@ export function PlayScreen({ stateUrl = '/api/quiz/state' }: { stateUrl?: string
   const poll = useCallback(async () => {
     const t0 = Date.now();
     try {
-      const res = await fetch(stateUrl, { cache: 'no-store' });
+      const res = await pollFetch(stateUrl, POLL_TIMEOUT_MS);
       const t1 = Date.now();
       const data = (await res.json()) as PhoneState;
       if ('now' in data && data.now) {
@@ -45,28 +49,42 @@ export function PlayScreen({ stateUrl = '/api/quiz/state' }: { stateUrl?: string
     }
   }, [stateUrl]);
 
-  // Polling loop: faster while a question is live.
+  // Polling loop: faster while a question is live. A hidden screen (phone locked, another app
+  // open) stops polling and catches up the moment it is shown again.
   useEffect(() => {
     let stopped = false;
+    let running = false;
     const loop = async () => {
+      if (timer.current) window.clearTimeout(timer.current);
+      timer.current = null;
+      if (stopped || running || document.visibilityState === 'hidden') return;
+      running = true;
       const data = await poll();
+      running = false;
       if (stopped) return;
       const q = data && data.signed_in ? data.question : null;
       const live = q && 'id' in q && !q.revealed && q.status === 'open';
       timer.current = window.setTimeout(loop, live ? POLL_LIVE_MS : POLL_IDLE_MS);
     };
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') loop();
+    };
     loop();
+    document.addEventListener('visibilitychange', onVisible);
     return () => {
       stopped = true;
+      document.removeEventListener('visibilitychange', onVisible);
       if (timer.current) window.clearTimeout(timer.current);
     };
   }, [poll]);
 
-  // Redraw the countdown smoothly between polls.
+  // Redraw the countdown smoothly between polls, only while a question is on screen.
+  const ticking = Boolean(state && state.signed_in && state.question && 'id' in state.question && !state.question.revealed);
   useEffect(() => {
+    if (!ticking) return;
     const id = window.setInterval(() => setTick((t) => t + 1), 200);
     return () => window.clearInterval(id);
-  }, []);
+  }, [ticking]);
 
   const answer = async (q: Q, option: number) => {
     if (pending) return;
@@ -142,13 +160,38 @@ function Body({
   pending: { question: string; option: number } | null;
   onAnswer: (q: Q, option: number) => void;
 }) {
+  // ---------------------------------------------------------------- red alert: the prelim on Kahoot
+  const k = s.kahoot;
+  if (k && !k.published && (s.phase === 'prelim' || s.phase === 'checkin')) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center bg-ember/15 px-6 text-center">
+        <p className="text-sm font-bold tracking-[0.3em] text-ember uppercase">Red alert</p>
+        <h1 className="display mt-3 text-4xl leading-tight text-bone">The prelim continues on Kahoot</h1>
+        <p className="mt-5 text-lg text-bone">
+          Open <span className="font-semibold text-glow">kahoot.it</span>
+          {k.pin ? (
+            <>
+              {' '}and enter the game PIN <span className="num block text-5xl font-semibold text-glow">{k.pin}</span>
+            </>
+          ) : ' and enter the game PIN shown on the projector.'}
+        </p>
+        <p className="mt-5 text-base text-bone">
+          Nickname: your agency ID first, e.g. <span className="num font-semibold">{s.agency.id} {s.agency.name}</span>
+        </p>
+        <p className="mt-3 text-sm text-steel">One phone per team. A nickname without your agency ID cannot be ranked.</p>
+      </div>
+    );
+  }
+
   // ---------------------------------------------------------------- after the prelim
   if (s.published || (s.phase !== 'prelim' && s.phase !== 'registration' && s.phase !== 'checkin')) {
     const qualified = s.agency.status === 'active';
     const out = s.agency.status === 'eliminated';
+    const rank = k ? k.rank : s.rank;
+    const points = k ? k.score ?? 0 : s.totals.points;
     return (
-      <Centered eyebrow="Prelim · final board" title={s.rank ? `Rank #${s.rank}` : 'Prelim complete'}>
-        <p className="num mt-2 text-xl text-bone">{s.totals.points.toLocaleString('en-IN')} points</p>
+      <Centered eyebrow={k ? 'Prelim · final board (Kahoot)' : 'Prelim · final board'} title={rank ? `Rank #${rank}` : 'Prelim complete'}>
+        <p className="num mt-2 text-xl text-bone">{points.toLocaleString('en-IN')} points</p>
         {qualified && <p className="stamp mt-6 text-toxic">Qualified for Power Bazaar</p>}
         {out && <p className="stamp mt-6 text-ember">Eliminated · Prelim</p>}
         {!s.frozen && <p className="mt-6 text-steel">The quiz host is confirming the top 16. Stay tuned to the projector.</p>}
@@ -200,15 +243,28 @@ function Body({
   const mine = q.my_answer?.option_index ?? (pending?.question === q.id ? pending.option : null);
   const answerable = !q.revealed && toStart <= 0 && left > 0 && mine === null;
 
+  // The first question of a category opens with the category intro.
+  if (q.intro_until && Date.now() + offset < Date.parse(q.intro_until)) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center px-6 text-center" style={{ background: `radial-gradient(80% 60% at 50% 40%, ${seg.color}33, transparent 75%)` }}>
+        <p className="text-xs font-semibold tracking-[0.3em] text-bone uppercase">New category · {seg.order} of 4</p>
+        <h1 className="display mt-3 text-4xl leading-tight" style={{ color: seg.color }}>{seg.label}</h1>
+        <p className="mt-4 text-lg text-bone">{seg.instruction}</p>
+        <p className="num mt-4 text-sm text-steel">{q.timer_s} s per question{q.weight > 1 ? ` · ×${q.weight} points` : ''}</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-1 flex-col px-4 pt-4 pb-6">
-      <p className="eyebrow">
-        Question {q.number} of 15 · {seg.label}
-      </p>
-      <p className="num mt-1 text-xs text-steel">
-        {q.timer_s} s{q.weight > 1 ? ` · ×${q.weight} points` : ''}
-      </p>
-      <h1 className="font-serif mt-3 text-[1.65rem] leading-snug text-bone">{q.prompt}</h1>
+    <div className="flex flex-1 flex-col px-4 pt-4 pb-6" style={{ background: `linear-gradient(${seg.color}1f, transparent 40%)` }}>
+      <div className="border-l-4 pl-3" style={{ borderColor: seg.color }}>
+        <p className="num text-xs font-semibold tracking-[0.2em] text-steel uppercase">
+          Question {q.number} of 15 · {q.timer_s} s{q.weight > 1 ? ` · ×${q.weight} points` : ''}
+        </p>
+        <p className="display mt-1 text-xl leading-tight" style={{ color: seg.color }}>{seg.label}</p>
+        <p className="mt-1 text-sm text-bone/85">{seg.instruction}</p>
+      </div>
+      <h1 className="font-serif mt-4 text-[1.65rem] leading-snug text-bone">{q.prompt}</h1>
 
       {/* Timer */}
       {!q.revealed && (
@@ -332,11 +388,14 @@ function Shell({
           <span className="num text-lg font-semibold text-glow">{agency?.id ?? '—'}</span>
           <span className="ml-2 truncate text-sm text-bone">{agency?.name}</span>
         </span>
-        {agency && (
-          <span className="num flex-none text-right text-sm text-steel">
-            <span className="text-bone">{(points ?? 0).toLocaleString('en-IN')}</span> pts · {done}/15
-          </span>
-        )}
+        <span className="flex flex-none items-center gap-3">
+          {agency && (
+            <span className="num text-right text-sm text-steel">
+              <span className="text-bone">{(points ?? 0).toLocaleString('en-IN')}</span> pts · {done}/15
+            </span>
+          )}
+          <FullscreenButton />
+        </span>
       </header>
       {offline && (
         <p role="alert" className="bg-ember/15 px-4 py-2 text-center text-xs font-semibold tracking-[0.14em] text-ember uppercase">

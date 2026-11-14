@@ -4,7 +4,9 @@
  */
 export const EVENT = {
   name: 'Doomsday',
-  tagline: 'Fund it ★ Build it ★ Save the city.',
+  /** The event's subtitle: the full title is "Doomsday: Multiverse of Money". */
+  tagline: 'Multiverse of Money',
+  fullName: 'Doomsday: Multiverse of Money',
   club: 'The Finance Club',
   villain: 'Professor Kalyug',
   city: 'Mahanagar',

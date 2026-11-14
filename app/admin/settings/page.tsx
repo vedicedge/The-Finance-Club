@@ -18,7 +18,10 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
   return (
     <AdminShell organiser={organiser}>
       <p className="eyebrow">Admin</p>
-      <h1 className="display mt-3 text-5xl">Settings</h1>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <h1 className="display mt-3 text-5xl">Settings</h1>
+        <a href="/admin/content" className="btn btn-ghost">Questions &amp; cards (Excel) →</a>
+      </div>
       <p className="mt-4 max-w-2xl text-steel">
         The spec&apos;s open decisions and the site&apos;s defaults. Changes apply immediately. docs/decisions.md lists
         what each one means.

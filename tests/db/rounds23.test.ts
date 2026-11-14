@@ -57,9 +57,8 @@ describe.skipIf(!hasDb)('Round 3', () => {
   const holder = (e: string) => `select holder_agency_id from v_envelope_holders where envelope_id = '${e}';`;
   const fund = (a: string) => `select fund_left('${a}');`;
 
-  it('the multiplier map must match the spec distribution', () => {
-    expect(sqlError(`select r3_set_envelope_contents(replace(${map}::text, 'Villain escaped', 'Clean win, zero damage')::jsonb, '${K}');`))
-      .toMatch(/bad_distribution/);
+  it('the multiplier map takes any outcome in any envelope', () => {
+    expect(sql(`select 1 from (select r3_set_envelope_contents(replace(${map}::text, 'Villain escaped', 'Clean win, zero damage')::jsonb, '${K}')) x;`)).toEqual(['1']);
   });
 
   it('the deal gives every finalist a different envelope', () => {
@@ -100,13 +99,24 @@ describe.skipIf(!hasDb)('Round 3', () => {
       select r3_choose(4, 'cash', null, '${K}'); ${fund('A06')}`)).toEqual(['26.0']);
   });
 
-  it('Chai Pe Charcha transfers: window, ₹0.5 steps, payer fund — two entries, one transaction', () => {
+  it('Chai Pe Charcha transfers: any time in Round 3, ₹0.5 steps, payer fund — two entries, one transaction', () => {
     const chai = `${r3} select r3_set_mission(2, 'chai');`;
     expect(sql(`${chai} select 1 from (select r3_transfer('A01', 'A02', 7.5, 'info deal', '${K}')) x; ${fund('A01')} ${fund('A02')}
       select count(distinct txn_id) from ledger_entries where reason = 'transfer';`)).toEqual(['1', '12.5', '27.5', '1']);
     expect(sqlError(`${chai} select r3_transfer('A01', 'A02', 20.5, '', '${K}');`)).toMatch(/insufficient_fund/);
     expect(sqlError(`${chai} select r3_transfer('A01', 'A02', 0.3, '', '${K}');`)).toMatch(/bad_step/);
-    expect(sqlError(`${r3} select r3_set_mission(2, 'play'); select r3_transfer('A01', 'A02', 1, '', '${K}');`)).toMatch(/window_closed/);
+    expect(sql(`${r3} select 1 from (select r3_transfer('A01', 'A02', 1, '', '${K}')) x; ${fund('A01')}`)).toEqual(['1', '19.0']);
+    expect(sqlError(`${r3} update event_state set phase = 'zero_hour' where id; select r3_transfer('A01', 'A02', 1, '', '${K}');`)).toMatch(/window_closed/);
+  });
+
+  it('one Force Field per finalist, bought in the window, played once', () => {
+    const ses = `insert into agency_sessions (token_hash, agency_id, expires_at) values ('f1', 'A01', now() + interval '1 hour');`;
+    expect(sqlError(`${r3} ${ses} select r3_agency_buy_ff('f1');`)).toMatch(/ff_closed/);
+    const open = `${r3} ${ses} select 1 from (select r3_open_ff_window(60, '${K}')) x;`;
+    expect(sql(`${open} select 1 from (select r3_agency_buy_ff('f1')) y; ${fund('A01')}
+      select 1 from (select r3_set_ff_used('A01', true, '${K}')) z; select used_at is not null from force_fields where agency_id = 'A01';`)).toEqual(['1', '1', '15.0', '1', 't']);
+    expect(sqlError(`${open} select r3_agency_buy_ff('f1'); select r3_agency_buy_ff('f1');`)).toMatch(/ff_already_bought/);
+    expect(sqlError(`${r3} select r3_set_ff_used('A02', true, '${K}');`)).toMatch(/no_force_field/);
   });
 
   it('a fine always applies, even below zero', () => {
@@ -142,8 +152,7 @@ describe.skipIf(!hasDb)('Zero Hour reveal', () => {
     expect(out).toEqual(['E8', 'E6', 'A08|2|0.25|19.0|10.00', 'A06|3|0.50|19.0|11.00']);
   });
 
-  it('waits for Mission 4\'s choice, then stops after the eighth envelope', () => {
-    expect(sqlError(`${zh} select r3_set_winner(4, 'A01', '${K}'); select zh_next_reveal('${K}');`)).toMatch(/mission4_choice_pending/);
+  it('stops after the eighth envelope (missions run offline)', () => {
     expect(sqlError(`${zh} ${Array(9).fill(`select zh_next_reveal('${K}');`).join(' ')}`)).toMatch(/all_revealed/);
   });
 });

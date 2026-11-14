@@ -1,5 +1,6 @@
 'use client';
 
+import { pollFetch } from '@/lib/poll';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 import { EVENT, ROUNDS } from '@/lib/config';
 import { formatCrore } from '@/lib/money';
@@ -20,7 +21,7 @@ export function RevealProjector({ canDrive, stateUrl = '/api/screen/reveal' }: {
 
   const load = useCallback(async () => {
     try {
-      const res = await fetch(stateUrl, { cache: 'no-store' });
+      const res = await pollFetch(stateUrl);
       if (res.status === 401) setError('Sign in at /admin/login on this laptop.');
       else setS((await res.json()) as S);
     } catch {
@@ -89,7 +90,7 @@ export function RevealProjector({ canDrive, stateUrl = '/api/screen/reveal' }: {
                 <h1 className="display metal text-[7cqw]">Zero Hour</h1>
                 <p className="mt-[2cqh] text-[2.2cqw] text-steel">
                   {s.mission4.pending
-                    ? `Mission 4's winner ${s.mission4.winner} makes the last call: Swap, X-Ray or ₹6 Cr.`
+                    ? `Mission 4's winner ${s.mission4.winner} makes the last call: Swap, X-Ray or ₹5 Cr.`
                     : 'Eight Mission Files. Opened in ascending Power Level. Highest Hero Score saves Mahanagar.'}
                 </p>
               </>

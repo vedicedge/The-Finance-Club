@@ -1,14 +1,15 @@
 'use client';
 
+import { pollFetch } from '@/lib/poll';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { QuizProjector } from '@/app/screen/quiz/QuizProjector';
 import { AuctionProjector } from '@/app/screen/auction/AuctionProjector';
 import { BoardProjector } from '@/app/screen/board/BoardProjector';
-import { RevealProjector } from '@/app/screen/reveal/RevealProjector';
-import { HoldingScreen, WelcomeScreen } from '@/components/screen/Slides';
+import { RulesScreen } from '@/components/screen/RulesScreen';
+import { CoverScreen, EventCover, HoldingScreen, PodiumScreen, WelcomeScreen } from '@/components/screen/Slides';
 import type { ProjectorScreen } from '@/lib/projector';
 
-type State = { now: string; phase: string; mode: string; screen: ProjectorScreen; startsAt: string; venue: string; agencies: number };
+type State = { now: string; phase: string; mode: string; screen: ProjectorScreen; startsAt: string; venue: string; agencies: number; places?: { place: number; id: string; name: string; coinToss: boolean }[]; finale?: 'podium' | 'cover' | null; ffClosesAt?: string | null };
 
 const POLL_MS = 2000;
 const IDLE_MS = 2500;
@@ -27,7 +28,7 @@ export function ProjectorShell({ preview = false }: { preview?: boolean }) {
     let t: number;
     const loop = async () => {
       try {
-        const res = await fetch('/api/screen/projector', { cache: 'no-store' });
+        const res = await pollFetch('/api/screen/projector');
         if (res.status === 401) setError('Sign in at /admin/login with the projector account.');
         else {
           setState((await res.json()) as State);
@@ -48,7 +49,7 @@ export function ProjectorShell({ preview = false }: { preview?: boolean }) {
   return (
     <div className="fixed inset-0 bg-black">
       {state ? (
-        <div key={state.screen} className="projector-fade absolute inset-0">
+        <div key={state.screen + (state.finale ?? "")} className="projector-fade absolute inset-0">
           <Screen state={state} />
         </div>
       ) : (
@@ -72,8 +73,12 @@ function Screen({ state }: { state: State }) {
       return <AuctionProjector />;
     case 'board':
       return <BoardProjector />;
+    case 'cover':
+      return <CoverScreen phase={state.phase} ffClosesAt={state.ffClosesAt ?? null} serverNow={state.now} />;
     case 'reveal':
-      return <RevealProjector canDrive={false} />;
+      return state.finale === 'cover' ? <EventCover /> : <PodiumScreen places={state.places ?? []} final={state.finale === 'podium'} />;
+    case 'rules':
+      return <RulesScreen phase={state.phase} />;
     case 'welcome':
       return <WelcomeScreen startsAt={state.startsAt} serverNow={state.now} agencies={state.agencies} />;
     case 'holding':

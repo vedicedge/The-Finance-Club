@@ -33,12 +33,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: { default: `${EVENT.name} — ${EVENT.club}`, template: `%s · ${EVENT.name}` },
+  title: { default: `${EVENT.fullName} — ${EVENT.club}`, template: `%s · ${EVENT.name}` },
+  appleWebApp: { capable: true, title: EVENT.name, statusBarStyle: 'black-translucent' },
   description: `${EVENT.villain} has announced a doomsday attack on ${EVENT.city}. Hero agencies race to fund, build and save the city.`,
   robots: { index: false, follow: false },
   openGraph: {
-    title: `${EVENT.name} — ${EVENT.club}`,
-    description: `${EVENT.tagline} 23 November 2026. Cash prize ${EVENT.prizePool}.`,
+    title: `${EVENT.fullName} — ${EVENT.club}`,
+    description: `${EVENT.fullName} · 23 November 2026 · Cash prize ${EVENT.prizePool}.`,
     type: 'website',
   },
 };

@@ -1,7 +1,7 @@
 'use client';
 
-import Image from 'next/image';
-import wordmark from '@/assets/art/wordmark.webp';
+import { pollFetch } from '@/lib/poll';
+import { TitleLockup } from '@/components/art/Poster';
 import { useEffect, useRef, useState } from 'react';
 import { EVENT, ROUNDS } from '@/lib/config';
 import { SEGMENTS, type QuizSegment } from '@/lib/scoring/quiz';
@@ -15,6 +15,7 @@ type ScreenState = {
   mode: 'lobby' | 'question' | 'board';
   published: boolean;
   frozen: boolean;
+  kahoot?: { pin: string | null } | null;
   standingBy: number;
   eligibleCount: number;
   lockedCount: number;
@@ -31,6 +32,8 @@ type ScreenState = {
     revealed: boolean;
     correct_index: number | null;
     distribution: number[] | null;
+    intro_until?: string | null;
+    reveal_line?: string | null;
   };
   board: null | {
     rows: { id: string; name: string; total: number; rank: number; position: number; qualified: boolean | null }[];
@@ -51,7 +54,7 @@ export function QuizProjector({ stateUrl = '/api/screen/quiz' }: { stateUrl?: st
     const loop = async () => {
       const t0 = Date.now();
       try {
-        const res = await fetch(stateUrl, { cache: 'no-store' });
+        const res = await pollFetch(stateUrl);
         const t1 = Date.now();
         if (res.status === 401) setError('Sign in at /admin/login on this laptop to drive the projector.');
         else {
@@ -82,6 +85,8 @@ export function QuizProjector({ stateUrl = '/api/screen/quiz' }: { stateUrl?: st
       <TopBar s={s} />
       {!s ? (
         <Center title={error ?? 'Establishing secure line…'} />
+      ) : s.kahoot && !(s.mode === 'board' && s.board) ? (
+        <RedAlert pin={s.kahoot.pin} />
       ) : s.mode === 'board' && s.board ? (
         <BoardView s={s} />
       ) : s.mode === 'question' && s.question ? (
@@ -102,11 +107,29 @@ function TopBar({ s }: { s: ScreenState | null }) {
       <p className="text-[1.25cqw] font-semibold tracking-[0.3em] text-steel uppercase">
         {EVENT.name} · Prelim · <span className="text-glow">{ROUNDS.prelim}</span>
       </p>
-      {s?.question?.number && s.mode === 'question' && (
+      {s?.question?.number && s.mode === 'question' && !s.kahoot && (
         <p className="num text-[1.4cqw] font-semibold tracking-[0.2em] text-steel uppercase">
           Question <span className="text-bone">{s.question.number}</span> / 15
         </p>
       )}
+    </div>
+  );
+}
+
+/** The red alert: the prelim continues on Kahoot. */
+function RedAlert({ pin }: { pin: string | null }) {
+  return (
+    <div className="flex h-full flex-col items-center justify-center bg-ember/10 px-[6cqw] text-center">
+      <p className="text-[1.6cqw] font-bold tracking-[0.4em] text-ember uppercase">Red alert</p>
+      <p className="display mt-[2cqh] text-[4.6cqw] leading-tight">The prelim continues on Kahoot</p>
+      <p className="mt-[4cqh] text-[2.2cqw] text-bone">
+        Go to <span className="font-semibold text-glow">kahoot.it</span> and enter the game PIN
+      </p>
+      <p className="num mt-[1cqh] text-[9cqw] leading-none font-semibold text-glow">{pin || '— — —'}</p>
+      <p className="mt-[4cqh] text-[1.9cqw] text-bone">
+        Nickname: <span className="font-semibold">your agency ID first</span>, e.g. <span className="num">A07 Rakshak Labs</span>
+      </p>
+      <p className="mt-[1.5cqh] text-[1.4cqw] text-steel">One phone per agency. A nickname without the agency ID cannot be ranked.</p>
     </div>
   );
 }
@@ -124,7 +147,7 @@ function Lobby({ s }: { s: ScreenState }) {
   const host = typeof window === 'undefined' ? '' : window.location.host;
   return (
     <div className="flex h-full flex-col items-center justify-center text-center">
-      <Image src={wordmark} alt={EVENT.name} sizes="40vw" className="h-auto w-[34cqw]" />
+      <TitleLockup sizes="40vw" className="w-[34cqw]" />
       <p className="mt-[3cqh] text-[1.4cqw] font-semibold tracking-[0.35em] text-glow uppercase">Incoming transmission</p>
       <h1 className="display metal mt-[1.5cqh] text-[8.8cqw]">{ROUNDS.prelim}</h1>
       <p className="mt-[3cqh] text-[2.4cqw] text-bone">
@@ -147,17 +170,18 @@ function QuestionView({ s, offset }: { s: ScreenState; offset: number }) {
   const total = Math.max(1, s.eligibleCount);
 
   if (q.status === 'void') return <Center title="Question voided."><p className="mt-[2cqh] text-[2cqw] text-steel">Stand by for a replacement.</p></Center>;
+  // The first question of a category opens with a few seconds of category intro.
+  if (q.intro_until && Date.now() + offset < Date.parse(q.intro_until)) return <CategoryIntro q={q} />;
 
   return (
-    <div className="grid h-full grid-cols-[1fr_22cqw] gap-[3cqw] px-[4cqw] pt-[11cqh] pb-[5cqh]">
-      <div className="flex min-w-0 flex-col">
-        <p className="text-[1.4cqw] font-semibold tracking-[0.3em] text-glow uppercase">
-          {q.segment === 'sudden_death' ? 'Sudden death · 16th place' : seg.label}
-          <span className="ml-[1cqw] text-steel">
-            {q.timer_s} s{q.weight > 1 ? ` · ×${q.weight}` : ''}
-          </span>
-        </p>
-        <h1 className="font-serif mt-[2.5cqh] text-[3.6cqw] leading-[1.15] text-bone">{q.prompt}</h1>
+    <div className="relative grid h-full grid-cols-[1fr_22cqw] gap-[3cqw] px-[4cqw] pt-[11cqh] pb-[5cqh]">
+      <CategoryTint color={seg.color} />
+      <div className="relative flex min-w-0 flex-col">
+        <CategoryBanner q={q} />
+        <h1 className={`font-serif mt-[2.5cqh] leading-[1.15] text-bone ${q.prompt.length <= 40 ? 'text-[5.2cqw]' : 'text-[3.4cqw]'}`}>{q.prompt}</h1>
+        {q.revealed && q.reveal_line && (
+          <p className="mt-[2cqh] text-[2cqw] leading-snug text-toxic">✓ {q.reveal_line}</p>
+        )}
         <ol className={`mt-auto grid gap-[1.4cqw] ${q.options.length === 2 ? 'grid-cols-2' : 'grid-cols-2'}`}>
           {q.options.map((opt, i) => {
             const correct = q.revealed && q.correct_index === i;
@@ -168,8 +192,9 @@ function QuestionView({ s, offset }: { s: ScreenState; offset: number }) {
               <li
                 key={i}
                 className={`relative flex items-center gap-[1.4cqw] overflow-hidden rounded-[0.3cqw] border px-[1.6cqw] py-[2.2cqh] ${
-                  correct ? 'border-toxic bg-toxic/15' : 'border-line-strong bg-vault/90'
+                  correct ? 'border-toxic bg-toxic/15' : 'bg-vault/90'
                 } ${dim ? 'opacity-45' : ''}`}
+                style={correct ? undefined : { borderColor: `${seg.color}66` }}
               >
                 {q.distribution && (
                   <span
@@ -189,7 +214,7 @@ function QuestionView({ s, offset }: { s: ScreenState; offset: number }) {
         </ol>
       </div>
 
-      <aside className="flex flex-col items-center justify-center border-l border-line pl-[3cqw] text-center">
+      <aside className="relative flex flex-col items-center justify-center border-l border-line pl-[3cqw] text-center">
         {q.revealed ? (
           <>
             <p className="text-[1.3cqw] font-semibold tracking-[0.3em] text-steel uppercase">Answer</p>
@@ -210,8 +235,8 @@ function QuestionView({ s, offset }: { s: ScreenState; offset: number }) {
             </p>
             <div className="mt-[3cqh] h-[1.2cqh] w-full overflow-hidden rounded-full bg-vault-2">
               <div
-                className={`h-full origin-left ${left <= 3 ? 'bg-ember' : 'bg-glow'}`}
-                style={{ transform: `scaleX(${Math.max(0, left / q.timer_s)})`, transition: 'transform 200ms linear' }}
+                className={`h-full origin-left ${left <= 3 ? 'bg-ember' : ''}`}
+                style={{ transform: `scaleX(${Math.max(0, left / q.timer_s)})`, transition: 'transform 200ms linear', ...(left <= 3 ? {} : { background: seg.color }) }}
               />
             </div>
           </>
@@ -225,6 +250,54 @@ function QuestionView({ s, offset }: { s: ScreenState; offset: number }) {
           </p>
         )}
       </aside>
+    </div>
+  );
+}
+
+type Q = NonNullable<ScreenState['question']>;
+
+/** A soft wash of the category's colour over the projector, and a stripe along the top. */
+function CategoryTint({ color }: { color: string }) {
+  return (
+    <>
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: `radial-gradient(90% 70% at 30% 0%, ${color}2e, transparent 70%)` }} />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-[8.5cqh] h-[0.6cqh]" style={{ background: color }} />
+    </>
+  );
+}
+
+/** The category, big and in its colour, with the one-line instruction. */
+function CategoryBanner({ q }: { q: Q }) {
+  const seg = SEGMENTS[q.segment];
+  const sudden = q.segment === 'sudden_death';
+  return (
+    <div>
+      <p className="text-[1.15cqw] font-semibold tracking-[0.3em] text-steel uppercase">
+        {sudden ? 'Tie for 16th place' : `Category ${seg.order} of 4`} · {q.timer_s} s{q.weight > 1 ? ` · ×${q.weight} points` : ''}
+      </p>
+      <p className="display mt-[0.6cqh] flex items-center gap-[1.2cqw] text-[3.4cqw] leading-none" style={{ color: seg.color }}>
+        <span aria-hidden="true" className="inline-block size-[2.2cqw] flex-none rounded-[0.3cqw]" style={{ background: seg.color }} />
+        {seg.label}
+      </p>
+      <p className="mt-[1.2cqh] text-[1.7cqw] text-bone/85">{seg.instruction}</p>
+    </div>
+  );
+}
+
+/** The first question of a category: the whole screen announces the new category. */
+function CategoryIntro({ q }: { q: Q }) {
+  const seg = SEGMENTS[q.segment];
+  return (
+    <div className="relative flex h-full flex-col items-center justify-center px-[8cqw] text-center">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: `radial-gradient(70% 60% at 50% 50%, ${seg.color}40, transparent 75%)` }} />
+      <p className="relative text-[1.8cqw] font-semibold tracking-[0.35em] text-bone uppercase">
+        {q.segment === 'sudden_death' ? 'Sudden death' : `New category · ${seg.order} of 4`}
+      </p>
+      <h1 className="display relative mt-[2cqh] text-[7cqw] leading-none" style={{ color: seg.color }}>{seg.label}</h1>
+      <p className="relative mt-[4cqh] max-w-[70cqw] text-[2.6cqw] leading-snug text-bone">{seg.instruction}</p>
+      <p className="num relative mt-[4cqh] text-[1.8cqw] text-steel">
+        {q.timer_s} seconds per question{q.weight > 1 ? ` · ×${q.weight} points` : ''} · question {q.number ?? ''} of 15 coming up
+      </p>
     </div>
   );
 }

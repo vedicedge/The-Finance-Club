@@ -58,9 +58,18 @@ export function KalyugImage({ className = '', sizes }: { className?: string; siz
   );
 }
 
-/** The DOOMSDAY lettering from the poster, on a transparent background. */
-export function Wordmark({ className = '', sizes, preload = false, alt = EVENT.name }: { className?: string; sizes: string; preload?: boolean; alt?: string }) {
-  return <Image src={wordmark} alt={alt} sizes={sizes} preload={preload} className={className} />;
+/**
+ * The event title as the poster sets it: the gold DOOMSDAY wordmark with "The Multiverse of
+ * Money" beneath it, cut from the November poster as one image. Size it with the className width.
+ */
+export function TitleLockup({ className = '', sizes, preload = false, star = false }: { className?: string; sizes: string; preload?: boolean; star?: boolean }) {
+  return (
+    <div className={`[container-type:inline-size] ${className}`}>
+      {/* The lettering image carries "The Multiverse of Money" and its rule, as on the poster. */}
+      <Image src={wordmark} alt={EVENT.fullName} sizes={sizes} preload={preload} className="block h-auto w-full" />
+      {star && <StarRule className="mx-auto mt-[2.4cqw] w-[70%]" />}
+    </div>
+  );
 }
 
 /** The poster blurred into a green haze, to sit behind a section. */

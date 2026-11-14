@@ -3,10 +3,11 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import heroDesktop from '@/assets/art/hero-desktop.jpg';
-import wordmark from '@/assets/art/wordmark.webp';
-import { EVENT } from '@/lib/config';
+import { EVENT, ROUNDS } from '@/lib/config';
 import { PHASE_INFO, isPhase } from '@/lib/phases';
 import { Stage } from '@/components/screen/Stage';
+import { TitleLockup } from '@/components/art/Poster';
+import { WindowClock } from '@/components/site/WindowClock';
 
 /**
  * Projector slides that are not a round of their own: the welcome slide before the prelim and
@@ -32,8 +33,7 @@ export function WelcomeScreen({ startsAt, serverNow, agencies }: { startsAt: str
     >
       <div className="flex h-full w-[52cqw] flex-col justify-center pl-[6cqw]">
         <p className="text-[1.3cqw] font-semibold tracking-[0.35em] text-glow uppercase">Incoming transmission · {EVENT.city}</p>
-        <Image src={wordmark} alt={EVENT.name} sizes="40vw" className="mt-[2.5cqh] h-auto w-[38cqw]" />
-        <p className="mt-[1.5cqh] font-serif text-[2.4cqw] text-silver italic">{EVENT.tagline}</p>
+        <TitleLockup sizes="40vw" className="mt-[2.5cqh] w-[38cqw]" />
         <p className="mt-[5cqh] text-[1.2cqw] font-semibold tracking-[0.3em] text-steel uppercase">{EVENT.villain} strikes in</p>
         <BigCountdown target={startsAt} serverNow={serverNow} />
         <p className="mt-[5cqh] text-[1.8cqw] text-bone">
@@ -55,7 +55,7 @@ export function HoldingScreen({ phase }: { phase: string }) {
   return (
     <Stage art="zerohour">
       <div className="flex h-full flex-col items-center justify-center text-center">
-        <Image src={wordmark} alt={EVENT.name} sizes="30vw" className="h-auto w-[26cqw] opacity-90" />
+        <TitleLockup sizes="30vw" className="w-[30cqw] opacity-90" />
         <p className="mt-[4cqh] text-[1.4cqw] font-semibold tracking-[0.35em] text-glow uppercase">{label}</p>
         <h1 className="display metal mt-[2cqh] text-[8cqw] leading-none">Back shortly</h1>
         <p className="mt-[3cqh] font-serif text-[2.2cqw] text-silver italic">Stay close. {EVENT.city} still needs you.</p>
@@ -91,5 +91,91 @@ function BigCountdown({ target, serverNow }: { target: string; serverNow: string
         </div>
       ))}
     </div>
+  );
+}
+
+const COVERS: Record<string, { eyebrow: string; title: string; line: string; art: 'skyline' | 'zerohour' }> = {
+  round2: { eyebrow: 'Round 2', title: ROUNDS.round2, line: `Win the city’s belief. Then defend ${EVENT.city}’s skyline.`, art: 'skyline' },
+  round3: { eyebrow: 'Round 3', title: ROUNDS.round3, line: `Sealed Mission Files. Only one agency saves ${EVENT.city}.`, art: 'zerohour' },
+};
+
+/** A round's cover: Round 2 until its results are published, Round 3 throughout (with the Force Field countdown). */
+export function CoverScreen({ phase = 'round3', ffClosesAt = null, serverNow = '' }: { phase?: string; ffClosesAt?: string | null; serverNow?: string }) {
+  const c = COVERS[phase] ?? COVERS.round3;
+  return (
+    <Stage art={c.art}>
+      <div className="flex h-full flex-col items-center justify-center text-center">
+        <p className="text-[1.4cqw] font-semibold tracking-[0.35em] text-glow uppercase">{c.eyebrow}</p>
+        <h1 className="display metal mt-[2cqh] text-[7.5cqw] leading-none">{c.title}</h1>
+        <p className="mt-[3cqh] font-serif text-[2.2cqw] text-silver italic">{c.line}</p>
+        {ffClosesAt && (
+          <div className="mt-[6cqh] border border-glow bg-glow/10 px-[4cqw] py-[2.5cqh]">
+            <p className="text-[1.4cqw] font-semibold tracking-[0.3em] text-glow uppercase">Force Field window · buy on My Agency</p>
+            <WindowClock closesAt={ffClosesAt} serverNow={serverNow} className="num mt-[1cqh] block text-[6cqw] font-semibold text-bone" />
+          </div>
+        )}
+      </div>
+    </Stage>
+  );
+}
+
+type Place = { place: number; id: string; name: string; coinToss: boolean };
+const PLACE = ['1st', '2nd', '3rd'];
+
+/** Zero Hour: a cover until the anchor announces 3rd place, then 2nd, then 1st. */
+export function PodiumScreen({ places, final = false }: { places: Place[]; final?: boolean }) {
+  const first = places.find((p) => p.place === 1) ?? null;
+  // The final leaderboard: all three together, 1st on top and highlighted.
+  const big = final ? first : places[0]; // otherwise the place just announced
+  return (
+    <Stage art="zerohour">
+      <div className="flex h-full flex-col items-center justify-center text-center">
+        <p className="text-[1.4cqw] font-semibold tracking-[0.35em] text-glow uppercase">{final ? 'Final leaderboard' : 'Zero Hour · The results'}</p>
+        {final && <h1 className="display metal mt-[2cqh] text-[5cqw] leading-none">The heroes of {EVENT.city}</h1>}
+        {places.length === 0 ? (
+          <>
+            <h1 className="display metal mt-[2cqh] text-[7.5cqw] leading-none">Who saved {EVENT.city}?</h1>
+            <p className="mt-[3cqh] font-serif text-[2.2cqw] text-silver italic">The envelopes are open. The results are coming.</p>
+          </>
+        ) : (
+          <ol className="mt-[4cqh] flex w-[70cqw] flex-col gap-[2.5cqh]">
+            {places.map((p) => {
+              const top = p === big;
+              return (
+                <li key={p.id} className={`projector-fade flex items-baseline justify-between border px-[3cqw] py-[2.5cqh] ${top ? 'border-glow bg-glow/10' : 'border-line bg-abyss/60'}`}>
+                  <span className={`display ${top ? 'text-[4cqw] text-glow' : 'text-[3cqw] text-steel'}`}>{PLACE[p.place - 1]}</span>
+                  <span className={`text-right ${top ? 'text-[4.4cqw] text-bone' : 'text-[3.2cqw] text-bone'}`}>
+                    <span className="num mr-[1.5cqw] font-semibold text-glow">{p.id}</span>
+                    {p.name}
+                    {p.coinToss && <span className="block text-[1.4cqw] text-ember">Tied: coin toss on stage</span>}
+                  </span>
+                </li>
+              );
+            })}
+          </ol>
+        )}
+        {first && !final && <p className="mt-[4cqh] font-serif text-[2.4cqw] text-silver italic">{first.name} saved {EVENT.city}.</p>}
+      </div>
+    </Stage>
+  );
+}
+
+/** The Doomsday cover, for the photos once the results are out. */
+export function EventCover() {
+  return (
+    <Stage
+      backdrop={
+        <>
+          <Image src={heroDesktop} alt="" fill sizes="100vw" className="pointer-events-none object-cover object-[60%_30%]" aria-hidden="true" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgb(8_17_13/0.55)_0%,rgb(8_17_13/0.9)_75%)]" />
+        </>
+      }
+    >
+      {/* Kept in the top part of the slide: people stand in front of the screen for photos. */}
+      <div className="flex h-full flex-col items-center justify-start pt-[6cqh] text-center">
+        <p className="text-[1.4cqw] font-semibold tracking-[0.35em] text-glow uppercase [text-shadow:0_0.2cqw_0.8cqw_rgb(0_0_0/0.95),0_0_2cqw_rgb(0_0_0/0.8)]">{EVENT.club}</p>
+        <TitleLockup sizes="60vw" star className="mt-[2cqh] w-[52cqw] [filter:drop-shadow(0_0.4cqw_1.2cqw_rgb(0_0_0/0.95))_drop-shadow(0_0_2.5cqw_rgb(0_0_0/0.7))]" />
+      </div>
+    </Stage>
   );
 }

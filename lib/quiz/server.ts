@@ -1,6 +1,6 @@
 import 'server-only';
 import { serviceDb } from '@/lib/db/server';
-import { rankBoard, type Board, type BoardInput } from '@/lib/quiz/board';
+import { QUALIFY, rankBoard, type Board, type BoardInput, type BoardRow } from '@/lib/quiz/board';
 import type { QuizSegment } from '@/lib/scoring/quiz';
 
 export type QuestionRow = {
@@ -73,7 +73,38 @@ export async function loadBoard(): Promise<Board & { names: Map<string, string> 
     correctTime: s.correct_time_s,
     tiebreakRank: tb.get(s.agency_id) ?? null,
   }));
+  // Red alert: the prelim moved to Kahoot, so Kahoot's ranking is the board.
+  const kahoot = await loadKahootBoard(inPlay, names);
+  if (kahoot) return { ...kahoot, names };
   return { ...rankBoard(input), names };
+}
+
+/** Is the prelim on Kahoot (the red alert)? With its game PIN. Tolerates an older database. */
+export async function loadKahootState(): Promise<{ on: boolean; pin: string | null }> {
+  const { data, error } = await serviceDb().from('event_state').select('prelim_kahoot, prelim_kahoot_pin').maybeSingle();
+  if (error || !data) return { on: false, pin: null };
+  return { on: Boolean(data.prelim_kahoot), pin: (data.prelim_kahoot_pin as string | null) ?? null };
+}
+
+/** Kahoot's ranking as the prelim board: 1, 2, 3… in Kahoot's order; the first 16 qualify. */
+async function loadKahootBoard(inPlay: Set<string>, names: Map<string, string>): Promise<Board | null> {
+  const k = await loadKahootState();
+  if (!k.on) return null;
+  const { data } = await serviceDb().from('prelim_kahoot_results').select('agency_id, kahoot_rank, score, correct').order('kahoot_rank');
+  const rows = (data ?? []).filter((r) => inPlay.has(r.agency_id as string));
+  const board: BoardRow[] = rows.map((r, i) => ({
+    agencyId: r.agency_id as string,
+    name: names.get(r.agency_id as string) ?? (r.agency_id as string),
+    total: r.score as number,
+    correctCount: (r.correct as number | null) ?? 0,
+    correctTime: 0,
+    tiebreakRank: null,
+    rank: i + 1,
+    position: i + 1,
+    tied: false,
+    qualified: i < QUALIFY,
+  }));
+  return { rows: board, suddenDeath: [], cutoffGroup: [], qualifiers: board.slice(0, QUALIFY).map((r) => r.agencyId) };
 }
 
 /** Points per agency per slot (1–15), for the CSV. Void questions are excluded. */

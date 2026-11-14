@@ -5,6 +5,8 @@ import { requireOrganiser } from '@/lib/auth/organiser';
 import { serviceDb } from '@/lib/db/server';
 import { audit } from '@/lib/audit';
 import { loadBoard, quizErrorMessage } from '@/lib/quiz/server';
+import { readXlsx } from '@/lib/xlsx';
+import { parseKahoot, readCsv } from '@/lib/kahoot';
 
 type DbResult = PromiseLike<{ error: { message: string; hint?: string | null } | null }>;
 
@@ -89,4 +91,54 @@ export async function freezeTop16(formData: FormData) {
   if (!board.qualifiers) redirect('/admin/quiz?error=' + encodeURIComponent('Settle the tie for 16th place first (sudden death).'));
   const qualifiers = board.qualifiers;
   await run('quiz.freeze_top16', { qualifiers }, () => serviceDb().rpc('quiz_freeze_top16', { p_qualifiers: qualifiers }));
+}
+
+// ---------------------------------------------------------------- red alert: the prelim on Kahoot
+
+const backTo = (p: Record<string, string>): never => redirect(`/admin/quiz?${new URLSearchParams(p)}#red-alert`);
+
+/** Red alert on (the prelim moves to Kahoot, with its game PIN) or off again. */
+export async function setKahoot(on: boolean, formData: FormData) {
+  const me = await requireOrganiser('quiz');
+  if (on && formData.get('confirm') !== 'on' && !formData.get('update')) backTo({ error: 'Tick “confirm” to sound the red alert.' });
+  if (!on && formData.get('confirm') !== 'on') backTo({ error: 'Tick “confirm” to switch back to the website quiz.' });
+  const pin = String(formData.get('pin') ?? '').trim();
+  const { error } = await serviceDb().rpc('prelim_set_kahoot', { p_on: on, p_pin: pin || null, p_actor: me.userId });
+  if (error) backTo({ error: quizErrorMessage(error) });
+  await audit(me, on ? 'quiz.kahoot_on' : 'quiz.kahoot_off', { pin: pin || null });
+  backTo({ ok: on ? `Red alert: the prelim is on Kahoot${pin ? ` (PIN ${pin})` : ''}. Phones and the projector now say so.` : 'Back to the website quiz.' });
+}
+
+/** Kahoot's results file (.xlsx or .csv): players matched to agencies by the ID in their nickname. */
+export async function uploadKahoot(formData: FormData) {
+  const me = await requireOrganiser('quiz');
+  const file = formData.get('file');
+  if (!(file instanceof File) || file.size === 0) backTo({ error: 'Choose Kahoot’s results file first.' });
+  const buf = Buffer.from(await (file as File).arrayBuffer());
+  let sheets: string[][][];
+  try {
+    sheets = /\.csv$/i.test((file as File).name) ? [readCsv(buf.toString('utf8'))] : [...readXlsx(buf).values()];
+  } catch {
+    return backTo({ error: 'That file could not be read. Upload Kahoot’s results as .xlsx (or .csv).' });
+  }
+  const { data: agencies } = await serviceDb().from('agencies').select('id, name');
+  const parsed = parseKahoot(sheets, (agencies ?? []) as { id: string; name: string }[]);
+  if (parsed.error) backTo({ error: parsed.error });
+  const { error } = await serviceDb().rpc('prelim_save_kahoot', { p_rows: parsed.rows, p_actor: me.userId });
+  if (error) backTo({ error: quizErrorMessage(error) });
+  await audit(me, 'quiz.kahoot_results', { teams: parsed.rows.length, unmatched: parsed.unmatched, duplicates: parsed.duplicates });
+  const notes = [
+    parsed.unmatched.length ? `Not matched (no agency ID in the nickname): ${parsed.unmatched.map((u) => `${u.player} (rank ${u.rank})`).join(', ')}.` : '',
+    parsed.duplicates.length ? `Ignored second entries: ${parsed.duplicates.map((d) => `${d.player} → ${d.agency}`).join(', ')}.` : '',
+  ].filter(Boolean).join(' ');
+  backTo({ ok: `Kahoot results uploaded: ${parsed.rows.length} teams ranked. ${notes} Check the table, then publish.` });
+}
+
+/** Publishes the Kahoot ranking as the prelim board (the projector shows it). */
+export async function publishKahoot() {
+  const me = await requireOrganiser('quiz');
+  const { error } = await serviceDb().rpc('prelim_kahoot_publish');
+  if (error) backTo({ error: quizErrorMessage(error) });
+  await audit(me, 'quiz.kahoot_publish', {});
+  backTo({ ok: 'The Kahoot board is published and on the projector. Freeze the top 16 next.' });
 }

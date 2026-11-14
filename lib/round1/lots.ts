@@ -30,3 +30,30 @@ export function nextLot<T extends Lot>(cards: T[], sold: Set<string>, step: R1St
 export function needing(category: string, agencies: { id: string; held: string[] }[]): string[] {
   return agencies.filter((a) => !a.held.includes(category)).map((a) => a.id);
 }
+
+/**
+ * Phone bidding (Secret Identity Bids): the card to open next. The lot on the projector if it is
+ * unsold and has not had its window yet; otherwise the next unsold Secret card after it in the
+ * running order. No wrap-around: each card gets one window, and cards left unsold go to Last Call.
+ */
+export function nextBidCard<T extends Lot>(cards: T[], sold: Set<string>, currentId: string | null, lastBidCard: string | null): T | null {
+  const pool = lotPool(cards, sold, 'secret');
+  const current = currentId ? pool.find((c) => c.id === currentId) : undefined;
+  if (current && lastBidCard !== current.id) return current;
+  const order = (id: string | null) => (id ? cards.find((c) => c.id === id)?.lot_order ?? -1 : -1);
+  const after = Math.max(order(currentId), order(lastBidCard));
+  return pool.find((c) => (c.lot_order ?? 999) > after) ?? null;
+}
+
+/** Secret cards still to be bid on (the current lot if it has not had its window, then the rest of the order). */
+export function bidCardsLeft<T extends Lot>(cards: T[], sold: Set<string>, currentId: string | null, lastBidCard: string | null): T[] {
+  const out: T[] = [];
+  let cur = currentId;
+  let last = lastBidCard;
+  for (let next = nextBidCard(cards, sold, cur, last); next; next = nextBidCard(cards, sold, cur, last)) {
+    out.push(next);
+    cur = next.id;
+    last = next.id;
+  }
+  return out;
+}

@@ -37,7 +37,7 @@ export const AREAS = {
   ledger: { path: '/admin/ledger', label: 'Fund Ledger', roles: ['ledger_keeper'] },
   round2: { path: '/admin/round2', label: 'Operation: Skyline', roles: ['scorer', 'social_lead'] },
   round3: { path: '/admin/round3', label: 'The Doomsday Vault', roles: ['ledger_keeper', 'scorer'] },
-  reveal: { path: '/screen/reveal', label: 'Zero Hour reveal', roles: ['anchor'] },
+  reveal: { path: '/admin/results', label: 'Final leaderboard', roles: ['anchor'] },
   screens: { path: '/screen', label: 'Projector screens', roles: ROLES },
   // Choosing what /projector shows (and pinning or blanking it) from the command centre.
   projector: { path: '/projector', label: 'Projector ↗', roles: ['anchor', 'quiz_host', 'auctioneer'] },

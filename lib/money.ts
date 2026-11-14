@@ -1,7 +1,5 @@
 /** Virtual ₹ crore helpers. All money moves in ₹0.5 Cr steps (spec: Money rules). */
 
-export const STEP_CR = 0.5;
-
 export function isHalfStep(amount: number): boolean {
   return Number.isFinite(amount) && Number.isInteger(amount * 2);
 }
