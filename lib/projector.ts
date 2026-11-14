@@ -20,7 +20,7 @@ export const SCREEN_LABEL: Record<ProjectorScreen, string> = {
   quiz: 'Prelim quiz',
   auction: 'Power Bazaar',
   board: 'Leaderboard',
-  cover: 'Round 3 cover',
+  cover: 'Round cover',
   reveal: 'Zero Hour results',
   holding: 'Back shortly',
   blank: 'Blackout',
@@ -32,13 +32,15 @@ export const AUTO_SCREEN: Record<Phase, ProjectorScreen> = {
   checkin: 'welcome',
   prelim: 'quiz',
   round1: 'auction',
-  round2: 'board',
+  round2: 'cover', // the board takes over once Round 2 is published
   round3: 'cover', // Round 3 runs offline: the cover only
   zero_hour: 'reveal',
   ended: 'reveal', // the podium stays up
 };
 
 /** The screen to show now: the pinned one, or the phase's own on auto. */
-export function projectorScreen(mode: ProjectorMode, phase: Phase): ProjectorScreen {
-  return mode === 'auto' ? AUTO_SCREEN[phase] : mode;
+export function projectorScreen(mode: ProjectorMode, phase: Phase, opts: { round2Published?: boolean } = {}): ProjectorScreen {
+  if (mode !== 'auto') return mode;
+  if (phase === 'round2' && opts.round2Published) return 'board';
+  return AUTO_SCREEN[phase];
 }

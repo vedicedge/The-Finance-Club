@@ -83,9 +83,9 @@ export default async function RulesPage() {
             ['Round 1', '−₹2 Cr', 'Optional sealed Insider Tip'],
             ['Round 1', '−winning bid', 'Each gear card won'],
             ['Round 1', '−₹8 Cr each', 'Forced Jugaad Kit (Power 2) for every category still missing after Last Call'],
-            ['Round 2', '+₹5 Cr', 'Poster duel winner (or a bye), only if it also reaches the top 8 in the tower game'],
-            ['Round 3', '−₹5 Cr', 'Force Field for one mission'],
-            ['Round 3', '+₹6 Cr', "Mission winner's cash option, instead of Swap or X-Ray"],
+            ['Round 2', '+₹5 Cr', 'Poster duel winner (or a bye), only if it also reaches the top 10 in the tower game'],
+            ['Round 3', '−₹5 Cr', 'Force Field: one per finalist, for the whole round'],
+            ['Round 3', '+₹5 Cr', "Mini game winner's cash option, instead of Swap or X-Ray"],
             ['Round 3', '± any', 'Chai Pe Charcha deals between agencies, reported to the ledger'],
             ['Round 3', '−₹5 Cr', "Fine for opening another agency's Mission File"],
           ]}

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import heroDesktop from '@/assets/art/hero-desktop.jpg';
 import wordmark from '@/assets/art/wordmark.webp';
-import { EVENT } from '@/lib/config';
+import { EVENT, ROUNDS } from '@/lib/config';
 import { PHASE_INFO, isPhase } from '@/lib/phases';
 import { Stage } from '@/components/screen/Stage';
 import { TitleLockup } from '@/components/art/Poster';
@@ -95,14 +95,20 @@ function BigCountdown({ target, serverNow }: { target: string; serverNow: string
   );
 }
 
-/** Round 3 runs offline: the projector shows only this cover. */
-export function CoverScreen({ ffClosesAt = null, serverNow = '' }: { ffClosesAt?: string | null; serverNow?: string }) {
+const COVERS: Record<string, { eyebrow: string; title: string; line: string; art: 'skyline' | 'zerohour' }> = {
+  round2: { eyebrow: 'Round 2', title: ROUNDS.round2, line: `Win the city’s belief. Then defend ${EVENT.city}’s skyline.`, art: 'skyline' },
+  round3: { eyebrow: 'Round 3', title: ROUNDS.round3, line: `Sealed Mission Files. Only one agency saves ${EVENT.city}.`, art: 'zerohour' },
+};
+
+/** A round's cover: Round 2 until its results are published, Round 3 throughout (with the Force Field countdown). */
+export function CoverScreen({ phase = 'round3', ffClosesAt = null, serverNow = '' }: { phase?: string; ffClosesAt?: string | null; serverNow?: string }) {
+  const c = COVERS[phase] ?? COVERS.round3;
   return (
-    <Stage art="zerohour">
+    <Stage art={c.art}>
       <div className="flex h-full flex-col items-center justify-center text-center">
-        <p className="text-[1.4cqw] font-semibold tracking-[0.35em] text-glow uppercase">Round 3</p>
-        <h1 className="display metal mt-[2cqh] text-[7.5cqw] leading-none">The Doomsday Vault</h1>
-        <p className="mt-[3cqh] font-serif text-[2.2cqw] text-silver italic">Sealed Mission Files. Only one agency saves {EVENT.city}.</p>
+        <p className="text-[1.4cqw] font-semibold tracking-[0.35em] text-glow uppercase">{c.eyebrow}</p>
+        <h1 className="display metal mt-[2cqh] text-[7.5cqw] leading-none">{c.title}</h1>
+        <p className="mt-[3cqh] font-serif text-[2.2cqw] text-silver italic">{c.line}</p>
         {ffClosesAt && (
           <div className="mt-[6cqh] border border-glow bg-glow/10 px-[4cqw] py-[2.5cqh]">
             <p className="text-[1.4cqw] font-semibold tracking-[0.3em] text-glow uppercase">Force Field window · buy on My Agency</p>

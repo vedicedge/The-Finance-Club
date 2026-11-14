@@ -10,11 +10,17 @@ describe('projector', () => {
       'welcome', // check-in
       'quiz', // prelim
       'auction', // round 1
-      'board', // round 2
+      'cover', // round 2 (the board once it is published)
       'cover', // round 3: runs offline
       'reveal', // zero hour
       'reveal', // ended: the winner stays up
     ]);
+  });
+
+  it('Round 2 shows its cover, then the board once the results are published', () => {
+    expect(projectorScreen('auto', 'round2')).toBe('cover');
+    expect(projectorScreen('auto', 'round2', { round2Published: true })).toBe('board');
+    expect(projectorScreen('cover', 'round2', { round2Published: true })).toBe('cover');
   });
 
   it('a pinned screen wins over the phase until it is set back to automatic', () => {

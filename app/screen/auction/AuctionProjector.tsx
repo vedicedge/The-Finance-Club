@@ -31,6 +31,10 @@ type S = {
     news: { id: string; headline: string; affects: string; delta: number; holders: { id: string; name: string }[] }[];
     teamUps: { name: string; gearA: string; gearB: string; bonus: number; holders: { id: string; name: string }[] }[];
   };
+  bidding: null | {
+    open: boolean; closesAt: string; now: string; count: number;
+    results: null | { agency: string; name: string; amount: number; winner: boolean }[];
+  };
   locked: boolean;
 };
 
@@ -227,8 +231,8 @@ function LotView({ s }: { s: S }) {
                 <p className="num mt-[2cqh] text-[4.4cqw] leading-none font-semibold text-bone">{formatCrore(lot.min_bid)}</p>
               </div>
             </div>
-            {s.step === 'secret' && (
-              <p className="mt-[4cqh] text-[1.45cqw] text-steel">Show 5 s · write your bid or PASS 10 s · unmask on &ldquo;3, 2, 1, mask utaro!&rdquo;</p>
+            {s.step === 'secret' && !s.bidding && (
+              <p className="mt-[4cqh] text-[1.45cqw] text-steel">Bidding opens on your My Agency page in a moment.</p>
             )}
             {lot.sold && <p className="stamp mt-[3cqh] self-start text-[2cqw] text-ember">Sold</p>}
           </>
@@ -238,13 +242,13 @@ function LotView({ s }: { s: S }) {
       </div>
 
       <aside className="flex min-w-0 flex-col justify-center gap-[5cqh] border-l border-line pl-[3cqw]">
-        {lot && (
+        {s.bidding ? <BiddingPanel b={s.bidding} /> : lot && (
           <div>
             <p className="text-[1.15cqw] font-semibold tracking-[0.3em] text-steel uppercase">Still needing {lot.category}</p>
             <p className="num mt-[1.5cqh] text-[2.2cqw] leading-snug text-bone">{lot.needing.join('  ') || 'Nobody'}</p>
           </div>
         )}
-        {sale && (
+        {sale && !s.bidding && (
           <div key={sale.at} className="transmission">
             <p className="text-[1.15cqw] font-semibold tracking-[0.3em] text-steel uppercase">Last sale</p>
             <div className="mt-[1.5cqh] flex items-center gap-[1.5cqw]">
@@ -267,6 +271,48 @@ function LotView({ s }: { s: S }) {
           </div>
         )}
       </aside>
+    </div>
+  );
+}
+
+/** Secret Identity Bids on phones: the countdown, then every bid unmasked and the winner. */
+function BiddingPanel({ b }: { b: NonNullable<S['bidding']> }) {
+  if (b.open) {
+    return (
+      <div>
+        <p className="text-[1.3cqw] font-semibold tracking-[0.3em] text-glow uppercase">Bid now on My Agency</p>
+        <WindowClock closesAt={b.closesAt} serverNow={b.now} className="num mt-[1cqh] block text-[9cqw] leading-none font-semibold text-glow" />
+        <p className="mt-[2cqh] text-[1.8cqw] text-bone">
+          <span className="num font-semibold">{b.count}</span> blind bid{b.count === 1 ? '' : 's'} in
+        </p>
+        <p className="mt-[1cqh] text-[1.3cqw] text-steel">Highest bid wins · a tie goes to the earlier bid</p>
+      </div>
+    );
+  }
+  if (!b.results) return <p className="display text-[2.6cqw] text-steel">Mask utaro…</p>;
+  const winner = b.results.find((r) => r.winner);
+  return (
+    <div className="transmission">
+      <p className="text-[1.3cqw] font-semibold tracking-[0.3em] text-steel uppercase">Masks off · every bid</p>
+      {b.results.length === 0 ? (
+        <p className="mt-[2cqh] text-[2cqw] text-ember">No bids. This card goes to Last Call.</p>
+      ) : (
+        <ol className="mt-[1.5cqh] space-y-[0.6cqh]">
+          {b.results.slice(0, 9).map((r) => (
+            <li key={r.agency} className={`flex items-baseline justify-between gap-[1.5cqw] text-[1.8cqw] ${r.winner ? 'font-semibold text-toxic' : 'text-bone'}`}>
+              <span className="min-w-0 truncate">
+                <span className="num">{r.agency}</span> <span className={r.winner ? '' : 'text-steel'}>{r.name}</span>
+              </span>
+              <span className="num whitespace-nowrap">{formatCrore(r.amount)}</span>
+            </li>
+          ))}
+        </ol>
+      )}
+      {winner ? (
+        <p className="stamp mt-[2cqh] text-[2cqw] text-toxic">Sold · {winner.agency}</p>
+      ) : (
+        b.results.length > 0 && <p className="mt-[2cqh] text-[1.6cqw] text-ember">No valid bid. Goes to Last Call.</p>
+      )}
     </div>
   );
 }

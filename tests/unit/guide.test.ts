@@ -13,7 +13,7 @@ function snap(over: Partial<GuideSnapshot> = {}): GuideSnapshot {
     phase: 'registration', step: null, now: NOW, dryRun: false,
     agencies: { total: 30, checkedIn: 0, active: 0 },
     quiz: { shuffled: false, slots: [], published: false, frozen: false, suddenDeathPending: false },
-    r1: { fundsStarted: false, newsDrawn: false, tipsClosesAt: null, tipsSold: 0, locked: false, newsTotal: 6, newsRevealed: 0, teamUpsTotal: 3, teamUpsRevealed: 0, recapOn: false, lotsLeft: 0, sellable: 0, lot: null, buyers: [], missing: 0 },
+    r1: { fundsStarted: false, newsDrawn: false, tipsClosesAt: null, tipsSold: 0, locked: false, newsTotal: 6, newsRevealed: 0, teamUpsTotal: 3, teamUpsRevealed: 0, recapOn: false, lotsLeft: 0, sellable: 0, lot: null, buyers: [], missing: 0, bid: null, bidNext: null, bidLeft: 0 },
     r2: { duels: 0, duelsDecided: 0, towersNeeded: 15, towersEntered: 0, cutoffPending: false, published: false },
     r3: { multipliersEntered: true, dealt: true, mission: null, finalists: [{ id: 'A01', name: 'One', forceFields: [] }], missions: missions() },
     zh: { opened: 0, total: 8 },
@@ -79,6 +79,19 @@ describe('Simple mode: the next step', () => {
     expect(actions(r({ locked: true }, 'locked'))).toEqual(['start-round2']);
   });
 
+  it('Secret Identity Bids on phones: open a window per card, wait, then the next card', () => {
+    const r = (r1: Partial<GuideSnapshot['r1']>) => snap({ phase: 'round1', step: 'secret', r1: { ...snap().r1, fundsStarted: true, newsDrawn: true, ...r1 } });
+    const next = { id: 'H05', name: 'Tower' };
+    expect(actions(r({ bidNext: next, bidLeft: 52 }))).toEqual(['r1-bid', 'r1-lastcall']);
+    const open = now(r({ bidNext: next, bid: { cardId: 'H05', closesAt: NOW + 15000, settled: false, count: 3, winner: null, price: null } }));
+    expect(open.until).toBe(NOW + 15000);
+    expect(open.buttons).toEqual([]);
+    const done = now(r({ bidNext: { id: 'H06', name: 'Fort' }, bid: { cardId: 'H05', closesAt: NOW - 1000, settled: true, count: 3, winner: 'A02', price: 9.5 } }));
+    expect(done.key).toBe('r1-bid-H06');
+    expect(done.body).toContain('sold to A02');
+    expect(actions(r({ bidNext: null }))).toEqual(['r1-lastcall']);
+  });
+
   it('Round 2: draw, enter, cutoff, publish, start Round 3', () => {
     const r = (r2: Partial<GuideSnapshot['r2']>) => snap({ phase: 'round2', r2: { ...snap().r2, ...r2 } });
     expect(actions(r({}))).toEqual(['r2-draw']);
@@ -88,13 +101,15 @@ describe('Simple mode: the next step', () => {
     expect(actions(r({ published: true }))).toEqual(['start-round3']);
   });
 
-  it('Round 3 runs offline: map, then the console until the envelopes are recorded, then Zero Hour', () => {
+  it('Round 3: map, then its console until the four mini games are in, then Zero Hour', () => {
     const r = (r3: Partial<GuideSnapshot['r3']>) => snap({ phase: 'round3', r3: { ...snap().r3, ...r3 } });
     expect(now(r({ multipliersEntered: false })).key).toBe('r3-map');
-    const offline = now(r({ dealt: false }));
-    expect(offline.key).toBe('r3-offline');
-    expect(offline.link?.href).toBe('/admin/round3');
-    expect(actions(r({}))).toEqual(['start-zero-hour']);
+    const running = now(r({ missions: missions({ 1: { choice: 'cash' } }) }));
+    expect(running.key).toBe('r3-console');
+    expect(running.link?.href).toBe('/admin/round3');
+    expect(running.progress).toBe('1 / 4 mini games recorded');
+    const all = missions({ 1: { choice: 'cash' }, 2: { choice: 'none' }, 3: { choice: 'swap' }, 4: { choice: 'xray' } });
+    expect(actions(r({ missions: all }))).toEqual(['start-zero-hour']);
   });
 
   it('Zero Hour: calculate, announce 3rd, 2nd, 1st, then end', () => {

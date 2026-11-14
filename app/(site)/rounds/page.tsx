@@ -82,15 +82,15 @@ export default async function RoundsPage() {
           Each agency signs one <strong>HQ</strong>, one <strong>Suit</strong>, one <strong>Gadget</strong> and one{' '}
           <strong>Sidekick</strong> from 60 gear cards, using its ₹50 Cr. There are 15 cards per category, one fewer than
           the agencies, so someone always misses out. Every card shows a public Power (1–10) and a minimum bid. Bidding is
-          physical, with shield paddles and slates; every sale goes on the Fund Ledger here, and your My Agency page
-          updates after each one.
+          live with shield paddles in the Marquee Auction and Last Call, and on your phone for the Secret Identity Bids;
+          every sale goes on the Fund Ledger here, and your My Agency page updates after each one.
         </p>
         <Table
           head={['Phase', 'Length', 'How it works']}
           rows={[
-            ['Insider Tips', '2 min', 'Buy one sealed tip for ₹2 Cr; it privately reveals one upcoming Breaking News card.'],
+            ['Insider Tips', '1 min', 'Buy one tip for ₹2 Cr on My Agency while the window is open; it privately reveals one upcoming Breaking News card.'],
             ['Marquee Auction', '10 min', 'The top 2 cards of each category: 8 lots, live with paddles, opening at the minimum bid.'],
-            ['Secret Identity Bids', '22 min', 'The other 52 cards, one at a time: 5 s to show, 10 s to write a bid or PASS, then "3, 2, 1, mask utaro!"'],
+            ['Secret Identity Bids', '22 min', 'The other 52 cards, one at a time: type a blind bid on My Agency within 20 seconds (or pass). At 0:00 every bid appears on the projector and the highest wins.'],
             ['Last Call', '3 min', 'Unsold cards re-auctioned live, only to agencies still missing that category.'],
             ['Breaking News', '6 min', 'The 6 news cards and the 3 Team-Ups (+3 Power each) are revealed.'],
             ['Ledger check', '4 min', 'Confirm your 4 cards, Power Level and fund left with a ledger keeper.'],
@@ -100,7 +100,8 @@ export default async function RoundsPage() {
         <ul>
           <li>A valid bid is at least the card&apos;s minimum, at most your fund left, in ₹0.5 Cr steps. Anything else counts as a pass.</li>
           <li>One card per category. Winning bids are final and come off your fund at once.</li>
-          <li>Tie for the highest bid: the tied agencies re-bid once on slates; still tied, a coin toss.</li>
+          <li>Tie for the highest bid: live lots, the tied agencies re-bid once, then a coin toss; phone bids, the bid that reached the site first wins.</li>
+          <li>Your phone warns you when your fund left gets close to what you still need to finish your hero.</li>
           <li>
             Still missing a category after Last Call: you must take a <strong>Jugaad Kit</strong> (Power 2) for ₹8 Cr for
             each missing category (two missing: two kits, ₹16 Cr). Unable to pay for all of them: eliminated.
@@ -109,14 +110,14 @@ export default async function RoundsPage() {
         <p>Round 1 fixes your Power Level and your fund left. Fund left counts half in the Hero Score, so spend with care.</p>
       </Section>
 
-      <Section id="round-2" index="03" scene="skyline" eyebrow="Round 2 · 35 min · on the floor" title={ROUNDS.round2} meta="→ top 8">
+      <Section id="round-2" index="03" scene="skyline" eyebrow="Round 2 · 35 min · on the floor" title={ROUNDS.round2} meta="→ top 10">
         <H3>Part A — Signal Before the Storm (posters, 5 min)</H3>
         <ul>
           <li>Draw a poster for your hero: your agency ID, the hero built in Round 1, its identity and its doomsday mission. Original artwork only.</li>
           <li>Agencies are paired at random for poster duels (an odd number gives one agency a bye).</li>
           <li>Each duel is voted on the club&apos;s Instagram story. Votes count until the last slingshot shot.</li>
           <li>
-            The duel winner (or a bye) earns <strong>+₹5 Cr</strong>, credited only if it also finishes in the top 8 of the
+            The duel winner (or a bye) earns <strong>+₹5 Cr</strong>, credited only if it also finishes in the top 10 of the
             tower game. Posters never decide who is eliminated.
           </li>
         </ul>
@@ -128,7 +129,7 @@ export default async function RoundsPage() {
             ['Tower building', '10 min', 'Rebuild it from memory. Build time is recorded; the build is frozen and photographed.'],
             ['Slingshot construction', '8 min', 'Build a launcher from the props supplied. No practice shots; safety check first.'],
             ['Single-shot takedown', '6 min', 'One shot per team in a marked lane; blocks fallen are counted.'],
-            ['Judge and qualify', '4 min 30 s', 'Scores computed, cutoff ties settled, top 8 announced, poster bonuses credited.'],
+            ['Judge and qualify', '4 min 30 s', 'Scores computed, cutoff ties settled, top 10 announced, poster bonuses credited.'],
           ]}
         />
         <Note>
@@ -140,45 +141,38 @@ export default async function RoundsPage() {
         <p>The 8 highest Tower Scores go to the Vault; everyone else is eliminated.</p>
       </Section>
 
-      <Section id="round-3" index="04" scene="vault" eyebrow="Round 3 · 31 min · seated, on paper" title={ROUNDS.round3} meta="8 finalists">
+      <Section id="round-3" index="04" scene="vault" eyebrow="Round 3 · 31 min · seated, on paper" title={ROUNDS.round3} meta="10 finalists">
         <p>
-          Each finalist holds one sealed <strong>Mission File</strong> (numbered E1–E8) carrying a secret Battle Outcome
-          multiplier. Keep it sealed on the table. Envelopes open only at Zero Hour.
+          Each finalist holds one sealed <strong>Mission File</strong>, a numbered envelope carrying a secret Battle Outcome
+          multiplier: one each of ×3, ×2, ×0.5 and ×0.25, the rest ×1 and ×1.5. Keep it sealed on the table. Envelopes open
+          only at Zero Hour.
         </p>
+        <H3>Force Field: one, for the whole round</H3>
+        <p>
+          Once you have read your envelope, a 60-second window opens on the projector. In it you may buy{' '}
+          <strong>one Force Field for ₹5 Cr</strong> on My Agency; nobody else sees who bought one. Play it once, when a mini
+          game winner tries to swap envelopes with you: the swap is blocked and the winner’s choice is used up.
+        </p>
+        <H3>Four mini games</H3>
         <Table
-          head={['Battle Outcome', 'Envelopes', 'Multiplier']}
-          numeric={[1, 2]}
+          head={['Step', 'What happens']}
           rows={[
-            ['City saved, statue unveiled', '1', '×3'],
-            ['Trending #1 across India', '1', '×2'],
-            ['Clean win, zero damage', '2', '×1.5'],
-            ['Saved the day, just about', '1', '×1'],
-            ['₹100 crore property damage bill', '2', '×0.5'],
-            ['Villain escaped', '1', '×0.25'],
-          ]}
-        />
-        <H3>Four missions, seven minutes each</H3>
-        <Table
-          head={['Step', 'Time', 'What happens']}
-          rows={[
-            ['Force Field', '30 s', 'Pay ₹5 Cr to block swaps on your envelope until this mission’s winner has chosen.'],
-            ['Play', '4 min', 'All 8 agencies solve the same puzzle. One paper submission each; a wrong sheet is final.'],
-            ['Results', '1 min', 'Scorers check sheets in arrival order. The first fully correct sheet wins.'],
-            ['Winner’s choice', '30 s', 'Swap envelopes with any unprotected agency (unseen), X-Ray one envelope privately, or take ₹6 Cr.'],
-            ['Chai Pe Charcha', '1 min', 'Information sales, cash deals and bluffing. Lying is allowed; cash deals go on the ledger.'],
+            ['Play', 'All finalists solve the same puzzle on paper. One submission each; a wrong sheet is final.'],
+            ['Result', 'Scorers check sheets in arrival order. The first fully correct sheet wins.'],
+            ['Winner’s choice', 'Swap envelopes with any team (unseen), X-Ray one envelope privately, or take ₹5 Cr.'],
+            ['Chai Pe Charcha', 'Information sales, cash deals and bluffing. Lying is allowed; cash deals go on the ledger.'],
           ]}
         />
         <ul>
-          <li>Missions: The Multiverse Grid, Across the Multiverse, Before the World Ends, The Shutdown Key.</li>
-          <li>Mission 4&apos;s winner chooses at the start of Zero Hour; its Force Fields stay up until then.</li>
+          <li>Mini games: The Multiverse Grid, Across the Multiverse, Before the World Ends, The Shutdown Key.</li>
           <li>Opening another agency&apos;s envelope costs a ₹5 Cr fine. Only the anchor moves envelopes.</li>
         </ul>
       </Section>
 
       <Section id="zero-hour" index="05" scene="zerohour" eyebrow="Finale · 20 min" title={ROUNDS.zeroHour} meta="→ one Hero Agency">
         <p>
-          Mission 4&apos;s winner makes the last swap, X-Ray or cash call. Then all 8 envelopes are opened on stage, in
-          ascending Power Level, and each Hero Score appears on the projector:
+          The envelopes are opened and every finalist’s Hero Score is calculated. Then the results are announced on stage: 3rd
+          place, 2nd place, and finally the Hero Agency of the Year.
         </p>
         <p className="display panel corners px-4 py-6 text-center text-[clamp(1.3rem,3.6vw,2rem)] leading-snug text-bone [--corner-inset:6px] [--corner-size:12px]">
           <span className="whitespace-nowrap text-glow">Power Level</span> × <span className="whitespace-nowrap text-toxic">Battle Outcome</span> +{' '}

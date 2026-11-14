@@ -33,6 +33,8 @@ export type DossierData = {
   /** The self-service Insider Tips window, while it is open (database time). */
   tipsWindow: { closesAt: string; serverNow: string } | null;
   round1Locked: boolean;
+  /** Power Bazaar is running (Round 1, not yet locked). */
+  round1Live: boolean;
   round2: {
     duel: null | { opponent: string | null; opponentName: string | null; mine: number | null; theirs: number | null; won: boolean | null };
     published: boolean;
@@ -148,6 +150,7 @@ export async function loadDossier(agencyId: string): Promise<DossierData> {
         ? { closesAt: st.data.tips_closes_at as string, serverNow: new Date().toISOString() }
         : null,
     round1Locked: Boolean(st.data?.round1_locked_at),
+    round1Live: st.data?.phase === 'round1' && !st.data?.round1_locked_at,
     round2: {
       duel: d
         ? {

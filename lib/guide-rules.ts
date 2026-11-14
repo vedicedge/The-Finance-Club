@@ -10,7 +10,7 @@ export const GUIDE_RULES: Record<GuideActionId, { area: Area; roles?: Role[] }> 
   'start-round2': { area: 'settings' }, 'start-round3': { area: 'settings' }, 'start-zero-hour': { area: 'settings' }, 'end-event': { area: 'settings' },
   'quiz-shuffle': { area: 'quiz' }, 'quiz-open': { area: 'quiz' }, 'quiz-reveal': { area: 'quiz' }, 'quiz-publish': { area: 'quiz' }, 'quiz-freeze': { area: 'quiz' },
   'r1-funds': { area: 'ledger' }, 'r1-draw': { area: 'ledger' }, 'r1-sale': { area: 'ledger' }, 'r1-jugaad': { area: 'ledger' }, 'r1-lock': { area: 'ledger' },
-  'r1-tips': { area: 'auction' }, 'r1-marquee': { area: 'auction' }, 'r1-first-lot': { area: 'auction' }, 'r1-skip': { area: 'auction' },
+  'r1-tips': { area: 'auction' }, 'r1-marquee': { area: 'auction' }, 'r1-first-lot': { area: 'auction' }, 'r1-skip': { area: 'auction' }, 'r1-bid': { area: 'auction' },
   'r1-secret': { area: 'auction' }, 'r1-lastcall': { area: 'auction' }, 'r1-news': { area: 'auction' }, 'r1-news-next': { area: 'auction' },
   'r1-teamups': { area: 'auction' }, 'r1-recap': { area: 'auction' }, 'r1-check': { area: 'auction' },
   'r2-draw': { area: 'round2', roles: ['social_lead'] }, 'r2-publish': { area: 'round2', roles: ['scorer'] },

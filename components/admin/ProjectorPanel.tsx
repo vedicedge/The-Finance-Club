@@ -71,7 +71,7 @@ export function ProjectorPanel({
           ))}
         </div>
         <p className="mt-3 text-xs text-steel">
-          Automatic: Welcome before the prelim, then the quiz, Power Bazaar, the leaderboard for Round 2, the Round 3 cover,
+          Automatic: Welcome before the prelim, then the quiz, Power Bazaar, a Round 2 cover (then its results), the Round 3 cover,
           and the Zero Hour results (3rd, 2nd, then 1st). Pin a screen for breaks or announcements; Blackout shows nothing. Now on automatic it would show{' '}
           {SCREEN_LABEL[AUTO_SCREEN[phase]]}.
         </p>

@@ -10,8 +10,8 @@ import { GearIcon } from '@/components/art/gear-icons';
 const STAGES: { tag: string; name: string; cut: string; line: string; scene: SceneName; href: string }[] = [
   { tag: 'Prelim', name: ROUNDS.prelim, cut: '50+ → 16', line: 'A 15-question live quiz on your phone. Fast and right beats slow and right.', scene: 'prelim', href: '/rounds#prelim' },
   { tag: 'Round 1', name: ROUNDS.round1, cut: '16 → round 2', line: 'Spend ₹50 Cr at a live auction to sign an HQ, a Suit, a Gadget and a Sidekick.', scene: 'bazaar', href: '/rounds#round-1' },
-  { tag: 'Round 2', name: ROUNDS.round2, cut: '→ top 8', line: 'Win the poster duel on Instagram stories, then rebuild a tower from memory and knock it down.', scene: 'skyline', href: '/rounds#round-2' },
-  { tag: 'Round 3', name: ROUNDS.round3, cut: '8 finalists', line: 'Sealed Mission Files, four puzzle races, swaps, X-Rays and Chai Pe Charcha deals.', scene: 'vault', href: '/rounds#round-3' },
+  { tag: 'Round 2', name: ROUNDS.round2, cut: '→ top 10', line: 'Win the poster duel on Instagram stories, then rebuild a tower from memory and knock it down.', scene: 'skyline', href: '/rounds#round-2' },
+  { tag: 'Round 3', name: ROUNDS.round3, cut: '10 finalists', line: 'Sealed Mission Files, four mini games, swaps, X-Rays, Force Fields and Chai Pe Charcha deals.', scene: 'vault', href: '/rounds#round-3' },
   { tag: 'Finale', name: ROUNDS.zeroHour, cut: '→ 1 Hero Agency', line: 'Envelopes open on stage. The highest Hero Score saves Mahanagar.', scene: 'zerohour', href: '/rounds#zero-hour' },
 ];
 

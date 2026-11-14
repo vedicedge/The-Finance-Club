@@ -10,7 +10,7 @@ export const MISSION_STEPS = [
   { id: 'chai', label: 'Chai Pe Charcha', length: '1 min' },
 ] as const;
 
-export type Mission = { no: number; name: string; winner_agency_id: string | null; choice: string | null; swap_target: string | null };
+export type Mission = { no: number; name: string; winner_agency_id: string | null; choice: string | null; swap_target: string | null; ff_blocked?: boolean };
 export type Finalist = { id: string; name: string; envelope: string | null; fund: number; power: number; forceFields: number[] };
 
 /**
@@ -33,6 +33,15 @@ export async function loadRound3({ withMultipliers = false } = {}) {
     db.from('battle_outcomes').select('label, multiplier, envelopes, sort_order').order('sort_order'),
   ]);
   for (const r of [st, agencies, holders, funds, power, missions, ffs, moves, xrays, contents, outcomes]) if (r.error) throw r.error;
+  // Read on their own, so the console still loads before the 11 and 14 November database updates.
+  const [blocked, shields, ffState] = await Promise.all([
+    db.from('missions').select('no, ff_blocked'),
+    db.from('force_fields').select('agency_id, used_at').is('mission', null).is('voided_at', null).order('agency_id'),
+    db.from('event_state').select('ff_closes_at').maybeSingle(),
+  ]);
+  const blockedOf = new Map((blocked.data ?? []).map((m) => [m.no as number, Boolean(m.ff_blocked)]));
+  const activeCount = (agencies.data ?? []).filter((a) => a.status === 'active').length;
+  const mapNeeded = Math.max(8, activeCount);
 
   const fundOf = new Map((funds.data ?? []).map((f) => [f.agency_id as string, Number(f.fund_left)]));
   const powerOf = new Map((power.data ?? []).map((p) => [p.agency_id as string, p.power_level as number]));
@@ -56,10 +65,14 @@ export async function loadRound3({ withMultipliers = false } = {}) {
     dealt,
     finalists,
     names: new Map((agencies.data ?? []).map((a) => [a.id as string, a.name as string])),
-    missions: (missions.data ?? []) as Mission[],
+    missions: ((missions.data ?? []) as Mission[]).map((m) => ({ ...m, ff_blocked: blockedOf.get(m.no) ?? false })),
+    /** The one Round 3 Force Field each finalist may buy: who bought one, and whether it is used. SECRET. */
+    shields: (shields.data ?? []).map((f) => ({ agency: f.agency_id as string, used: Boolean(f.used_at) })),
+    ffClosesAt: (ffState.data?.ff_closes_at as string | null | undefined) ?? null,
+    mapNeeded,
     swaps: (moves.data ?? []) as { envelope_id: string; mission: number; from_agency: string; to_agency: string }[],
     xrays: (xrays.data ?? []) as { mission: number; agency_id: string; target_agency_id: string }[],
-    multipliersEntered: withMultipliers ? (contents.data?.length ?? 0) >= 8 : (contents.count ?? 0) >= 8,
+    multipliersEntered: (withMultipliers ? contents.data?.length ?? 0 : contents.count ?? 0) >= mapNeeded,
     multiplierMap: withMultipliers ? new Map(((contents.data ?? []) as { envelope_id: string; outcome_label: string }[]).map((c) => [c.envelope_id, c.outcome_label])) : null,
     outcomes: (outcomes.data ?? []) as { label: string; multiplier: number; envelopes: number }[],
   };

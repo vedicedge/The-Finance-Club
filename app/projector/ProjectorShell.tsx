@@ -73,7 +73,7 @@ function Screen({ state }: { state: State }) {
     case 'board':
       return <BoardProjector />;
     case 'cover':
-      return <CoverScreen ffClosesAt={state.ffClosesAt ?? null} serverNow={state.now} />;
+      return <CoverScreen phase={state.phase} ffClosesAt={state.ffClosesAt ?? null} serverNow={state.now} />;
     case 'reveal':
       return state.finale === 'cover' ? <EventCover /> : <PodiumScreen places={state.places ?? []} final={state.finale === 'podium'} />;
     case 'welcome':

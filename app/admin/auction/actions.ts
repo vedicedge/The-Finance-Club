@@ -6,7 +6,8 @@ import { serviceDb } from '@/lib/db/server';
 import { audit } from '@/lib/audit';
 import { formatCrore } from '@/lib/money';
 import { isR1Step, TIPS_WINDOW_SECONDS } from '@/lib/round1/steps';
-import { nextLot } from '@/lib/round1/lots';
+import { nextBidCard, nextLot } from '@/lib/round1/lots';
+import { BID_WINDOW_SECONDS, loadBidState, settleBidding } from '@/lib/round1/bidding';
 import { dbMessage, loadRound1 } from '@/lib/round1/server';
 import type { Area } from '@/lib/auth/roles';
 
@@ -49,6 +50,24 @@ export async function advanceLot() {
   await act('auction', 'r1.next_lot', { card: next?.id ?? null }, () =>
     serviceDb().from('event_state').update({ current_card_id: next?.id ?? null }).eq('id', true),
   () => (next ? `Next lot: ${next.id}.` : 'No unsold lots left in this step.'));
+}
+
+/**
+ * Secret Identity Bids on phones: opens the 20-second window for the card picked (or the next
+ * card due) and puts it on the projector. Teams bid on My Agency; the highest bid wins at 0:00.
+ */
+export async function openBidding(formData: FormData) {
+  const me = await requireOrganiser('auction');
+  await settleBidding();
+  let card = String(formData.get('card') ?? '');
+  if (!card) {
+    const [r1, bid] = await Promise.all([loadRound1(), loadBidState()]);
+    card = nextBidCard(r1.cards, r1.sold, r1.currentCardId, bid?.cardId ?? null)?.id ?? '';
+    if (!card) back({ error: 'Every Secret Identity card has had its bidding window. Start Last Call.' });
+  }
+  await act('auction', 'r1.open_bidding', { card }, () =>
+    serviceDb().rpc('r1_open_bidding', { p_card: card, p_seconds: BID_WINDOW_SECONDS, p_actor: me.userId }),
+  () => `Bidding open on ${card} for ${BID_WINDOW_SECONDS} seconds. Teams bid on My Agency.`);
 }
 
 export async function revealNextNews() {
