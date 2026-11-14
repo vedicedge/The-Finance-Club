@@ -32,7 +32,6 @@ export default async function Round3Console({ searchParams }: { searchParams: Pr
   const step = r3Step({ mapEntered: r3.multipliersEntered, ffClosesAt: ffCloses, now, dealt: r3.dealt, missions: r3.missions });
   const stepIdx = r3StepIndex(step);
   const envelopes = Array.from({ length: Math.max(8, r3.mapNeeded) }, (_, i) => `E${i + 1}`);
-  const name = (id: string | null) => (id ? `${id} ${r3.names.get(id) ?? ''}` : '—');
   const readyShields = r3.shields.filter((f) => !f.used).map((f) => f.agency);
   const decided = r3.missions.filter((m) => m.choice !== null);
   const lastDecided = decided.at(-1) ?? null;

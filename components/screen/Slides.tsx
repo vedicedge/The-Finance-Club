@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import heroDesktop from '@/assets/art/hero-desktop.jpg';
-import wordmark from '@/assets/art/wordmark.webp';
 import { EVENT, ROUNDS } from '@/lib/config';
 import { PHASE_INFO, isPhase } from '@/lib/phases';
 import { Stage } from '@/components/screen/Stage';

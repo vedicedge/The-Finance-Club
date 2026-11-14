@@ -53,31 +53,52 @@ export type DossierData = {
   hero: null | { outcome: string; multiplier: number; hero: number };
 };
 
-/** Everything an agency may see about itself on My Agency. Only ever called for the signed-in agency. */
+const REACHED = ['registration', 'checkin', 'prelim', 'round1', 'round2', 'round3', 'zero_hour', 'ended'];
+/** The event has reached `phase` (or gone past it). */
+const reached = (current: unknown, phase: string) => REACHED.indexOf(current as string) >= REACHED.indexOf(phase);
+const none = { data: null } as const;
+
+/**
+ * Everything an agency may see about itself on My Agency. Only ever called for the signed-in agency.
+ * Every phone refreshes this every few seconds, so it reads the event state once, then only what
+ * the event has reached: no Round 2 reads before Round 2, no prelim board before it is published.
+ */
 export async function loadDossier(agencyId: string): Promise<DossierData> {
   const db = serviceDb();
-  const [st, ledger, gear, power, tip, news, teamUps, scores, duels, towers, holder, moves, ffs, shield, ffState, hero, names, cardNames] = await Promise.all([
-    db.from('event_state').select('phase, step, tips_closes_at, prelim_published_at, round1_locked_at, round2_published_at, current_mission').single(),
+  const { data: st } = await db
+    .from('event_state')
+    .select('phase, step, tips_closes_at, prelim_published_at, prelim_kahoot, round1_locked_at, round2_published_at, current_mission, ff_closes_at')
+    .single();
+  const phase = st?.phase as string | undefined;
+  const prelimPublished = Boolean(st?.prelim_published_at);
+  const inRound2 = reached(phase, 'round2');
+  const inRound3 = reached(phase, 'round3');
+  const atZeroHour = placesAnnounced(phase as string, st?.step as string | null) === 3;
+
+  const [ledger, gear, power, tip, news, teamUps, scores, kahootRes, duels, towers, holder, moves, ffs, hero, names, cardNames] = await Promise.all([
     db.from('v_ledger').select('id, agency_id, amount, reason, ref, note, created_at, voided, void_reason').eq('agency_id', agencyId),
     db.from('v_held_gear').select('category, card_id, gear_name, power, price').eq('agency_id', agencyId),
     db.from('v_power_level').select('gear_power, team_up_bonus, news_delta, power_level').eq('agency_id', agencyId).maybeSingle(),
     db.from('insider_tips').select('news_id, breaking_news(id, headline, affects_gear, delta)').eq('agency_id', agencyId).is('voided_at', null).maybeSingle(),
     db.from('v_public_news').select('headline, affects_gear, delta'),
     db.from('v_public_team_ups').select('name, gear_a, gear_b, bonus'),
-    db.from('v_prelim_scores').select('agency_id, total_points, correct_time_s'),
-    db.from('poster_duels').select('id, agency_a, agency_b, votes_a, votes_b, winner').or(`agency_a.eq.${agencyId},agency_b.eq.${agencyId}`),
-    db.from('v_tower_scores').select('agency_id, accuracy, speed, destruction, tower_score, cutoff_rank, published'),
-    db.from('v_envelope_holders').select('envelope_id').eq('holder_agency_id', agencyId).maybeSingle(),
-    db.from('envelope_moves').select('envelope_id, mission, from_agency, to_agency, move_group').eq('kind', 'swap').is('voided_at', null)
-      .or(`from_agency.eq.${agencyId},to_agency.eq.${agencyId}`).order('id'),
-    db.from('force_fields').select('mission').eq('agency_id', agencyId).is('voided_at', null),
-    // Separate, error-tolerant reads: these columns arrive with the 11 November database update.
-    db.from('force_fields').select('used_at').eq('agency_id', agencyId).is('mission', null).is('voided_at', null).maybeSingle(),
-    db.from('event_state').select('ff_closes_at').maybeSingle(),
-    db.from('v_hero_scores').select('outcome_label, multiplier, hero_score').eq('agency_id', agencyId).maybeSingle(),
-    db.from('agencies').select('id, name, is_test'),
+    // The prelim rank is shown only once the board is published.
+    prelimPublished && !st?.prelim_kahoot ? db.from('v_prelim_scores').select('agency_id, total_points, correct_time_s') : none,
+    prelimPublished && st?.prelim_kahoot ? db.from('prelim_kahoot_results').select('agency_id, score').order('kahoot_rank') : none,
+    inRound2 ? db.from('poster_duels').select('id, agency_a, agency_b, votes_a, votes_b, winner').or(`agency_a.eq.${agencyId},agency_b.eq.${agencyId}`) : none,
+    st?.round2_published_at ? db.from('v_tower_scores').select('agency_id, accuracy, speed, destruction, tower_score, cutoff_rank, published') : none,
+    inRound3 ? db.from('v_envelope_holders').select('envelope_id').eq('holder_agency_id', agencyId).maybeSingle() : none,
+    inRound3
+      ? db.from('envelope_moves').select('envelope_id, mission, from_agency, to_agency, move_group').eq('kind', 'swap').is('voided_at', null)
+          .or(`from_agency.eq.${agencyId},to_agency.eq.${agencyId}`).order('id')
+      : none,
+    inRound3 ? db.from('force_fields').select('mission, used_at').eq('agency_id', agencyId).is('voided_at', null) : none,
+    atZeroHour ? db.from('v_hero_scores').select('outcome_label, multiplier, hero_score').eq('agency_id', agencyId).maybeSingle() : none,
+    prelimPublished || inRound2 ? db.from('agencies').select('id, name, is_test') : none,
     loadCardNames(),
   ]);
+  // The one Round 3 Force Field is the agency's row without a mission.
+  const r3Shield = (ffs.data ?? []).find((f) => f.mission === null) ?? null;
 
   const rows = (ledger.data ?? []).map((r) => ({ ...r, amount: Number(r.amount) })) as LedgerRow[];
   const withBalance = withRunningBalance(rows); // oldest first
@@ -96,17 +117,15 @@ export async function loadDossier(agencyId: string): Promise<DossierData> {
   if (me) rank = 1 + all.filter((s) => s.t > me.t || (s.t === me.t && s.time < me.time)).length;
   // Red alert: the prelim moved to Kahoot, so the rank and points are Kahoot's.
   let kahootTotal: number | null = null;
-  const kahoot = await serviceDb().from('event_state').select('prelim_kahoot').maybeSingle();
-  if (kahoot.data?.prelim_kahoot) {
-    const res = await serviceDb().from('prelim_kahoot_results').select('agency_id, score').order('kahoot_rank');
-    const mineK = (res.data ?? []).filter((r) => (isTest.get(r.agency_id as string) ?? false) === mine);
+  if (kahootRes.data) {
+    const mineK = kahootRes.data.filter((r) => (isTest.get(r.agency_id as string) ?? false) === mine);
     const at = mineK.findIndex((r) => r.agency_id === agencyId);
     rank = at >= 0 ? at + 1 : null;
     kahootTotal = at >= 0 ? (mineK[at].score as number) : 0;
   }
 
   // Round 2: opponent once drawn; votes, tower and bonus only once published.
-  const r2Published = Boolean(st.data?.round2_published_at);
+  const r2Published = Boolean(st?.round2_published_at);
   const d = duels.data?.[0];
   const nameOf = new Map((names.data ?? []).map((a) => [a.id as string, a.name as string]));
   const isA = d?.agency_a === agencyId;
@@ -131,7 +150,7 @@ export async function loadDossier(agencyId: string): Promise<DossierData> {
 
   const t = tip.data?.breaking_news as unknown as { id: string; headline: string; affects_gear: string; delta: number } | null;
   return {
-    prelim: { published: Boolean(st.data?.prelim_published_at), rank, total: kahootTotal ?? me?.t ?? 0 },
+    prelim: { published: Boolean(st?.prelim_published_at), rank, total: kahootTotal ?? me?.t ?? 0 },
     ledger: [...withBalance].reverse(), // newest first on the page
     fund,
     gear: (gear.data ?? [])
@@ -155,12 +174,12 @@ export async function loadDossier(agencyId: string): Promise<DossierData> {
     },
     tip: t ? { id: t.id, headline: t.headline, affects: seriesOf(cardNames, t.affects_gear), delta: t.delta } : null,
     tipsWindow:
-      st.data?.phase === 'round1' && st.data?.step === 'tips' && !st.data?.round1_locked_at && st.data?.tips_closes_at &&
-      Date.parse(st.data.tips_closes_at) > Date.now()
-        ? { closesAt: st.data.tips_closes_at as string, serverNow: new Date().toISOString() }
+      st?.phase === 'round1' && st?.step === 'tips' && !st?.round1_locked_at && st?.tips_closes_at &&
+      Date.parse(st.tips_closes_at) > Date.now()
+        ? { closesAt: st.tips_closes_at as string, serverNow: new Date().toISOString() }
         : null,
-    round1Locked: Boolean(st.data?.round1_locked_at),
-    round1Live: st.data?.phase === 'round1' && !st.data?.round1_locked_at,
+    round1Locked: Boolean(st?.round1_locked_at),
+    round1Live: st?.phase === 'round1' && !st?.round1_locked_at,
     round2: {
       duel: d
         ? {
@@ -183,15 +202,15 @@ export async function loadDossier(agencyId: string): Promise<DossierData> {
         .filter((g) => g.gave && g.got && g.with)
         .map((g) => ({ mission: g.mission, gave: g.gave!, got: g.got!, with: g.with! })),
       forceFields: (ffs.data ?? []).filter((f) => f.mission !== null).map((f) => f.mission as number),
-      currentMission: (st.data?.current_mission as number | null) ?? null,
-      forceField: shield.data ? { used: Boolean(shield.data.used_at) } : null,
+      currentMission: (st?.current_mission as number | null) ?? null,
+      forceField: r3Shield ? { used: Boolean(r3Shield.used_at) } : null,
       ffWindow:
-        st.data?.phase === 'round3' && ffState.data?.ff_closes_at && Date.parse(ffState.data.ff_closes_at) > Date.now()
-          ? { closesAt: ffState.data.ff_closes_at as string, serverNow: new Date().toISOString() }
+        st?.phase === 'round3' && st.ff_closes_at && Date.parse(st.ff_closes_at) > Date.now()
+          ? { closesAt: st.ff_closes_at as string, serverNow: new Date().toISOString() }
           : null,
     },
     // No result reaches a participant until the anchor has announced 1st place.
-    hero: hero.data && placesAnnounced(st.data?.phase as string, st.data?.step as string | null) === 3
+    hero: hero.data && atZeroHour
       ? { outcome: hero.data.outcome_label, multiplier: Number(hero.data.multiplier), hero: Number(hero.data.hero_score) }
       : null,
   };

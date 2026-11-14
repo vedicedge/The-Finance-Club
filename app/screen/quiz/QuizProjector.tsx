@@ -1,7 +1,6 @@
 'use client';
 
 import { pollFetch } from '@/lib/poll';
-import Image from 'next/image';
 import { TitleLockup } from '@/components/art/Poster';
 import { useEffect, useRef, useState } from 'react';
 import { EVENT, ROUNDS } from '@/lib/config';
