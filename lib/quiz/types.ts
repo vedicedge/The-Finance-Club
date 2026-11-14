@@ -36,6 +36,8 @@ export type PhoneState =
       frozen: boolean;
       rank: number | null;
       dry_run?: boolean;
+      /** Red alert: the prelim moved to Kahoot. */
+      kahoot?: { pin: string | null; published: boolean; rank: number | null; score: number | null };
     };
 
 /** Seconds left on a question, using the server's clock (offset = server time − phone time). */

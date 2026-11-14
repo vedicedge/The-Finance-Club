@@ -21,6 +21,8 @@ export type GuideSnapshot = {
     published: boolean;
     frozen: boolean;
     suddenDeathPending: boolean;
+    /** The red alert: the prelim moved to Kahoot. */
+    kahoot?: { on: boolean; results: number };
   };
   r1: {
     fundsStarted: boolean;
@@ -61,7 +63,7 @@ export type GuideSnapshot = {
 
 /** Every button Simple mode can press. The server action maps each to the console's own logic. */
 export type GuideActionId =
-  | 'start-checkin' | 'start-prelim' | 'quiz-shuffle' | 'quiz-open' | 'quiz-reveal' | 'quiz-publish' | 'quiz-freeze'
+  | 'start-checkin' | 'start-prelim' | 'quiz-shuffle' | 'quiz-open' | 'quiz-reveal' | 'quiz-publish' | 'quiz-freeze' | 'quiz-kahoot-publish'
   | 'start-round1' | 'r1-funds' | 'r1-draw' | 'r1-tips' | 'r1-marquee' | 'r1-first-lot' | 'r1-sale' | 'r1-skip' | 'r1-bid'
   | 'r1-secret' | 'r1-lastcall' | 'r1-news' | 'r1-news-next' | 'r1-teamups' | 'r1-recap' | 'r1-check' | 'r1-jugaad' | 'r1-lock'
   | 'start-round2' | 'r2-draw' | 'r2-publish' | 'start-round3'
@@ -164,6 +166,20 @@ function prelim(s: GuideSnapshot): Guide {
   const q = s.quiz;
   const labels = ['Shuffle the 15 questions', 'Play the 15 questions', 'Publish the board', 'Freeze the top 16', `Start ${ROUNDS.round1}`];
   const base = { phaseTitle: `Prelim · ${ROUNDS.prelim}` };
+  if (q.kahoot?.on) {
+    const kl = ['Run the quiz on Kahoot', 'Upload Kahoot’s results', 'Publish the board', 'Freeze the top 16', `Start ${ROUNDS.round1}`];
+    const kb = { phaseTitle: `Prelim · red alert (Kahoot)` };
+    if (!q.kahoot.results) {
+      return { ...kb, items: items(kl, 1), now: { key: 'kahoot-upload', title: 'Upload Kahoot’s results', body: 'Finish the game on Kahoot, download its results (Reports → the game → Download), then upload the file on the quiz console. Nicknames must start with the agency ID, e.g. “A07 Rakshak Labs”.', ...HOST, buttons: [], link: { href: '/admin/quiz#red-alert', label: 'Upload on the quiz console' } } };
+    }
+    if (!q.published) {
+      return { ...kb, items: items(kl, 2), now: { key: 'kahoot-publish', title: 'Publish the Kahoot board', body: `${q.kahoot.results} agencies ranked from Kahoot. Check the list on the quiz console, then publish: the projector shows the board and each phone its rank.`, ...HOST, buttons: [{ action: 'quiz-kahoot-publish', label: 'Publish the Kahoot board' }], link: { href: '/admin/quiz#red-alert', label: 'Check the list' } } };
+    }
+    if (!q.frozen) {
+      return { ...kb, items: items(kl, 3), now: { key: 'quiz-freeze', title: 'Freeze the top 16', body: 'Kahoot’s top 16 go to the Power Bazaar; everyone else is eliminated. Phones then show “Qualified” or “Eliminated”.', ...HOST, buttons: [{ action: 'quiz-freeze', label: 'Freeze the top 16', confirm: 'The board is final' }] } };
+    }
+    return { ...kb, items: items(kl, 4), now: { key: 'start-round1', title: `Start ${ROUNDS.round1}`, body: 'The top 16 are frozen. Move the event to Round 1: the projector switches to the auction.', ...ADMIN, buttons: [{ action: 'start-round1', label: `Start ${ROUNDS.round1}` }] } };
+  }
   if (!q.shuffled) {
     return { ...base, items: items(labels, 0), now: { key: 'quiz-shuffle', title: 'Shuffle the 15 questions', body: 'Fixes one random order of the live questions, the same for every phone. Do it once, before question 1.', ...HOST, buttons: [{ action: 'quiz-shuffle', label: 'Shuffle the questions' }] } };
   }

@@ -6,7 +6,7 @@ import { parseSettings } from '@/lib/settings';
 import { PHASE_INFO, isPhase } from '@/lib/phases';
 import { SEGMENTS } from '@/lib/scoring/quiz';
 import { OPTION_LETTERS } from '@/lib/quiz/types';
-import { loadAnswerCounts, loadAnswerKeys, loadBoard, loadQuestions, type QuestionRow } from '@/lib/quiz/server';
+import { loadAnswerCounts, loadAnswerKeys, loadBoard, loadKahootState, loadQuestions, type QuestionRow } from '@/lib/quiz/server';
 import { AdminShell } from '@/components/admin/AdminShell';
 import { AutoRefresh } from '@/components/admin/AutoRefresh';
 import { NextPhase } from '@/components/admin/NextPhase';
@@ -15,11 +15,14 @@ import {
   freezeTop16,
   openQuestion,
   publishBoard,
+  publishKahoot,
   revealQuestion,
   saveTiebreak,
+  setKahoot,
   setProjector,
   shuffleQuiz,
   unpublishBoard,
+  uploadKahoot,
   voidQuestion,
 } from './actions';
 
@@ -38,10 +41,15 @@ function liveStatus(q: QuestionRow, now: number) {
   return { label: 'Time up · reveal', tone: 'text-bone' };
 }
 
-export default async function QuizHostPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+export default async function QuizHostPage({ searchParams }: { searchParams: Promise<{ error?: string; ok?: string }> }) {
   const organiser = await requireOrganiser('quiz');
-  const { error } = await searchParams;
+  const { error, ok } = await searchParams;
   const db = serviceDb();
+  // Red alert: the prelim moved to Kahoot.
+  const [kahoot, kahootRows] = await Promise.all([
+    loadKahootState(),
+    db.from('prelim_kahoot_results').select('agency_id, kahoot_rank, score, correct, player, agencies(name, is_test)').order('kahoot_rank'),
+  ]);
   const [{ data: st }, questions, keys, counts, board, eligible] = await Promise.all([
     db.from('event_state').select('phase, step, current_question_id, prelim_published_at, prelim_frozen_at, settings').single(),
     loadQuestions(),
@@ -107,6 +115,94 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
         <p role="alert" className="mt-6 rounded-sm border border-ember/40 bg-ember/10 px-4 py-3 text-sm text-ember">
           Signal interference: {error}
         </p>
+      )}
+      {ok && <p role="status" className="mt-6 rounded-sm border border-toxic/40 bg-toxic/10 px-4 py-3 text-sm text-toxic">{ok}</p>}
+
+      {/* ---------------------------------------------------------------- red alert: the prelim on Kahoot */}
+      {(phase === 'checkin' || phase === 'prelim') && (kahoot.on || !frozen) && (
+        <section id="red-alert" className={`mt-6 rounded-sm border-2 px-5 py-5 ${kahoot.on ? 'border-ember bg-ember/15' : 'border-ember/40 bg-ember/5'}`}>
+          {!kahoot.on ? (
+            <form action={setKahoot.bind(null, true)} className="flex flex-wrap items-end gap-3">
+              <div className="min-w-64 flex-1">
+                <h2 className="text-sm font-bold tracking-[0.24em] text-ember uppercase">Red alert · website quiz failing?</h2>
+                <p className="mt-1 text-sm text-steel">
+                  Move the prelim to the backup quiz on Kahoot. Phones and the projector tell every team to join Kahoot with their
+                  agency ID in the nickname (e.g. “A07 Rakshak Labs”). Afterwards you upload Kahoot’s results here and they become the
+                  prelim board.
+                </p>
+              </div>
+              <label className="text-sm text-steel">
+                Kahoot game PIN
+                <input name="pin" inputMode="numeric" placeholder="e.g. 1234567" className="field num !mt-1 w-40" />
+              </label>
+              <label className="flex items-center gap-2 text-sm text-steel">
+                <input type="checkbox" name="confirm" className="size-5 accent-ember" /> Confirm
+              </label>
+              <button className="btn !min-h-12 border-ember bg-ember/90 !px-5 font-bold text-abyss hover:bg-ember">Red alert: move to Kahoot</button>
+            </form>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-baseline justify-between gap-3">
+                <h2 className="display text-3xl text-ember">Red alert · the prelim is on Kahoot</h2>
+                <form action={setKahoot.bind(null, true)} className="flex items-end gap-2">
+                  <input type="hidden" name="update" value="1" />
+                  <label className="text-sm text-steel">
+                    Game PIN
+                    <input name="pin" defaultValue={kahoot.pin ?? ''} inputMode="numeric" className="field num !mt-1 w-36" />
+                  </label>
+                  <button className="btn btn-ghost !min-h-0 !px-3 !py-2 !text-xs">Update PIN</button>
+                </form>
+              </div>
+              <ol className="list-decimal space-y-1 pl-5 text-sm text-bone">
+                <li>Run the quiz on Kahoot. Teams join at kahoot.it with their agency ID in the nickname.</li>
+                <li>When it ends, download Kahoot’s results (Excel) and upload it below.</li>
+                <li>Check the ranking, publish it, then freeze the top 16 below as usual.</li>
+              </ol>
+              {!frozen && (
+                <form action={uploadKahoot} className="flex flex-wrap items-center gap-3">
+                  <input name="file" type="file" required accept=".xlsx,.csv" className="text-sm text-bone file:mr-3 file:rounded-sm file:border file:border-line-strong file:bg-vault-2 file:px-3 file:py-2 file:text-bone" />
+                  <button className="btn btn-primary">Upload Kahoot results</button>
+                </form>
+              )}
+              {(kahootRows.data ?? []).length > 0 && (
+                <div>
+                  <p className="text-sm text-steel">
+                    Kahoot ranking · {(kahootRows.data ?? []).length} teams matched · the first 16 qualify
+                    {published ? ' · published' : ''}
+                  </p>
+                  <ol className="mt-2 grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
+                    {(kahootRows.data ?? []).map((r, i) => {
+                      const a = (Array.isArray(r.agencies) ? r.agencies[0] : r.agencies) as { name: string } | null;
+                      return (
+                        <li key={r.agency_id as string} className={`flex gap-2 ${i < 16 ? 'text-bone' : 'text-steel'}`}>
+                          <span className="num w-8 text-right">{i + 1}</span>
+                          <span className="num font-semibold text-glow">{r.agency_id as string}</span>
+                          <span className="min-w-0 flex-1 truncate">{a?.name}</span>
+                          <span className="num">{(r.score as number).toLocaleString('en-IN')}</span>
+                          <span className="hidden truncate text-xs text-steel sm:inline">“{r.player as string}”</span>
+                        </li>
+                      );
+                    })}
+                  </ol>
+                  {!published && (
+                    <form action={publishKahoot} className="mt-3">
+                      <button className="btn btn-primary">Publish the Kahoot board</button>
+                    </form>
+                  )}
+                </div>
+              )}
+              {!frozen && (
+                <form action={setKahoot.bind(null, false)} className="flex flex-wrap items-center gap-2 border-t border-ember/30 pt-3 text-sm">
+                  <span className="text-steel">Turned on by mistake?</span>
+                  <label className="flex items-center gap-2 text-steel">
+                    <input type="checkbox" name="confirm" className="size-4 accent-glow" /> Confirm
+                  </label>
+                  <button className="btn btn-ghost !min-h-0 !px-3 !py-1.5 !text-xs">Switch back to the website quiz</button>
+                </form>
+              )}
+            </div>
+          )}
+        </section>
       )}
       <NextPhase organiser={organiser} to="round1" />
       {phase !== 'prelim' && (

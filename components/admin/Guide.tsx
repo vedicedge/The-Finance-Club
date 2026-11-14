@@ -51,6 +51,11 @@ export function Guide({ guide, snap, organiser }: { guide: GuideData; snap: Guid
         Simple mode · {guide.phaseTitle}
         {snap.dryRun && <span className="ml-2 text-glow">· dry run</span>}
       </p>
+      {(snap.phase === 'checkin' || snap.phase === 'prelim') && !snap.quiz.frozen && !snap.quiz.kahoot?.on && opens('/admin/quiz') && (
+        <Link href="/admin/quiz#red-alert" className="mt-2 inline-block text-sm font-semibold text-ember underline-offset-4 hover:underline">
+          Website quiz failing? Red alert → move the prelim to Kahoot
+        </Link>
+      )}
 
       <section data-step={now.key} className="panel mt-4 border-l-4 border-l-glow px-6 py-7 sm:px-8">
         <p className="text-xs font-semibold tracking-[0.24em] text-glow uppercase">Do this now</p>

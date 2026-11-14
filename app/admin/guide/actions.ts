@@ -109,6 +109,7 @@ export async function guideDo(action: GuideActionId, arg: string, formData: Form
       await call(db.from('event_state').update({ step: 'board' }).eq('id', true));
       ok = 'The final board is published.';
       break;
+    case 'quiz-kahoot-publish': await call(db.rpc('prelim_kahoot_publish')); ok = 'The Kahoot board is published.'; break;
     case 'quiz-freeze': {
       const board = await loadBoard();
       if (!board.qualifiers) fail('Settle the tie for 16th place first (sudden death in the quiz console).');

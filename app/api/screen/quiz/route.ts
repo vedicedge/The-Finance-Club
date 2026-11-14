@@ -3,7 +3,7 @@ import { getOrganiser } from '@/lib/auth/organiser';
 import { canAccess } from '@/lib/auth/roles';
 import { serviceDb } from '@/lib/db/server';
 import { parseSettings } from '@/lib/settings';
-import { loadAnswerKeys, loadBoard } from '@/lib/quiz/server';
+import { loadAnswerKeys, loadBoard, loadKahootState } from '@/lib/quiz/server';
 
 /**
  * What the quiz projector shows. Organisers only (the projector laptop is signed in).
@@ -60,6 +60,7 @@ export async function GET() {
 
   const mode = st.step === 'board' ? 'board' : st.step === 'lobby' || !q ? 'lobby' : 'question';
   const board = mode === 'board' ? await loadBoard() : null;
+  const kahoot = await loadKahootState();
 
   return NextResponse.json(
     {
@@ -68,6 +69,7 @@ export async function GET() {
       mode,
       published: Boolean(st.prelim_published_at),
       frozen: Boolean(st.prelim_frozen_at),
+      kahoot: kahoot.on ? { pin: kahoot.pin } : null,
       standingBy: new Set((sessions.data ?? []).map((s) => s.agency_id)).size,
       eligibleCount: eligible.count ?? 0,
       lockedCount,

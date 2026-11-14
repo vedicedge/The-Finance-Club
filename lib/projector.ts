@@ -45,6 +45,8 @@ export type RoundProgress = {
   round2Published?: boolean;
   /** Prelim: the first question has opened. */
   quizStarted?: boolean;
+  /** Prelim: the red alert moved the quiz to Kahoot (the quiz screen shows the PIN). */
+  kahoot?: boolean;
   /** Round 1: the auction step (null or 'rules' = not started yet). */
   r1Step?: string | null;
   /** Round 2: the poster duels have been drawn. */
@@ -55,6 +57,7 @@ export type RoundProgress = {
 
 export function projectorScreen(mode: ProjectorMode, phase: Phase, opts: RoundProgress = {}): ProjectorScreen {
   if (mode !== 'auto') return mode;
+  if ((phase === 'prelim' || phase === 'checkin') && opts.kahoot) return 'quiz';
   if (phase === 'prelim' && opts.quizStarted === false) return 'rules';
   if (phase === 'round1' && (opts.r1Step === null || opts.r1Step === 'rules')) return 'rules';
   if (phase === 'round2') return opts.round2Published ? 'board' : opts.duelsDrawn === false ? 'rules' : 'cover';
