@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getEventState, registrationStatus } from '@/lib/event-state';
 import { longDate } from '@/lib/schedule';
+import { EVENT } from '@/lib/config';
 import { RegisterForm } from './RegisterForm';
 import { QuickJoinForm } from './QuickJoinForm';
 import { WithArt } from '@/components/site/WithArt';
@@ -53,6 +54,11 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
             {r.smallTeams ? 'One to three founders' : 'Three founders'}, one name. You&apos;ll get an agency ID and a 4-digit PIN.{' '}
             <span className="num text-bone">{Math.max(0, r.maxAgencies - state.agencyCount)}</span> slots left · closes{' '}
             {longDate(r.closesAt)}.
+          </p>
+          <p className="panel mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-1 px-4 py-3">
+            <span className="kicker !text-[0.66rem] !text-steel">Prizes worth</span>
+            <span className="display metal num text-2xl">{EVENT.prizePool}</span>
+            <span className="kicker basis-full !text-[0.66rem] !tracking-[0.24em] !text-glow">{EVENT.winnerPerk}</span>
           </p>
           <div className="mt-8">
             <RegisterForm emailDomain={r.emailDomain} emailHint={r.emailHint} smallTeams={r.smallTeams} />
