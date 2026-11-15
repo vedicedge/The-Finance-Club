@@ -36,10 +36,10 @@ export const ROUND_RULES: Record<'prelim' | 'round1' | 'round2' | 'round3' | 'ze
     title: ROUNDS.round2,
     art: 'skyline',
     rules: [
-      'Poster duel: draw your hero. Votes on the club’s Instagram stories; the winner gets +₹5 Cr if it also makes the top 10.',
+      'Poster duel: draw your hero. Votes on the club’s Instagram stories; the winner gets +₹5 Cr if it also makes the top 8.',
       '90 seconds to memorise your tower, 10 minutes to rebuild it from memory.',
       '8 minutes to build a slingshot, then one shot to knock your tower down.',
-      'Tower Score = (Accuracy + Speed + Destruction) ÷ 3. The top 10 go to the Vault.',
+      'Tower Score = (Accuracy + Speed + Destruction) ÷ 3. The top 8 go to the Vault.',
       'Soft foam only. Nobody in the target area.',
     ],
   },
