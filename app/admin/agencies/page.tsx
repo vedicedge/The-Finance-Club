@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { requireOrganiser } from '@/lib/auth/organiser';
+import Link from 'next/link';
+import { hasRole, requireOrganiser } from '@/lib/auth/organiser';
 import { serviceDb } from '@/lib/db/server';
 import { getEventState } from '@/lib/event-state';
 import { AdminShell } from '@/components/admin/AdminShell';
@@ -16,7 +17,7 @@ type Row = {
   is_test: boolean;
   created_at: string;
   founders: { id: number; name: string; section: string; phone: string; email: string; is_captain: boolean }[];
-  agency_auth: { locked_until: string | null; last_login_at: string | null } | null;
+  agency_auth: { locked_until: string | null; last_login_at: string | null; pin_copy?: string | null } | null;
 };
 
 const STATUS_STYLE: Record<Row['status'], string> = {
@@ -29,10 +30,12 @@ const STATUS_STYLE: Record<Row['status'], string> = {
 export default async function AgenciesPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const organiser = await requireOrganiser('agencies');
   const { q = '' } = await searchParams;
+  // PINs are shown to admins only, and only read from the database for them.
+  const admin = hasRole(organiser);
   const [{ data, error }, state] = await Promise.all([
     serviceDb()
       .from('agencies')
-      .select('id, name, status, eliminated_in, is_test, created_at, founders(id, name, section, phone, email, is_captain), agency_auth(locked_until, last_login_at)')
+      .select(`id, name, status, eliminated_in, is_test, created_at, founders(id, name, section, phone, email, is_captain), agency_auth(locked_until, last_login_at${admin ? ', pin_copy' : ''})`)
       .order('id'),
     getEventState(),
   ]);
@@ -69,6 +72,14 @@ export default async function AgenciesPage({ searchParams }: { searchParams: Pro
         {counts.total} registered{counts.test ? ` (+${counts.test} test)` : ''} · {counts.checkedIn} checked in · founders {foundersLocked ? 'locked' : 'editable until registration closes'}
       </p>
 
+      {admin && (
+        <p className="mt-3">
+          <Link href="/admin/agencies/pins" className="text-sm font-semibold text-glow underline-offset-4 hover:underline">
+            All agency IDs &amp; PINs (admins only) →
+          </Link>
+        </p>
+      )}
+
       <form className="mt-8 flex gap-3" role="search">
         <input name="q" defaultValue={q} placeholder="Search ID, agency, founder, phone or email" className="field !mt-0 max-w-md" />
         <button className="btn btn-ghost">Search</button>
@@ -101,6 +112,13 @@ export default async function AgenciesPage({ searchParams }: { searchParams: Pro
                       {a.status === 'registered' ? 'Check in' : 'Undo check-in'}
                     </button>
                   </form>
+                )}
+                {admin && (
+                  <details className="text-sm">
+                    <summary className="cursor-pointer text-steel hover:text-bone">Show PIN</summary>
+                    <span className="num text-2xl font-semibold tracking-[0.15em] text-glow">{a.agency_auth?.pin_copy ?? '—'}</span>
+                    {!a.agency_auth?.pin_copy && <span className="block text-xs text-steel">Not stored (registered before the update): reset it.</span>}
+                  </details>
                 )}
                 <ResetPinButton agencyId={a.id} />
               </div>

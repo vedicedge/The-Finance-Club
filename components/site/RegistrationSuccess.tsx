@@ -37,10 +37,10 @@ export function RegistrationSuccess({
             </p>
           ) : (
             <>
-              <p className="mt-5 font-semibold text-bone">Screenshot this now. The PIN is shown only once.</p>
+              <p className="mt-5 font-semibold text-bone">Screenshot this now. The site will not show the PIN again.</p>
               <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-bone/85 marker:text-glow">
                 <li>{captain} (captain) logs in with this ID and PIN on the quiz phone on Doomsday.</li>
-                <li>Share the ID and PIN with your co-founders. Lost it? An organiser can reset it at the check-in desk.</li>
+                <li>Share the ID and PIN with your co-founders. Lost it? The check-in desk can look it up or reset it.</li>
               </ul>
             </>
           )}

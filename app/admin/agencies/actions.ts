@@ -35,6 +35,7 @@ export async function resetPin(agencyId: string, _prev: PinResetState): Promise<
     .eq('agency_id', agencyId)
     .select('agency_id');
   if (error || !data?.length) return { kind: 'error', message: error?.message ?? 'Agency not found.' };
+  await db.from('agency_auth').update({ pin_copy: pin }).eq('agency_id', agencyId);
   await db.from('agency_sessions').update({ revoked_at: new Date().toISOString() }).eq('agency_id', agencyId).is('revoked_at', null);
   // An organiser at the desk vouches for the agency: the new PIN works even once the prelim has begun.
   await db.from('agency_auth').update({ first_login_at: new Date().toISOString() }).eq('agency_id', agencyId).is('first_login_at', null);

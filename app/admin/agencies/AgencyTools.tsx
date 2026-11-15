@@ -9,7 +9,7 @@ export function ResetPinButton({ agencyId }: { agencyId: string }) {
     return (
       <p className="transmission panel border-glow/50 px-3 py-2 text-sm">
         New PIN for {agencyId}: <span className="num ml-1 text-2xl font-semibold tracking-[0.15em] text-glow">{state.pin}</span>
-        <span className="mt-1 block text-xs text-steel">Shown once. Their phones have been signed out.</span>
+        <span className="mt-1 block text-xs text-steel">Their phones have been signed out.</span>
       </p>
     );
   }
