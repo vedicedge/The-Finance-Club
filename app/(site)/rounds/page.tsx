@@ -114,14 +114,14 @@ export default async function RoundsPage() {
         <p>Round 1 fixes your Power Level and your fund left. Fund left counts half in the Hero Score, so spend with care.</p>
       </Section>
 
-      <Section id="round-2" index="03" scene="skyline" eyebrow="Round 2 · 35 min · on the floor" title={ROUNDS.round2} meta="→ top 10">
+      <Section id="round-2" index="03" scene="skyline" eyebrow="Round 2 · 35 min · on the floor" title={ROUNDS.round2} meta="→ top 8">
         <H3>Part A — Signal Before the Storm (posters, 5 min)</H3>
         <ul>
           <li>Draw a poster for your hero: your agency ID, the hero built in Round 1, its identity and its doomsday mission. Original artwork only.</li>
           <li>Agencies are paired at random for poster duels (an odd number gives one agency a bye).</li>
           <li>Each duel is voted on the club&apos;s Instagram story. Votes count until the last slingshot shot.</li>
           <li>
-            The duel winner (or a bye) earns <strong>+₹5 Cr</strong>, credited only if it also finishes in the top 10 of the
+            The duel winner (or a bye) earns <strong>+₹5 Cr</strong>, credited only if it also finishes in the top 8 of the
             tower game. Posters never decide who is eliminated.
           </li>
         </ul>
@@ -133,7 +133,7 @@ export default async function RoundsPage() {
             ['Tower building', '10 min', 'Rebuild it from memory. Build time is recorded; the build is frozen and photographed.'],
             ['Slingshot construction', '8 min', 'Build a launcher from the props supplied. No practice shots; safety check first.'],
             ['Single-shot takedown', '6 min', 'One shot per team in a marked lane; blocks fallen are counted.'],
-            ['Judge and qualify', '4 min 30 s', 'Scores computed, cutoff ties settled, top 10 announced, poster bonuses credited.'],
+            ['Judge and qualify', '4 min 30 s', 'Scores computed, cutoff ties settled, top 8 announced, poster bonuses credited.'],
           ]}
         />
         <Note>
@@ -145,7 +145,7 @@ export default async function RoundsPage() {
         <p>The 8 highest Tower Scores go to the Vault; everyone else is eliminated.</p>
       </Section>
 
-      <Section id="round-3" index="04" scene="vault" eyebrow="Round 3 · 31 min · seated, on paper" title={ROUNDS.round3} meta="10 finalists">
+      <Section id="round-3" index="04" scene="vault" eyebrow="Round 3 · 31 min · seated, on paper" title={ROUNDS.round3} meta="8 finalists">
         <p>
           Each finalist holds one sealed <strong>Mission File</strong>, a numbered envelope carrying a secret Battle Outcome
           multiplier: one each of ×3, ×2, ×0.5 and ×0.25, the rest ×1 and ×1.5. Keep it sealed on the table. Envelopes open
