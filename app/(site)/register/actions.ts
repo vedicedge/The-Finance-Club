@@ -55,6 +55,7 @@ export async function registerAgency(_prev: RegisterState, formData: FormData): 
     };
   }
 
+  await keepPinCopy(data, pin);
   // Signed in straight away on this phone, so the agency can open My Agency.
   await startAgencySession(data, { single: false });
   return { kind: 'done', agencyId: data, agencyName: checked.value.agencyName, pin, captain: checked.value.founders[0].name };
@@ -90,6 +91,12 @@ export async function registerTestAgency(_prev: QuickState, formData: FormData):
             : 'Could not join. Try again.',
     };
   }
+  await keepPinCopy(data, pin);
   await startAgencySession(data, { single: false });
   return { kind: 'done', agencyId: data, agencyName: name, pin, captain: name };
+}
+
+/** Keeps the PIN for the admins' desk lookup (server-only; tolerates a database without the column). */
+async function keepPinCopy(agencyId: string, pin: string): Promise<void> {
+  await serviceDb().from('agency_auth').update({ pin_copy: pin }).eq('agency_id', agencyId);
 }
