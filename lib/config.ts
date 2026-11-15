@@ -15,6 +15,8 @@ export const EVENT = {
   defaultStartsAt: '2026-11-23T17:30:00+05:30',
   /** The cash prize pool, as on the poster. */
   prizePool: '₹13,000',
+  /** The winning team's extra prize, as on the poster. */
+  winnerPerk: 'Winner team gets Doomsday ticket',
   timeZone: 'Asia/Kolkata',
 } as const;
 

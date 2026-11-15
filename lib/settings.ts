@@ -52,7 +52,7 @@ export const DEFAULT_SETTINGS: EventSettings = {
   round1: { showFundPublicly: false, insiderTipAssignment: 'random' },
   round2: { cutoffTiebreak: 'Rock-paper-scissors' },
   zeroHour: { heroTiebreak: ['fund_left', 'power_level', 'coin_toss'], revealOrderTiebreak: 'agency_id' },
-  prizes: { winner: 'Cash prize from the ₹13,000 pool', runnerUp: 'Cash prize from the ₹13,000 pool' },
+  prizes: { winner: 'Doomsday ticket + prizes from the ₹13,000 pool', runnerUp: 'Prizes from the ₹13,000 pool' },
   security: { pinMaxAttempts: 5, pinLockSeconds: 60 },
   dryRun: { enabled: false },
 };

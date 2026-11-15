@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
   openGraph: {
     title: `${EVENT.fullName} — ${EVENT.club}`,
-    description: `${EVENT.fullName} · 23 November 2026 · Cash prize ${EVENT.prizePool}.`,
+    description: `${EVENT.fullName} · 23 November 2026 · Prizes worth ${EVENT.prizePool} · ${EVENT.winnerPerk}.`,
     type: 'website',
   },
 };
