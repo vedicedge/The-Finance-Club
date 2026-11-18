@@ -183,9 +183,10 @@ describe.skipIf(!hasDb)('closing Round 1', () => {
     ]);
   });
 
-  it('stops without applying anything when the four Jugaad Kits run out', () => {
-    // Each of the four agencies misses two categories and can pay: eight kits needed, four exist.
-    const thin = `${sale('H05', 'A01', 5)} ${sale('S05', 'A01', 5)} ${sale('H06', 'A02', 5)} ${sale('S06', 'A02', 5)}
+  it('stops without applying anything when the Jugaad Kits run out', () => {
+    // Each of the four agencies misses two categories and can pay: eight kits needed, only four kept here.
+    const thin = `delete from gear_cards where phase = 'jugaad' and id not in ('JK1', 'JK2', 'JK3', 'JK4');
+      ${sale('H05', 'A01', 5)} ${sale('S05', 'A01', 5)} ${sale('H06', 'A02', 5)} ${sale('S06', 'A02', 5)}
       ${sale('H07', 'A03', 5)} ${sale('S07', 'A03', 5)} ${sale('H08', 'A04', 4)} ${sale('S08', 'A04', 4)} ${step('last_call')}`;
     expect(sqlError(`${setup()} ${thin} select r1_apply_jugaad('${KEEPER}');`)).toMatch(/no_jugaad_kit_left/);
     expect(sql(`${setup()} ${thin} select count(*) from gear_cards where phase = 'jugaad';`).slice(-1)).toEqual(['4']);

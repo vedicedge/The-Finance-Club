@@ -233,7 +233,8 @@ export function AuctionSheets({ base, auction }: { base: Base; auction: AuctionP
             <Divider cols={9}>Secret Identity Bids · on slates: show 5 s, write 10 s, unmask</Divider>
             {lots.filter((c) => c.phase === 'secret').map(lotRow)}
             <Divider cols={9}>Jugaad Kits · Power 2 for ₹8 Cr each, one for every category an agency still misses (write the slot it fills)</Divider>
-            {kits.map((c) => {
+            {/* Every kit already given out, plus 8 blank lines for the paper backup. */}
+            {kits.filter((c, i) => auction.soldTo.has(c.id) || i < 8).map((c) => {
               const s = auction.soldTo.get(c.id);
               return (
                 <tr key={c.id}>

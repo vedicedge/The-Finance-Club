@@ -89,7 +89,7 @@ export function parseCards(rows: string[][]): { rows: CardRow[]; errors: string[
     const get = (i: number) => r[col[i]] ?? '';
     const bad = (msg: string) => errors.push(`Cards row ${line}: ${msg}`);
     const id = get(0).toUpperCase();
-    if (!/^([HSGK](0[1-9]|1[0-5])|JK[0-9]+)$/.test(id)) { bad(`ID "${get(0)}" must be H, S, G or K with 01–15 (e.g. G07), or JK1–JK4.`); continue; }
+    if (!/^([HSGK](0[1-9]|1[0-5])|JK[0-9]+)$/.test(id)) { bad(`ID "${get(0)}" must be H, S, G or K with 01–15 (e.g. G07), or JK1–JK64.`); continue; }
     if (seen.has(id)) { bad(`ID ${id} appears twice.`); continue; }
     seen.add(id);
     const category = CARD_CATEGORIES.find((c) => norm(c) === norm(get(1)));
@@ -127,7 +127,7 @@ export const INSTRUCTIONS: string[][] = [
   ['Side (Marvel/DC): optional label. Working (optional): a note for the quiz host.'],
   [''],
   ['CARDS sheet'],
-  ['ID: H01–H15 = HQ, S01–S15 = Suit, G01–G15 = Gadget, K01–K15 = Sidekick, JK1–JK4 = Jugaad Kits.'],
+  ['ID: H01–H15 = HQ, S01–S15 = Suit, G01–G15 = Gadget, K01–K15 = Sidekick, JK1–JK64 = Jugaad Kits (one per missing category).'],
   ['Category: HQ, Suit, Gadget, Sidekick (Any for Jugaad Kits). Card name and Series: shown on the projector and My Agency; card names must all differ.'],
   ['Series key (do not change): the internal name Breaking News and Team-Ups match on. Keep it as downloaded; for a brand-new card, copy the key of the series it belongs to.'],
   ['Power (1-10): whole number. Min bid (Cr): the opening bid in ₹ crore, in 0.5 steps.'],
