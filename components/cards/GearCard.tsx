@@ -1,3 +1,4 @@
+import { categoryColor } from '@/lib/round1/colours';
 import Image from 'next/image';
 import { cardArt, cardBackArt, seriesLabel } from '@/lib/card-art';
 import { GearIcon } from '@/components/art/gear-icons';
@@ -35,19 +36,28 @@ export function GearCard({
 }) {
   const art = cardArt(card.id);
   const series = showSeries && card.series ? seriesLabel(card.series) : null;
+  const color = categoryColor(card.category);
   return (
-    <figure className={`gear-card ${className}`}>
+    <figure className={`gear-card ${className}`} style={{ borderColor: `${color}b3`, boxShadow: `0 0 1.2em -0.3em ${color}66` }}>
       <div className="relative aspect-[3/4] overflow-hidden rounded-[0.45em] bg-[#07100c]">
         {art ? (
           <Image src={art} alt={card.name} fill sizes={sizes} className="object-cover" />
         ) : (
           <Placeholder category={card.category} />
         )}
+        {/* The category in its colour (Power Bazaar colour code). */}
+        <span aria-hidden="true" className="absolute inset-x-0 top-0 h-[0.35em]" style={{ background: color }} />
+        <span
+          className="absolute top-[0.6em] left-[0.5em] rounded-[0.2em] px-[0.45em] py-[0.15em] text-[0.58em] font-bold tracking-[0.14em] uppercase"
+          style={{ background: color, color: '#0b0f0c' }}
+        >
+          {card.category === 'Any' ? 'Jugaad' : card.category}
+        </span>
       </div>
       <figcaption className="px-[0.2em] pt-[0.6em] pb-[0.15em]">
         <span className="font-display line-clamp-2 block text-[1em] leading-[1.15] font-semibold text-bone">{card.name}</span>
         <span className="mt-[0.4em] flex items-center justify-between gap-[0.5em] text-[0.62em] font-semibold tracking-[0.16em] text-steel uppercase">
-          <span className="truncate">{series ?? card.category}</span>
+          <span className="truncate" style={series ? undefined : { color }}>{series ?? card.category}</span>
           {card.power !== undefined && <span className="num flex-none text-glow">P{card.power}</span>}
         </span>
       </figcaption>

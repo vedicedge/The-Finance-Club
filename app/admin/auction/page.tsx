@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { requireOrganiser } from '@/lib/auth/organiser';
 import { canAccess } from '@/lib/auth/roles';
 import { formatCrore } from '@/lib/money';
+import { CategoryTag } from '@/components/cards/CategoryTag';
 import { GearCard } from '@/components/cards/GearCard';
 import { seriesLabel } from '@/lib/card-art';
 import { CATEGORIES, R1_STEPS, TIPS_WINDOW_SECONDS, isR1Step } from '@/lib/round1/steps';
@@ -259,7 +260,7 @@ export default async function AuctionConsole({
                   <div className="min-w-0">
                     <p className="flex items-baseline gap-3">
                       <span className="num text-4xl font-semibold text-glow">{lot.id}</span>
-                      <span className="text-sm text-steel">{lot.category}</span>
+                      <CategoryTag category={lot.category} className="text-sm" />
                       {r1.sold.has(lot.id) && <span className="stamp text-ember">Sold</span>}
                     </p>
                     <p className="font-serif mt-1 text-2xl">{lot.card_name}</p>

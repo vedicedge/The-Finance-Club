@@ -80,7 +80,7 @@ export default async function RulesPage() {
           numeric={[1]}
           rows={[
             ['Round 1 start', '+₹50 Cr', 'Starting fund for every qualified agency'],
-            ['Round 1', '−₹2 Cr', 'Optional sealed Insider Tip'],
+            ['Round 1', '−₹2 Cr', 'Optional Insider Tip: an early, private look at one Breaking News headline'],
             ['Round 1', '−winning bid', 'Each gear card won'],
             ['Round 1', '−₹8 Cr each', 'Forced Jugaad Kit (Power 2) for every category still missing after Last Call'],
             ['Round 2', '+₹5 Cr', 'Poster duel winner (or a bye), only if it also reaches the top 8 in the tower game'],

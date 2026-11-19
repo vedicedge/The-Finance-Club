@@ -92,9 +92,9 @@ export default async function RoundsPage() {
         <Table
           head={['Phase', 'Length', 'How it works']}
           rows={[
-            ['Insider Tips', '1 min', 'Buy one tip for ₹2 Cr on My Agency while the window is open; it privately reveals one upcoming Breaking News card.'],
+            ['Insider Tips', '1 min', 'Optional. For ₹2 Cr (one per team, on My Agency while the 1-minute window is open) your team sees one Breaking News headline before it is announced: which cards will get stronger or weaker, and by how much. Use it to choose what to bid on.'],
             ['Marquee Auction', '10 min', 'The top 2 cards of each category: 8 lots, live with paddles, opening at the minimum bid.'],
-            ['Secret Identity Bids', '22 min', 'The other 52 cards, one at a time: type a blind bid on My Agency within 20 seconds (or pass). At 0:00 every bid appears on the projector and the highest wins.'],
+            ['Secret Identity Bids', '22 min', 'The other 52 cards, one at a time: type a blind bid on My Agency within 25 seconds (or pass). At 0:00 every bid appears on the projector and the highest wins.'],
             ['Last Call', '3 min', 'Unsold cards re-auctioned live, only to agencies still missing that category.'],
             ['Breaking News', '6 min', 'The 6 news cards and the 3 Team-Ups (+3 Power each) are revealed.'],
             ['Ledger check', '4 min', 'Confirm your 4 cards, Power Level and fund left with a ledger keeper.'],

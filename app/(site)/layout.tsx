@@ -3,11 +3,14 @@ import { ThreatBar } from '@/components/site/ThreatBar';
 import { SiteHeader } from '@/components/site/SiteHeader';
 import { SiteFooter } from '@/components/site/SiteFooter';
 import { DryRunStrip } from '@/components/site/DryRunStrip';
+import { TestSiteStrip } from '@/components/site/TestSiteStrip';
+import { isTestSite } from '@/lib/env';
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const state = await getEventState();
   return (
     <div className="flex min-h-dvh flex-col">
+      {isTestSite() && <TestSiteStrip />}
       {state.settings.dryRun.enabled && <DryRunStrip />}
       <ThreatBar phase={state.phase} alert={state.alert} />
       <SiteHeader registrationOpen={registrationStatus(state).open} />

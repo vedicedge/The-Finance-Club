@@ -13,13 +13,22 @@ export function BuyTip({ closesAt, serverNow, fund }: { closesAt: string; server
   return (
     <section className="panel border-l-2 border-l-glow px-5 py-5 transmission">
       <div className="flex items-baseline justify-between gap-3">
-        <p className="eyebrow text-glow">Insider Tips window</p>
+        <p className="eyebrow text-glow">Insider Tip · window open</p>
         <WindowClock closesAt={closesAt} serverNow={serverNow} refreshOnClose className="text-3xl font-semibold text-glow" />
       </div>
-      <p className="mt-2 text-sm text-bone/85">
-        For ₹2 Cr, see one of the 6 Breaking News headlines before it is announced: which card it hits and by how much. The site
-        picks the headline at random. One tip per agency; only your agency sees it.
-      </p>
+      <div className="mt-2 space-y-2 text-sm text-bone/90">
+        <p>
+          <strong>What is it?</strong> Later in this round, 6 <strong>Breaking News</strong> headlines are announced. Each one makes a
+          group of cards stronger or weaker by changing their Power, and your Power Level changes with it.
+        </p>
+        <p>An Insider Tip shows you one of those headlines now, before anyone else knows it:</p>
+        <ul className="list-disc space-y-1 pl-5">
+          <li>which cards it affects, and by how much (for example: every card in one series gets +2 Power);</li>
+          <li>picked at random by the site, and seen only by your team;</li>
+          <li>costs ₹2 Cr from your fund, one tip per team, only while this timer runs.</li>
+        </ul>
+        <p className="text-steel">Use it to decide which cards to bid higher on and which to avoid. Buying is optional.</p>
+      </div>
       {state.error && (
         <p role="alert" className="mt-3 text-sm text-ember">
           {state.error}

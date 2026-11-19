@@ -8,6 +8,8 @@ import { BuyTip } from '@/components/site/BuyTip';
 import { BuyForceField } from '@/components/site/BuyForceField';
 import { BlindBid } from '@/components/site/BlindBid';
 import { BudgetWarning } from '@/components/site/BudgetWarning';
+import { CategoryTag } from '@/components/cards/CategoryTag';
+import { categoryColor } from '@/lib/round1/colours';
 import { budgetWarning } from '@/lib/round1/budget';
 import { envNo } from '@/lib/round3/flow';
 import { Scene } from '@/components/art/Scene';
@@ -118,8 +120,9 @@ export function Dossier({
       </section>
 
       {prelimLive && (
-        <a href="/play" className="btn btn-primary mt-6 w-full !min-h-16 !text-base">
-          Enter the prelim · {ROUNDS.prelim}
+        <a href="/play" className="btn btn-primary mt-6 w-full !min-h-16 flex-col !gap-1 !px-4 text-center !whitespace-normal">
+          <span className="text-base leading-tight">Enter the prelim</span>
+          <span className="text-[0.7rem] leading-tight tracking-[0.12em] opacity-80">{ROUNDS.prelim}</span>
         </a>
       )}
 
@@ -190,10 +193,16 @@ export function Dossier({
 
         {data?.tip && (
           <section className="panel border-l-2 !border-l-ember px-5 py-5">
-            <p className="eyebrow text-ember">Insider Tip · eyes only</p>
-            <p className="font-serif mt-2 text-xl text-bone">&ldquo;{data.tip.headline}&rdquo;</p>
-            <p className="num mt-1 text-sm text-steel">
-              {data.tip.delta > 0 ? '+' : ''}{data.tip.delta} Power to every card in the {seriesLabel(data.tip.affects)}, when Breaking News hits.
+            <p className="eyebrow text-ember">Your Insider Tip · only your team can see this</p>
+            <p className="mt-2 text-sm text-steel">This Breaking News headline will be announced later in Round 1:</p>
+            <p className="font-serif mt-1 text-xl text-bone">&ldquo;{data.tip.headline}&rdquo;</p>
+            <p className="mt-2 text-sm text-bone">
+              When it is announced, every card in the <strong>{seriesLabel(data.tip.affects)}</strong> gets{' '}
+              <span className={`num font-semibold ${data.tip.delta > 0 ? 'text-toxic' : 'text-ember'}`}>
+                {data.tip.delta > 0 ? '+' : ''}
+                {data.tip.delta} Power
+              </span>{' '}
+              ({data.tip.delta > 0 ? 'stronger' : 'weaker'}). Use it: {data.tip.delta > 0 ? 'these cards are worth bidding higher on' : 'think twice before paying a lot for these cards'}.
             </p>
           </section>
         )}
@@ -217,7 +226,7 @@ export function Dossier({
                         sizes="(min-width: 640px) 150px, 45vw"
                       />
                     ) : (
-                      <div className="flex h-full min-h-[14em] flex-col items-center justify-center gap-2 rounded-[0.7em] border border-dashed border-line-strong text-steel">
+                      <div className="flex h-full min-h-[14em] flex-col items-center justify-center gap-2 rounded-[0.7em] border border-dashed" style={{ borderColor: `${categoryColor(cat)}80`, color: categoryColor(cat) }}>
                         <svg viewBox="0 0 48 48" className="w-10 opacity-60" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
                           <GearIcon kind={cat} />
                         </svg>
@@ -240,7 +249,7 @@ export function Dossier({
                 return (
                   <li key={cat} className="py-2">
                     <div className="grid grid-cols-[4.6rem_1fr_auto] gap-x-3">
-                      <span className="text-steel">{cat}</span>
+                      <CategoryTag category={cat} className="text-sm" />
                       <span className="min-w-0">
                         {g ? (
                           <>

@@ -1,3 +1,5 @@
+import { isTestSite } from '@/lib/env';
+import { TestSiteStrip } from '@/components/site/TestSiteStrip';
 import Link from 'next/link';
 import { EVENT } from '@/lib/config';
 import { AREAS, areasFor, ROLE_LABELS } from '@/lib/auth/roles';
@@ -23,6 +25,7 @@ export async function AdminShell({ organiser, children, guideHome = false }: { o
   const consoleLink = CONSOLE_FOR[phase];
   return (
     <div className="min-h-dvh">
+      {isTestSite() && <TestSiteStrip />}
       {settings.dryRun.enabled && <DryRunStrip />}
       {!schema.ok && (
         <p role="alert" className="border-b border-ember/50 bg-ember/15 px-[var(--gutter)] py-2.5 text-center text-sm text-ember">
