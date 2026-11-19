@@ -53,7 +53,7 @@ export async function advanceLot() {
 }
 
 /**
- * Secret Identity Bids on phones: opens the 20-second window for the card picked (or the next
+ * Secret Identity Bids on phones: opens the 25-second window for the card picked (or the next
  * card due) and puts it on the projector. Teams bid on My Agency; the highest bid wins at 0:00.
  */
 export async function openBidding(formData: FormData) {

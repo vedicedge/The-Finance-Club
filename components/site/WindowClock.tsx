@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { pollFetch } from '@/lib/poll';
 import { useRouter } from 'next/navigation';
 
 /**
@@ -31,7 +32,8 @@ export function WindowClock({
       setLeft(Math.max(0, Math.ceil(ms / 1000)));
       if (ms <= 0 && refreshOnClose && !refreshed.current) {
         refreshed.current = true;
-        router.refresh();
+        // Only with a working line: a failed refresh would reload the page onto the browser's offline screen.
+        void pollFetch('/api/ping', 3000).then((r) => r.ok && router.refresh()).catch(() => {});
       }
     };
     tick();

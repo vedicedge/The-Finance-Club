@@ -1,3 +1,4 @@
+import { isTestSite } from '@/lib/env';
 import type { Metadata } from 'next';
 import { requireOrganiser } from '@/lib/auth/organiser';
 import { AREAS, canAccess, type Area } from '@/lib/auth/roles';
@@ -70,6 +71,7 @@ export default async function CommandCentre({ searchParams }: { searchParams: Pr
   const isAdmin = canAccess(organiser.roles, 'settings');
   const dryRun = parseSettings(state.data?.settings).dryRun.enabled;
   const testCount = (agencyRows.data ?? []).filter((r) => r.is_test).length;
+  const realCount = (agencyRows.data ?? []).filter((r) => !r.is_test).length;
   const connected = !state.error;
   const allSeeded = EXPECTED.every((e, i) => counts[i] === e.expected);
   const secretsMissing = EXPECTED.some((e, i) => e.secret && counts[i] === 0);
@@ -152,7 +154,13 @@ export default async function CommandCentre({ searchParams }: { searchParams: Pr
               </p>
             )}
           </div>
-          <form action={setDryRun.bind(null, !dryRun)}>
+          <form action={setDryRun.bind(null, !dryRun)} className="flex flex-col items-end gap-2">
+            {!dryRun && !isTestSite() && realCount > 0 && (
+              <label className="flex max-w-xs items-start gap-2 text-xs text-ember">
+                <input type="checkbox" name="confirm_real" className="mt-0.5 size-4 accent-ember" />
+                {realCount} real team{realCount === 1 ? '' : 's'} registered here: they would see the dry run. Use the test site instead, or tick to go ahead.
+              </label>
+            )}
             <button className={`btn ${dryRun ? 'btn-ghost' : 'btn-primary'}`}>{dryRun ? 'End dry run mode' : 'Start dry run mode'}</button>
           </form>
         </section>

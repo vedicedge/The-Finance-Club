@@ -8,7 +8,8 @@ export function BudgetWarning({ fund, missing, reserve, className = '' }: { fund
       <p className="mt-1 text-bone">
         You are approaching the end of your budget: <span className="num font-semibold">{formatCrore(fund)}</span> left, and you still
         need {missing} categor{missing === 1 ? 'y' : 'ies'}. Strategise carefully and control your bidding: every category you miss
-        costs a ₹8 Cr Jugaad Kit, so keep about <span className="num font-semibold">{formatCrore(reserve)}</span> in hand.
+        costs a ₹8 Cr Jugaad Kit, so keep about <span className="num font-semibold">{formatCrore(reserve)}</span> in hand. This is only a
+        reminder: you can still bid.
       </p>
     </div>
   );

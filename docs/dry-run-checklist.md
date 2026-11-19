@@ -23,6 +23,7 @@ This file is generated from `lib/print/checklist.ts`; edit that file, then run `
 - [ ] Projector laptop on the auditorium Wi-Fi: sign in with the **Projector (view only)** account, open `/projector` and press F for full screen. It follows the event stage by itself and reads from the back row. From the command centre’s **Projector** panel, practise pinning a screen, **Back shortly** and **Blackout**, then set it back to **Automatic**.
 - [ ] Host laptop signed in on `/admin/quiz`; ledger keepers on `/admin/auction` and `/admin/ledger`; scorers and social-media lead on `/admin/round2` and `/admin/round3`.
 - [ ] Phone hotspot charged and switched on as the backup network.
+- [ ] Once real teams have registered, rehearse on the **test site** (the copy with the blue TEST SITE strip and its own database), never on the real one.
 - [ ] Command centre → **Start dry run mode**. Every page shows the DRY RUN strip.
 - [ ] Each tester opens the site on their own phone → Register → types a name. The phone is signed in and the test agency is checked in. Write each ID and PIN (shown once) on the check-in sheet. Aim for 10 or more phones.
 - [ ] Agencies & check-in lists every test agency with a TEST badge. On a real team, open “Change team members” and check the form (do not save).
@@ -46,7 +47,7 @@ This file is generated from `lib/print/checklist.ts`; edit that file, then run `
 - [ ] Enter the Breaking News draw (or draw at random) before the first tip.
 - [ ] Insider Tips: press **Open the 60-second window**. The projector counts down; two testers buy a tip on My Agency (₹2 Cr, with a confirm step) and the console marks each purchase NEW. Only that agency’s page shows its tip; after 0:00 the Buy button disappears.
 - [ ] Marquee: record sales by hand; the projector moves to the next lot. Try sales the site must refuse: below the minimum, above the fund left, not a ₹0.5 Cr step, a second card in the same category.
-- [ ] Secret Identity Bids: press **Open bidding** for a card. Three testers bid on My Agency within the 20 seconds (two of them the same amount; one tries a bid below the minimum). At 0:00 the projector shows every bid and the highest wins (on a tie, the earlier bid). A tester with a low fund sees the Budget alert.
+- [ ] Secret Identity Bids: press **Open bidding** for a card. Three testers bid on My Agency within the 25 seconds (two of them the same amount; one tries a bid below the minimum). At 0:00 the projector shows every bid and the highest wins (on a tie, the earlier bid). A tester with a low fund sees the Budget alert.
 - [ ] Undo the last entry, and void a sale with a reason: the card returns to the auction and the money to the fund.
 - [ ] Last Call, then Breaking News: reveal the headlines one at a time, then the Team-Ups.
 - [ ] **Apply Jugaad Kits & eliminations** (one kit at ₹8 Cr for each missing category; a team that cannot pay for all its kits is eliminated), then **Lock Round 1**. Press **Show all news & Team-Ups on the projector**: every headline and Team-Up, with who holds each card. Testers check gear, Power Level and fund left on My Agency, as at the real ledger check; then **Back to the normal view**.

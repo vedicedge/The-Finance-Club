@@ -1,5 +1,6 @@
 'use server';
 
+import { isTestSite } from '@/lib/env';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { requireOrganiser } from '@/lib/auth/organiser';
@@ -63,10 +64,20 @@ export async function setAlert(formData: FormData): Promise<void> {
   revalidatePath('/', 'layout');
 }
 
-/** Dry run mode on/off (admin): name-only test agencies for rehearsals. */
-export async function setDryRun(enabled: boolean): Promise<void> {
+/**
+ * Dry run mode on/off (admin): name-only test agencies for rehearsals. On the real site, once real
+ * teams have registered, starting one needs an extra tick: they would see the DRY RUN strip and
+ * registration closes while the rehearsal runs. The test site never asks.
+ */
+export async function setDryRun(enabled: boolean, formData?: FormData): Promise<void> {
   const me = await requireOrganiser('settings');
   const { settings } = await getEventState();
+  if (enabled && !isTestSite() && formData?.get('confirm_real') !== 'on') {
+    const { count } = await serviceDb().from('agencies').select('id', { count: 'exact', head: true }).eq('is_test', false);
+    if ((count ?? 0) > 0) {
+      redirect(`/admin?error=${encodeURIComponent(`${count} real team${count === 1 ? ' has' : 's have'} registered on this site. Rehearse on the test site instead, or tick the box to run a dry run here anyway.`)}`);
+    }
+  }
   const { error } = await serviceDb()
     .from('event_state')
     .update({

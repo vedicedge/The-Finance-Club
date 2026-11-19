@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Stage } from '@/components/screen/Stage';
 import { PLAY_SEGMENTS } from '@/lib/scoring/quiz';
 import { rulesFor } from '@/lib/round-rules';
+import { BAZAAR_CATEGORIES, CATEGORY_COLOURS } from '@/lib/round1/colours';
 
 /**
  * One page of rules on the projector before a round. The prelim page also shows the four quiz
@@ -12,6 +13,7 @@ import { rulesFor } from '@/lib/round-rules';
 export function RulesScreen({ phase }: { phase: string }) {
   const r = rulesFor(phase);
   const prelim = r.art === 'prelim';
+  const bazaar = r.art === 'bazaar';
   const [host, setHost] = useState('');
   useEffect(() => setHost(window.location.host), []);
   return (
@@ -37,7 +39,22 @@ export function RulesScreen({ phase }: { phase: string }) {
           </ol>
         )}
 
-        <ol className={`${prelim ? 'mt-[3.5cqh] space-y-[1.4cqh] text-[1.75cqw]' : 'mt-[5cqh] space-y-[2.2cqh] text-[2.2cqw]'} leading-snug text-bone`}>
+        {bazaar && (
+          <ol className="mt-[3.5cqh] grid grid-cols-4 gap-[1.6cqw]">
+            {BAZAAR_CATEGORIES.map((k) => {
+              const c = CATEGORY_COLOURS[k];
+              return (
+                <li key={k} className="flex flex-col rounded-[0.4cqw] border-t-[0.8cqh] bg-vault/85 px-[1.4cqw] py-[1.8cqh]" style={{ borderColor: c.color, boxShadow: `inset 0 0 0 1px ${c.color}55` }}>
+                  <span className="num text-[1.2cqw] font-semibold tracking-[0.25em] uppercase" style={{ color: c.color }}>{c.name}</span>
+                  <span className="display mt-[1cqh] text-[2.6cqw] leading-tight" style={{ color: c.color }}>{k}</span>
+                  <span className="mt-[1cqh] text-[1.35cqw] leading-snug text-bone/90">{c.blurb} · 15 cards</span>
+                </li>
+              );
+            })}
+          </ol>
+        )}
+
+        <ol className={`${prelim || bazaar ? 'mt-[3.5cqh] space-y-[1.4cqh] text-[1.75cqw]' : 'mt-[5cqh] space-y-[2.2cqh] text-[2.2cqw]'} leading-snug text-bone`}>
           {r.rules.map((line, i) => (
             <li key={i} className="flex gap-[1.4cqw]">
               <span className="num w-[2.4cqw] flex-none font-semibold text-glow">{i + 1}</span>

@@ -1,5 +1,7 @@
 'use client';
 
+import { categoryColor } from '@/lib/round1/colours';
+import { CategoryTag } from '@/components/cards/CategoryTag';
 import { pollFetch } from '@/lib/poll';
 import { useEffect, useState } from 'react';
 import { EVENT, ROUNDS } from '@/lib/config';
@@ -164,7 +166,8 @@ function TipsView({ s }: { s: S }) {
           <WindowClock closesAt={t.closesAt} serverNow={t.now} className="mt-[1cqh] block text-[13cqw] leading-none font-semibold text-glow" />
           <p className="mt-[3cqh] text-[2.4cqw] text-bone">Buy now on your My Agency page · ₹2 Cr · one per agency</p>
           <p className="mt-[1cqh] text-[1.8cqw] text-steel">
-            See one Breaking News headline before it is announced. <span className="num text-bone">{t.sold}</span> bought so far.
+            A tip shows your team one Breaking News headline before it is announced: which cards get stronger or weaker, and by how
+            much. <span className="num text-bone">{t.sold}</span> bought so far.
           </p>
         </>
       ) : (
@@ -175,7 +178,7 @@ function TipsView({ s }: { s: S }) {
           <p className="mt-[1cqh] text-[1.8cqw] text-steel">
             {t?.closesAt
               ? `${t.sold} tip${t.sold === 1 ? '' : 's'} bought.`
-              : 'It privately reveals one Breaking News card that will really be played. One per agency.'}
+              : 'It shows your team one Breaking News headline early: which cards get stronger or weaker. Optional; one per agency.'}
           </p>
         </>
       )}
@@ -196,8 +199,15 @@ function LotView({ s }: { s: S }) {
   const lot = s.lot;
   const sale = s.lastSale;
   const name = lot?.card_name ?? '';
+  const color = lot ? categoryColor(lot.category) : null;
   return (
-    <div className="grid h-full grid-cols-[auto_minmax(0,1fr)_minmax(0,0.8fr)] items-center gap-[3cqw] px-[4cqw] pt-[11cqh] pb-[5cqh]">
+    <div className="relative grid h-full grid-cols-[auto_minmax(0,1fr)_minmax(0,0.8fr)] items-center gap-[3cqw] px-[4cqw] pt-[11cqh] pb-[5cqh]">
+      {color && (
+        <>
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: `radial-gradient(90% 70% at 30% 0%, ${color}2e, transparent 70%)` }} />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-[8.5cqh] h-[0.6cqh]" style={{ background: color }} />
+        </>
+      )}
       {/* the card: it turns over as the lot opens; text sits beside it, never on the picture */}
       <div className="w-[25cqw] text-[1.8cqw]">
         {lot ? (
@@ -214,9 +224,11 @@ function LotView({ s }: { s: S }) {
       <div className="flex min-w-0 flex-col justify-center">
         {lot ? (
           <>
-            <p className="text-[1.4cqw] font-semibold tracking-[0.3em] text-glow uppercase">
+            <p className="text-[1.4cqw] font-semibold tracking-[0.3em] text-steel uppercase">
               {s.step === 'marquee' && lot.lot_order ? `Marquee lot ${lot.lot_order} of ${s.marqueeTotal}` : s.step === 'last_call' ? 'Last Call' : 'Secret Identity Bid'}
-              <span className="ml-[1.5cqw] text-steel">{lot.category}</span>
+            </p>
+            <p className="display mt-[0.8cqh] text-[3cqw] leading-none">
+              <CategoryTag category={lot.category === 'Any' ? 'Jugaad Kit' : lot.category} />
             </p>
             <p className="num mt-[2cqh] text-[2.4cqw] font-semibold text-steel">{lot.id}</p>
             <h1 className="display mt-[1cqh] text-[4.4cqw] leading-[1.02]">{name}</h1>
@@ -244,7 +256,9 @@ function LotView({ s }: { s: S }) {
       <aside className="flex min-w-0 flex-col justify-center gap-[5cqh] border-l border-line pl-[3cqw]">
         {s.bidding ? <BiddingPanel b={s.bidding} /> : lot && (
           <div>
-            <p className="text-[1.15cqw] font-semibold tracking-[0.3em] text-steel uppercase">Still needing {lot.category}</p>
+            <p className="text-[1.15cqw] font-semibold tracking-[0.3em] text-steel uppercase">
+              Still needing <CategoryTag category={lot.category} />
+            </p>
             <p className="num mt-[1.5cqh] text-[2.2cqw] leading-snug text-bone">{lot.needing.join('  ') || 'Nobody'}</p>
           </div>
         )}

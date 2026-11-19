@@ -12,6 +12,14 @@ export function publicEnv(): PublicEnv | null {
   return { supabaseUrl, supabasePublishableKey };
 }
 
+/**
+ * The test copy of the site (NEXT_PUBLIC_SITE_MODE=test in its Vercel project): its own database,
+ * a TEST SITE strip on every page, and dry runs without any warning.
+ */
+export function isTestSite(): boolean {
+  return process.env.NEXT_PUBLIC_SITE_MODE === 'test';
+}
+
 /** Emails that become admins the first time they sign in (comma-separated). */
 export function bootstrapAdminEmails(): string[] {
   return (process.env.BOOTSTRAP_ADMIN_EMAILS ?? '')
