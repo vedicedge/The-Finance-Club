@@ -92,6 +92,23 @@ A card without a picture shows its category icon.
    laptop plugged into the auditorium projector: sign it in there and it goes straight to
    `/projector`.
 
+### 5. Test site (rehearsals while real registrations are open)
+
+There are two sites, built from the same `main` branch, each with its own database:
+
+| | Website | Supabase project |
+|---|---|---|
+| Real event | doomsday-pi.vercel.app | `doomsday` (`lthhfacibqkkkkwqysut`) |
+| Test copy | doomsday-test.vercel.app | `doomsday-test` (`crclrjpyvvjyigdnxxxj`) |
+
+- The test site's Vercel project sets `NEXT_PUBLIC_SITE_MODE=test`: a blue TEST SITE strip on
+  every page. Dry runs happen there; real teams never see them.
+- **Every new migration is run on both projects**, real first, then test, so both report the
+  same `schema_version()`.
+- To rebuild the test database from scratch: run every file in `supabase/migrations/` in order,
+  then the private secret seed, then copy `questions`, `question_keys` and `gear_cards` from the
+  real project (with the runtime columns cleared).
+
 ## Developing locally
 
 ```bash
