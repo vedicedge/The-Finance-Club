@@ -17,7 +17,7 @@ export default async function RulesPage() {
     [
       'Who can register?',
       <>
-        {r.eligibility}. Teams of {r.smallTeams ? 'one to three' : 'exactly three'} founders
+        {r.eligibility}. Teams of {r.minFounders === 3 ? 'exactly three' : r.minFounders === 2 ? 'two or three' : 'one to three'} founders
         {r.emailDomain && <>, each registering with their own @{r.emailDomain} email ID</>}. Entry: {r.fee.toLowerCase()}.
         Registration closes {longDate(r.closesAt)} or when {r.maxAgencies} agencies have signed up.
       </>,
@@ -62,7 +62,7 @@ export default async function RulesPage() {
 
       <Section eyebrow="Your agency" title="Agency rules">
         <ul>
-          <li>{r.smallTeams ? '1 to 3' : 'Exactly 3'} founders, named at registration. Changes only at the desk, until the prelim starts. All founders should be present from Round 1 onward.</li>
+          <li>{r.minFounders === 3 ? 'Exactly 3' : `${r.minFounders} to 3`} founders, named at registration. Changes only at the desk, until the prelim starts. All founders should be present from Round 1 onward.</li>
           <li>Each agency picks a name and gets an ID (A01, A02…) used on the quiz, paddles, posters, forms and the ledger.</li>
           <li>One phone per agency for the quiz.</li>
         </ul>

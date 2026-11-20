@@ -38,7 +38,11 @@ export async function saveSettings(_prev: SettingsState, formData: FormData): Pr
       fee: text('fee') || DEFAULT_SETTINGS.registration.fee,
       closesAt,
       maxAgencies,
-      smallTeams: on('small_teams'),
+      ...(() => {
+        const min = Number(text('min_founders'));
+        const m = (min === 1 || min === 2 ? min : 3) as 1 | 2 | 3;
+        return { minFounders: m, smallTeams: m < 3 };
+      })(),
     },
     event: { startsAt, venue: text('venue') || DEFAULT_SETTINGS.event.venue },
     prelim: { requiresCheckin: on('requires_checkin'), leadInSeconds: leadIn },

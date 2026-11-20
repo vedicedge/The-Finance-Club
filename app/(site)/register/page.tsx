@@ -51,7 +51,7 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
       {status.open ? (
         <>
           <p className="mt-4 text-steel">
-            {r.smallTeams ? 'One to three founders' : 'Three founders'}, one name. You&apos;ll get an agency ID and a 4-digit PIN.{' '}
+            {r.minFounders === 3 ? 'Three founders' : r.minFounders === 2 ? 'Two or three founders' : 'One to three founders'}, one name. You&apos;ll get an agency ID and a 4-digit PIN.{' '}
 Registration closes {longDate(r.closesAt)}.
           </p>
           <p className="panel mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-1 px-4 py-3">
@@ -60,7 +60,7 @@ Registration closes {longDate(r.closesAt)}.
             <span className="kicker basis-full !text-[0.66rem] !tracking-[0.24em] !text-glow">{EVENT.winnerPerk}</span>
           </p>
           <div className="mt-8">
-            <RegisterForm emailDomain={r.emailDomain} emailHint={r.emailHint} smallTeams={r.smallTeams} />
+            <RegisterForm emailDomain={r.emailDomain} emailHint={r.emailHint} minFounders={r.minFounders} />
           </div>
         </>
       ) : (

@@ -22,7 +22,9 @@ export type EventSettings = {
     fee: string;
     closesAt: string; // ISO timestamp
     maxAgencies: number;
-    /** Teams of 1 or 2 may register (e.g. on-the-spot entries on the day); off = exactly 3. */
+    /** Smallest team allowed to register: 3 (exactly 3), 2 (2–3) or 1 (1–3). */
+    minFounders: 1 | 2 | 3;
+    /** minFounders below 3 (kept for older code and the database's old setting). */
     smallTeams: boolean;
   };
   event: { startsAt: string; venue: string };
@@ -45,6 +47,7 @@ export const DEFAULT_SETTINGS: EventSettings = {
     fee: 'Free',
     closesAt: '2026-11-23T18:00:00+05:30',
     maxAgencies: 60,
+    minFounders: 3,
     smallTeams: false,
   },
   event: { startsAt: '2026-11-23T17:30:00+05:30', venue: 'Auditorium' },
@@ -92,7 +95,7 @@ export function parseSettings(raw: unknown): EventSettings {
       fee: str(reg.fee, d.registration.fee),
       closesAt: isoTime(reg.closes_at, d.registration.closesAt),
       maxAgencies: int(reg.max_agencies, d.registration.maxAgencies, 1, 999),
-      smallTeams: bool(reg.small_teams, d.registration.smallTeams),
+      ...teamSize(reg),
     },
     event: { startsAt: isoTime(ev.starts_at, d.event.startsAt), venue: str(ev.venue, d.event.venue) },
     prelim: {
@@ -132,7 +135,8 @@ export function serializeSettings(s: EventSettings): Json {
       fee: s.registration.fee,
       closes_at: s.registration.closesAt,
       max_agencies: s.registration.maxAgencies,
-      small_teams: s.registration.smallTeams,
+      min_founders: s.registration.minFounders,
+      small_teams: s.registration.minFounders < 3,
     },
     event: { starts_at: s.event.startsAt, venue: s.event.venue },
     prelim: { requires_checkin: s.prelim.requiresCheckin, lead_in_seconds: s.prelim.leadInSeconds },
@@ -160,4 +164,11 @@ export function istLocalToIso(local: string): string | null {
 export function isoToIstLocal(iso: string): string {
   const shifted = new Date(Date.parse(iso) + 330 * 60_000);
   return shifted.toISOString().slice(0, 16);
+}
+
+/** registration.min_founders (1–3); without it, the older small_teams on/off (on = 1–3). */
+function teamSize(reg: Record<string, unknown>): { minFounders: 1 | 2 | 3; smallTeams: boolean } {
+  const raw = Number(reg.min_founders);
+  const min = raw === 1 || raw === 2 || raw === 3 ? raw : reg.small_teams === true ? 1 : 3;
+  return { minFounders: min, smallTeams: min < 3 };
 }
