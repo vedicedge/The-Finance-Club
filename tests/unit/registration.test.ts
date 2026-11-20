@@ -24,6 +24,15 @@ describe('registration form', () => {
     expect(!half.ok && half.errors.f2_phone).toBeTruthy();
   });
 
+  it('"teams of 2 or 3": a pair registers, a solo founder does not, a trio still does', () => {
+    const blank = (i: number) => ({ [`f${i}_name`]: '', [`f${i}_section`]: '', [`f${i}_phone`]: '', [`f${i}_email`]: '' });
+    const duo = validateRegistration({ ...valid(), ...blank(2) }, 'imi.edu', 2);
+    expect(duo.ok && duo.value.founders.length).toBe(2);
+    const solo = validateRegistration({ ...valid(), ...blank(1), ...blank(2) }, 'imi.edu', 2);
+    expect(solo.ok).toBe(false);
+    expect(validateRegistration(valid(), 'imi.edu', 2).ok).toBe(true);
+  });
+
   it('accepts a valid agency and normalises phones and emails; founder 1 is captain', () => {
     const r = validateRegistration(valid(), 'imi.edu');
     expect(r.ok).toBe(true);

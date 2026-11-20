@@ -125,7 +125,7 @@ export default async function Landing() {
               {[
                 ['Target', EVENT.city],
                 ['Strike', shortDate(event.startsAt)],
-                ['Defenders', registration.smallTeams ? 'Agencies of 1–3' : 'Agencies of 3'],
+                ['Defenders', registration.minFounders === 3 ? 'Agencies of 3' : `Agencies of ${registration.minFounders}–3`],
               ].map(([k, v]) => (
                 <div key={k} className="border-r border-line py-4 pr-3 last:border-r-0 [&:not(:first-child)]:pl-4">
                   <dt className="eyebrow !text-[0.6rem]">{k}</dt>
@@ -271,7 +271,7 @@ export default async function Landing() {
             </h2>
             <ul className="mt-7 space-y-2.5 text-bone/85">
               <li className="flex gap-3">
-                <Star className="mt-1.5 flex-none" /> {registration.smallTeams ? '1 to 3 founders' : 'Exactly 3 founders'}, named at registration — no changes later
+                <Star className="mt-1.5 flex-none" /> {registration.minFounders === 3 ? 'Exactly 3 founders' : `${registration.minFounders} to 3 founders`}, named at registration — no changes later
               </li>
               <li className="flex gap-3">
                 <Star className="mt-1.5 flex-none" />

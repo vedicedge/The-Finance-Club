@@ -50,7 +50,10 @@ const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
  * Validates the register form. Field names: agency_name and f{0,1,2}_{name,section,phone,email}.
  * Founder 1 (index 0) is the captain.
  */
-export function validateRegistration(form: Record<string, string>, emailDomain: string | null, smallTeams = false): RegistrationResult {
+export function validateRegistration(form: Record<string, string>, emailDomain: string | null, teamRule: boolean | number = false): RegistrationResult {
+  // The smallest team allowed: a number (1–3), or the older on/off (true = 1 to 3 founders).
+  const minFounders = typeof teamRule === 'number' ? Math.min(3, Math.max(1, teamRule)) : teamRule ? 1 : 3;
+  const smallTeams = minFounders < 3;
   const errors: Record<string, string> = {};
   const agencyName = collapse(form.agency_name ?? '');
   if (agencyName.length < 2 || agencyName.length > 40) errors.agency_name = 'Agency name must be 2–40 characters.';
@@ -58,7 +61,7 @@ export function validateRegistration(form: Record<string, string>, emailDomain: 
 
   // With small teams allowed, founders 2 and 3 may be left blank (a team of 1 or 2).
   const slots = FOUNDER_SLOTS.filter(
-    (i) => i === 0 || !smallTeams || ['name', 'section', 'phone', 'email'].some((k) => (form[`f${i}_${k}`] ?? '').trim() !== ''),
+    (i) => i < minFounders || !smallTeams || ['name', 'section', 'phone', 'email'].some((k) => (form[`f${i}_${k}`] ?? '').trim() !== ''),
   );
   const founders: FounderInput[] = slots.map((i) => {
     const name = collapse(form[`f${i}_name`] ?? '');
@@ -75,6 +78,8 @@ export function validateRegistration(form: Record<string, string>, emailDomain: 
 
     return { name, section, phone: phone ?? '', email, isCaptain: i === 0 };
   });
+
+  if (founders.length < minFounders) errors.f1_name = `Add at least ${minFounders} founders.`;
 
   // The same person cannot be two founders.
   founders.forEach((a, x) => {
