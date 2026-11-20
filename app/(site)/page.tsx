@@ -19,7 +19,6 @@ export default async function Landing() {
   const state = await getEventState();
   const { registration, event } = state.settings;
   const reg = registrationStatus(state);
-  const slotsLeft = Math.max(0, registration.maxAgencies - state.agencyCount);
 
   return (
     <>
@@ -77,9 +76,8 @@ export default async function Landing() {
               <p className="mt-3 flex flex-wrap items-center justify-center gap-x-2 text-sm text-steel lg:justify-start">
                 {reg.open && (
                   <span>
-                    <span className="num text-glow">{slotsLeft}</span> of <span className="num">{registration.maxAgencies}</span>
-                    <span className="sm:hidden"> slots left · closes {shortDate(registration.closesAt)}</span>
-                    <span className="hidden sm:inline"> agency slots left · closes {longDate(registration.closesAt)}</span>
+                    <span className="sm:hidden">Registration closes {shortDate(registration.closesAt)}</span>
+                    <span className="hidden sm:inline">Registration closes {longDate(registration.closesAt)}</span>
                   </span>
                 )}
                 <span className="sm:hidden">

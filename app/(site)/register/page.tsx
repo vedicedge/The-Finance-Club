@@ -52,8 +52,7 @@ export default async function RegisterPage({ searchParams }: { searchParams: Pro
         <>
           <p className="mt-4 text-steel">
             {r.smallTeams ? 'One to three founders' : 'Three founders'}, one name. You&apos;ll get an agency ID and a 4-digit PIN.{' '}
-            <span className="num text-bone">{Math.max(0, r.maxAgencies - state.agencyCount)}</span> slots left · closes{' '}
-            {longDate(r.closesAt)}.
+Registration closes {longDate(r.closesAt)}.
           </p>
           <p className="panel mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-1 px-4 py-3">
             <span className="kicker !text-[0.66rem] !text-steel">Prizes worth</span>
