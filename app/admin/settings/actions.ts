@@ -45,7 +45,7 @@ export async function saveSettings(_prev: SettingsState, formData: FormData): Pr
       })(),
     },
     event: { startsAt, venue: text('venue') || DEFAULT_SETTINGS.event.venue },
-    prelim: { requiresCheckin: on('requires_checkin'), leadInSeconds: leadIn },
+    prelim: { requiresCheckin: on('requires_checkin'), leadInSeconds: leadIn, revealAnswers: on('reveal_answers') },
     round1: {
       showFundPublicly: on('show_fund_publicly'),
       insiderTipAssignment: text('insider_tip_assignment') === 'manual' ? 'manual' : 'random',

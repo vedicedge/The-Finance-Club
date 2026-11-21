@@ -61,6 +61,7 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
   const now = Date.now();
   const phase = isPhase(st?.phase) ? st.phase : 'registration';
   const requiresCheckin = parseSettings(st?.settings).prelim.requiresCheckin;
+  const revealAnswers = parseSettings(st?.settings).prelim.revealAnswers;
   const eligibleCount = (eligible.data ?? []).filter((a) =>
     requiresCheckin ? a.status === 'checked_in' : a.status === 'registered' || a.status === 'checked_in',
   ).length;
@@ -248,7 +249,7 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
                       disabled={!current.opened_at || now < Date.parse(current.opened_at) + current.timer_s * 1000}
                       className="btn btn-primary"
                     >
-                      Reveal answer
+                      {revealAnswers ? 'Reveal answer' : 'Close question'}
                     </button>
                   </form>
                 )}
@@ -279,13 +280,15 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
               {toReveal.map((q) => (
                 <form key={q.id} action={revealQuestion.bind(null, q.id)}>
                   <button className="btn btn-primary w-full !min-h-14">
-                    Reveal answer · question {q.order_no} · {q.id}
+                    {revealAnswers ? 'Reveal answer' : 'Close'} · question {q.order_no} · {q.id}
                   </button>
                 </form>
               ))}
               <p className="text-xs text-steel">
-                {next ? `Reveal first, then open question ${next.order_no}.` : 'Reveal it, then publish the final board.'} Phones show
-                right/wrong and points for a question only once it is revealed.
+                {next ? `Close it first, then open question ${next.order_no}.` : 'Close it, then publish the final board.'}{' '}
+                {revealAnswers
+                  ? 'Phones show right/wrong and points once it is revealed.'
+                  : 'Answers stay hidden on the projector and phones (Settings → prelim); the site scores them automatically.'}
               </p>
             </div>
           ) : next ? (

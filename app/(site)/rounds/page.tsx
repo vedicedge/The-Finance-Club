@@ -73,7 +73,7 @@ export default async function RoundsPage() {
           <li>Before the prelim starts, your captain logs in with your agency ID and PIN.</li>
           <li>Joining closes when question 1 opens. If your phone drops, log back in on any phone; missed questions score 0.</li>
           <li>Each question shows its segment, so you know whether you have 10 or 20 seconds. Your answer locks on tap.</li>
-          <li>After each question your phone shows right or wrong and the points earned.</li>
+          <li>Answers are scored automatically and kept secret during the quiz: no right/wrong or points until the final board.</li>
         </ul>
         <p>
           Ranking is by total points. Ties are broken by the lower total time on correct answers; a tie for 16th place is

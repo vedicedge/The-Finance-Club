@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { serviceDb } from '@/lib/db/server';
+import { parseSettings } from '@/lib/settings';
 import { AGENCY_SESSION_COOKIE, hashSessionToken } from '@/lib/auth/session-token';
 
 type PhoneData = { signed_in?: boolean; agency?: { id?: string }; question?: Record<string, unknown> | null } & Record<string, unknown>;
@@ -17,7 +18,7 @@ export async function GET() {
     const db = serviceDb();
     const [phone, kahootState, intros] = await Promise.all([
       db.rpc('quiz_phone_state', { p_token_hash: hashSessionToken(token) }),
-      db.from('event_state').select('prelim_kahoot, prelim_kahoot_pin, prelim_published_at').maybeSingle(),
+      db.from('event_state').select('prelim_kahoot, prelim_kahoot_pin, prelim_published_at, settings').maybeSingle(),
       // Category intros: only the first question of each category has one (a handful of rows).
       db.from('questions').select('id, intro_until').not('intro_until', 'is', null),
     ]);
@@ -25,6 +26,21 @@ export async function GET() {
     const data = phone.data as PhoneData | null;
 
     const q = data?.question;
+    // Answers hidden (Settings → prelim): the phone never receives the right answer, right/wrong or
+    // points; the site still scores every answer. The final board shows the result.
+    const reveal = parseSettings(kahootState.data?.settings).prelim.revealAnswers;
+    if (data && !reveal) {
+      data.answers_hidden = true;
+      if (q && typeof q.id === 'string') {
+        q.correct_index = null;
+        const mine = q.my_answer as Record<string, unknown> | null | undefined;
+        if (mine) { mine.is_correct = null; mine.points = null; }
+      }
+      if (!kahootState.data?.prelim_published_at) {
+        const t = data.totals as { points: number; correct: number; answered: number } | undefined;
+        if (t) data.totals = { points: 0, correct: 0, answered: t.answered };
+      }
+    }
     if (q && typeof q.id === 'string') {
       q.intro_until = (intros.data ?? []).find((r) => r.id === q.id)?.intro_until ?? null;
     }

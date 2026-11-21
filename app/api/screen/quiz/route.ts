@@ -46,7 +46,9 @@ export async function GET() {
   let revealLine: string | null = null;
   const introUntil = (q?.intro_until as string | null | undefined) ?? null;
   const mode = st.step === 'board' ? 'board' : st.step === 'lobby' || !q ? 'lobby' : 'question';
-  const revealed = Boolean(q && q.revealed_at && q.status !== 'void');
+  // Answers hidden (Settings → prelim): the projector never gets the answer, the reveal line or the vote split.
+  const answersHidden = !parseSettings(st.settings).prelim.revealAnswers;
+  const revealed = Boolean(q && q.revealed_at && q.status !== 'void') && !answersHidden;
   const [answers, key, board] = await Promise.all([
     q ? db.from('answers').select('option_index').eq('question_id', q.id) : { data: null },
     // The key and the reveal line (whose company, or the working) go on the projector only after the reveal.
@@ -70,6 +72,7 @@ export async function GET() {
       phase: st.phase,
       mode,
       published: Boolean(st.prelim_published_at),
+      answersHidden,
       frozen: Boolean(st.prelim_frozen_at),
       kahoot: kahoot.on ? { pin: kahoot.pin } : null,
       standingBy: new Set((sessions.data ?? []).map((s) => s.agency_id)).size,

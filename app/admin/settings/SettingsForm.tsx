@@ -65,6 +65,7 @@ export function SettingsForm({ settings: s, closesLocal, startsLocal, tiebreakKe
 
       <Group title="Prelim">
         <Check name="requires_checkin" label="Agencies must be checked in to play the prelim" checked={s.prelim.requiresCheckin} />
+        <Check name="reveal_answers" label="Show the right answer and points after each question (off = answers stay hidden; the site scores automatically and only the final board is shown)" checked={s.prelim.revealAnswers} />
         <Text
           name="lead_in_seconds"
           label="Read-in before each question's clock starts (seconds, 0–10)"
