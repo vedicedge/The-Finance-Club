@@ -193,14 +193,14 @@ function prelim(s: GuideSnapshot): Guide {
     if (s.now < ends) {
       return { ...base, items: items(labels, 1), now: { key: `quiz-wait-${open.id}`, title: `Question ${open.no} is live`, body: 'Teams are answering on their phones. The Reveal button appears when the timer ends.', ...HOST, buttons: [], until: ends, question, progress } };
     }
-    return { ...base, items: items(labels, 1), now: { key: `quiz-reveal-${open.id}`, title: `Reveal the answer to question ${open.no}`, body: 'Time is up. Revealing shows the answer on the projector and each phone shows right or wrong and its points.', ...HOST, buttons: [{ action: 'quiz-reveal', label: `Reveal the answer to question ${open.no}`, arg: open.id }], question, progress } };
+    return { ...base, items: items(labels, 1), now: { key: `quiz-reveal-${open.id}`, title: `Close question ${open.no}`, body: 'Time is up. Closing locks every answer; the site scores them automatically. Answers stay hidden unless Settings → “Show the right answer” is on.', ...HOST, buttons: [{ action: 'quiz-reveal', label: `Close question ${open.no}`, arg: open.id }], question, progress } };
   }
   const next = q.slots.find((x) => x.openedAt === null);
   if (next) {
     return { ...base, items: items(labels, 1), now: { key: `quiz-open-${next.id}`, title: `Open question ${next.no} of ${q.slots.length}`, body: played === 0 ? 'Check the projector shows the quiz, then open the first question. Phones show a 3-2-1 read-in, then the clock starts.' : 'Read it out once it is on the screen. Phones get a 3-2-1 read-in before the clock starts.', ...HOST, buttons: [{ action: 'quiz-open', label: `Open question ${next.no}`, arg: next.id }], question: { prompt: next.prompt, options: next.options, answer: next.answer }, progress } };
   }
   if (!q.published) {
-    return { ...base, items: items(labels, 2), now: { key: 'quiz-publish', title: 'Publish the final board', body: 'All questions are revealed. Publishing shows the final board on the projector and each team’s rank on its phone.', ...HOST, buttons: [{ action: 'quiz-publish', label: 'Publish the final board' }], progress } };
+    return { ...base, items: items(labels, 2), now: { key: 'quiz-publish', title: 'Publish the final board', body: 'All questions are closed. Publishing shows the final board on the projector and each team’s rank on its phone.', ...HOST, buttons: [{ action: 'quiz-publish', label: 'Publish the final board' }], progress } };
   }
   if (q.suddenDeathPending) {
     return { ...base, items: items(labels, 3), now: { key: 'quiz-sudden-death', title: 'Tie for 16th: run the sudden death', body: 'Two or more teams are level across the cut. Show a sudden-death question in the quiz console, then enter who finished first.', ...HOST, buttons: [], link: { href: '/admin/quiz', label: 'Open the sudden death in the quiz console' } } };

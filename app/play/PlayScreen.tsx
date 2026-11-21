@@ -138,7 +138,7 @@ export function PlayScreen({ stateUrl = '/api/quiz/state' }: { stateUrl?: string
 
   const s = state;
   return (
-    <Shell agency={s.agency} points={s.totals.points} done={s.revealed_count} offline={failures >= 2} dryRun={s.dry_run}>
+    <Shell agency={s.agency} points={s.answers_hidden && !s.published ? undefined : s.totals.points} done={s.revealed_count} offline={failures >= 2} dryRun={s.dry_run}>
       <Body state={s} offset={offset} pending={pending} onAnswer={answer} />
       {notice && (
         <p role="status" className="mx-4 mb-4 rounded-sm border border-ember/40 bg-ember/10 px-4 py-3 text-sm text-ember">
@@ -317,7 +317,12 @@ function Body({
 
       {/* Status line */}
       <div className="mt-6 text-center" role="status">
-        {q.revealed ? (
+        {q.revealed && s.answers_hidden ? (
+          <p className="text-steel">
+            {q.my_answer ? (q.my_answer.late ? 'Time ran out before your answer arrived.' : 'Answer locked in.') : 'No answer this time.'} Scores are
+            revealed only on the final board.
+          </p>
+        ) : q.revealed ? (
           q.my_answer ? (
             q.my_answer.is_correct ? (
               <p className="stamp text-toxic">Correct · +{q.my_answer.points}</p>
@@ -328,7 +333,7 @@ function Body({
             <p className="stamp text-ember">No answer · 0</p>
           )
         ) : mine !== null ? (
-          <p className="text-steel">Answer locked. Waiting for the reveal…</p>
+          <p className="text-steel">{s.answers_hidden ? 'Answer locked. Wait for the next question.' : 'Answer locked. Waiting for the reveal…'}</p>
         ) : toStart > 0 ? (
           <p className="text-steel">Read the question. Options unlock at zero.</p>
         ) : left <= 0 ? (
@@ -391,7 +396,13 @@ function Shell({
         <span className="flex flex-none items-center gap-3">
           {agency && (
             <span className="num text-right text-sm text-steel">
-              <span className="text-bone">{(points ?? 0).toLocaleString('en-IN')}</span> pts · {done}/15
+              {points === undefined ? (
+                <>Question {done}/15</>
+              ) : (
+                <>
+                  <span className="text-bone">{points.toLocaleString('en-IN')}</span> pts · {done}/15
+                </>
+              )}
             </span>
           )}
           <FullscreenButton />

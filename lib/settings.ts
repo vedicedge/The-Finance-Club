@@ -28,7 +28,8 @@ export type EventSettings = {
     smallTeams: boolean;
   };
   event: { startsAt: string; venue: string };
-  prelim: { requiresCheckin: boolean; leadInSeconds: number };
+  /** revealAnswers: show the right answer and points after each question (off: only the final board). */
+  prelim: { requiresCheckin: boolean; leadInSeconds: number; revealAnswers: boolean };
   round1: { showFundPublicly: boolean; insiderTipAssignment: 'random' | 'manual' };
   round2: { cutoffTiebreak: string };
   zeroHour: { heroTiebreak: HeroTiebreak[]; revealOrderTiebreak: 'agency_id' };
@@ -51,7 +52,7 @@ export const DEFAULT_SETTINGS: EventSettings = {
     smallTeams: false,
   },
   event: { startsAt: '2026-11-23T17:30:00+05:30', venue: 'Auditorium' },
-  prelim: { requiresCheckin: true, leadInSeconds: 3 },
+  prelim: { requiresCheckin: true, leadInSeconds: 3, revealAnswers: false },
   round1: { showFundPublicly: false, insiderTipAssignment: 'random' },
   round2: { cutoffTiebreak: 'Rock-paper-scissors' },
   zeroHour: { heroTiebreak: ['fund_left', 'power_level', 'coin_toss'], revealOrderTiebreak: 'agency_id' },
@@ -101,6 +102,7 @@ export function parseSettings(raw: unknown): EventSettings {
     prelim: {
       requiresCheckin: bool(pre.requires_checkin, d.prelim.requiresCheckin),
       leadInSeconds: int(pre.lead_in_seconds, d.prelim.leadInSeconds, 0, 10),
+      revealAnswers: bool(pre.reveal_answers, d.prelim.revealAnswers),
     },
     round1: {
       showFundPublicly: bool(r1.show_fund_publicly, d.round1.showFundPublicly),
@@ -139,7 +141,7 @@ export function serializeSettings(s: EventSettings): Json {
       small_teams: s.registration.minFounders < 3,
     },
     event: { starts_at: s.event.startsAt, venue: s.event.venue },
-    prelim: { requires_checkin: s.prelim.requiresCheckin, lead_in_seconds: s.prelim.leadInSeconds },
+    prelim: { requires_checkin: s.prelim.requiresCheckin, lead_in_seconds: s.prelim.leadInSeconds, reveal_answers: s.prelim.revealAnswers },
     round1: { show_fund_publicly: s.round1.showFundPublicly, insider_tip_assignment: s.round1.insiderTipAssignment },
     round2: { cutoff_tiebreak: s.round2.cutoffTiebreak },
     zero_hour: { hero_tiebreak: s.zeroHour.heroTiebreak, reveal_order_tiebreak: s.zeroHour.revealOrderTiebreak },

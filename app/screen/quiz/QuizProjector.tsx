@@ -14,6 +14,7 @@ type ScreenState = {
   phase: string;
   mode: 'lobby' | 'question' | 'board';
   published: boolean;
+  answersHidden?: boolean;
   frozen: boolean;
   kahoot?: { pin: string | null } | null;
   standingBy: number;
@@ -215,7 +216,13 @@ function QuestionView({ s, offset }: { s: ScreenState; offset: number }) {
       </div>
 
       <aside className="relative flex flex-col items-center justify-center border-l border-line pl-[3cqw] text-center">
-        {q.revealed ? (
+        {q.revealed && s.answersHidden ? (
+          <>
+            <p className="text-[1.3cqw] font-semibold tracking-[0.3em] text-steel uppercase">Time&apos;s up</p>
+            <p className="display mt-[1.5cqh] text-[3.4cqw] leading-tight text-bone">Answers locked</p>
+            <p className="mt-[1.5cqh] text-[1.4cqw] text-steel">Scores appear only on the final board.</p>
+          </>
+        ) : q.revealed ? (
           <>
             <p className="text-[1.3cqw] font-semibold tracking-[0.3em] text-steel uppercase">Answer</p>
             <p className="num mt-[1cqh] text-[11cqw] leading-none font-semibold text-toxic">

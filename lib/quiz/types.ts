@@ -2,6 +2,7 @@ import type { QuizSegment } from '@/lib/scoring/quiz';
 import type { Phase } from '@/lib/phases';
 
 /** What /api/quiz/state returns to a phone (built by the quiz_phone_state database function). */
+/** answers_hidden: the right answer, right/wrong and points are not sent (Settings → prelim). */
 export type PhoneState =
   | { signed_in: false }
   | {
@@ -32,6 +33,7 @@ export type PhoneState =
           };
       totals: { points: number; correct: number; answered: number };
       revealed_count: number;
+      answers_hidden?: boolean;
       published: boolean;
       frozen: boolean;
       rank: number | null;
