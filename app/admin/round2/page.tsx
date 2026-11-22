@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: 'Operation: Skyline console' };
 const small = 'btn !min-h-0 !px-3 !py-1.5 !text-xs';
 const num = 'w-16 rounded-sm border border-line-strong bg-vault-2 px-2 py-1 text-sm num';
 
-type Typed = { duel?: string; votes_a?: string; votes_b?: string; row?: string; correct?: string; reference?: string; build_time?: string; fallen?: string; frozen?: string };
+type Typed = { duel?: string; votes_a?: string; votes_b?: string; row?: string; correct?: string; reference?: string; build_time?: string; standing?: string; frozen?: string };
 
 export default async function Round2Console({ searchParams }: { searchParams: Promise<{ ok?: string; error?: string } & Typed> }) {
   const organiser = await requireOrganiser('round2');
@@ -110,9 +110,9 @@ export default async function Round2Console({ searchParams }: { searchParams: Pr
             <thead>
               <tr className="border-b border-line-strong text-steel">
                 <th className="py-2 pr-3 font-medium">Agency</th>
-                <th className="py-2 pr-3 font-medium">Correct / reference</th>
+                <th className="py-2 pr-3 font-medium">Cups correct / in reference</th>
                 <th className="py-2 pr-3 font-medium">Build time</th>
-                <th className="py-2 pr-3 font-medium">Fallen / frozen</th>
+                <th className="py-2 pr-3 font-medium">Still standing after the throw / cups in the tower</th>
                 <th className="py-2 pr-3 font-medium" />
                 <th className="num py-2 pr-3 text-right font-medium">A · S · D</th>
                 <th className="num py-2 text-right font-medium">Score</th>
@@ -128,13 +128,13 @@ export default async function Round2Console({ searchParams }: { searchParams: Pr
                     <td className="py-2 pr-3"><span className="num font-semibold text-glow">{a.id}</span> {a.name}</td>
                     <td colSpan={4} className="py-2 pr-3">
                       <form action={saveTower.bind(null, a.id)} className="flex flex-wrap items-center gap-2">
-                        <input name="correct" defaultValue={retry ? sp.correct : t?.correct_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Correct blocks" />
+                        <input name="correct" defaultValue={retry ? sp.correct : t?.correct_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Cups in the correct position" />
                         <span className="text-steel">/</span>
-                        <input name="reference" defaultValue={retry ? sp.reference : t?.reference_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Reference blocks" />
+                        <input name="reference" defaultValue={retry ? sp.reference : t?.reference_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Cups in the reference" />
                         <input name="build_time" defaultValue={retry ? sp.build_time : t ? (t.build_time_s >= 600 ? 'DNF' : formatBuildTime(t.build_time_s)) : ''} placeholder="6:05" disabled={!scorer || !live} className={`${num} !w-20`} aria-label="Build time" />
-                        <input name="fallen" defaultValue={retry ? sp.fallen : t?.blocks_fallen ?? ''} disabled={!scorer || !live} className={num} aria-label="Blocks fallen" />
+                        <input name="standing" defaultValue={retry ? sp.standing : t ? t.frozen_blocks - t.blocks_fallen : ''} disabled={!scorer || !live} className={num} aria-label="Cups still standing after the throw" />
                         <span className="text-steel">/</span>
-                        <input name="frozen" defaultValue={retry ? sp.frozen : t?.frozen_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Blocks in frozen build" />
+                        <input name="frozen" defaultValue={retry ? sp.frozen : t?.frozen_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Cups in the tower as built" />
                         {scorer && live && <button className={`${small} btn-ghost`}>Save</button>}
                       </form>
                     </td>

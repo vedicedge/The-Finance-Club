@@ -7,9 +7,9 @@ export function BudgetWarning({ fund, missing, reserve, className = '' }: { fund
       <p className="font-semibold tracking-[0.12em] text-ember uppercase">Budget alert</p>
       <p className="mt-1 text-bone">
         You are approaching the end of your budget: <span className="num font-semibold">{formatCrore(fund)}</span> left, and you still
-        need {missing} categor{missing === 1 ? 'y' : 'ies'}. Strategise carefully and control your bidding: every category you miss
-        costs a ₹8 Cr Jugaad Kit, so keep about <span className="num font-semibold">{formatCrore(reserve)}</span> in hand. This is only a
-        reminder: you can still bid.
+        need {missing} categor{missing === 1 ? 'y' : 'ies'}. Every category you miss costs a ₹8 Cr Jugaad Kit, so keep about{' '}
+        <span className="num font-semibold">{formatCrore(reserve)}</span> in hand. You can still bid: anything beyond your fund becomes a
+        loan from The Finance Club, which lowers your Hero Score.
       </p>
     </div>
   );

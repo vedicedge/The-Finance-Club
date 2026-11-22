@@ -1,6 +1,7 @@
 import { isTestSite } from '@/lib/env';
 import { TestSiteStrip } from '@/components/site/TestSiteStrip';
 import Link from 'next/link';
+import { FullscreenButton } from '@/components/site/FullscreenButton';
 import { EVENT } from '@/lib/config';
 import { AREAS, areasFor, ROLE_LABELS } from '@/lib/auth/roles';
 import type { Organiser } from '@/lib/auth/organiser';
@@ -64,6 +65,7 @@ export async function AdminShell({ organiser, children, guideHome = false }: { o
           </nav>
           )}
           <div className="ml-auto flex items-center gap-4 text-sm">
+            <FullscreenButton label />
             <form action={setSimpleMode.bind(null, !simple, '/admin')}>
               <button
                 aria-pressed={simple}

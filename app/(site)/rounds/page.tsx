@@ -102,16 +102,16 @@ export default async function RoundsPage() {
         />
         <H3>Bid rules</H3>
         <ul>
-          <li>A valid bid is at least the card&apos;s minimum, at most your fund left, in ₹0.5 Cr steps. Anything else counts as a pass.</li>
+          <li>A valid bid is at least the card&apos;s minimum, in ₹0.5 Cr steps. You may bid more than your fund left: the difference becomes a <strong>loan from The Finance Club</strong> (a negative fund).</li>
           <li>One card per category. Winning bids are final and come off your fund at once.</li>
           <li>Tie for the highest bid: live lots, the tied agencies re-bid once, then a coin toss; phone bids, the bid that reached the site first wins.</li>
-          <li>Your phone warns you when your fund left gets close to what you still need to finish your hero.</li>
+          <li>Your phone warns you when your fund left gets close to what you still need to finish your hero, and before any bid that would put you into a loan.</li>
           <li>
             Still missing a category after Last Call: you must take a <strong>Jugaad Kit</strong> (Power 2) for ₹8 Cr for
-            each missing category (two missing: two kits, ₹16 Cr). Unable to pay for all of them: eliminated.
+            each missing category (two missing: two kits, ₹16 Cr). Nobody is eliminated in Round 1: if you can&apos;t pay, the rest is a loan from The Finance Club.
           </li>
         </ul>
-        <p>Round 1 fixes your Power Level and your fund left. Fund left counts half in the Hero Score, so spend with care.</p>
+        <p>Round 1 fixes your Power Level and your fund left. Fund left counts half in the Hero Score, so spend with care: a loan is a negative fund and lowers your final score.</p>
       </Section>
 
       <Section id="round-2" index="03" scene="skyline" eyebrow="Round 2 · 35 min · on the floor" title={ROUNDS.round2} meta="→ top 8">
@@ -119,27 +119,26 @@ export default async function RoundsPage() {
         <ul>
           <li>Draw a poster for your hero: your agency ID, the hero built in Round 1, its identity and its doomsday mission. Original artwork only.</li>
           <li>Agencies are paired at random for poster duels (an odd number gives one agency a bye).</li>
-          <li>Each duel is voted on the club&apos;s Instagram story. Votes count until the last slingshot shot.</li>
+          <li>Each duel is voted on the club&apos;s Instagram story. Votes count until the last team&apos;s throw.</li>
           <li>
             The duel winner (or a bye) earns <strong>+₹5 Cr</strong>, credited only if it also finishes in the top 8 of the
             tower game. Posters never decide who is eliminated.
           </li>
         </ul>
-        <H3>Part B — Skyline: Build. Break. (30 min)</H3>
+        <H3>Part B — Skyline: Build. Break. (cup tower)</H3>
         <Table
           head={['Step', 'Time', 'What happens']}
           rows={[
-            ['Reference viewing', '1 min 30 s', 'Each team sees a different colour-coded block tower; then all references are hidden.'],
-            ['Tower building', '10 min', 'Rebuild it from memory. Build time is recorded; the build is frozen and photographed.'],
-            ['Slingshot construction', '8 min', 'Build a launcher from the props supplied. No practice shots; safety check first.'],
-            ['Single-shot takedown', '6 min', 'One shot per team in a marked lane; blocks fallen are counted.'],
+            ['Reference viewing', '45 s', 'Each team sees a reference photo of a cup tower; then it is hidden.'],
+            ['Tower building', '10 min', 'Rebuild it from memory with cups. Build time is recorded; cups in the correct position are counted against the reference.'],
+                        ['Tennis-ball throw', '1 throw', 'Each team throws one tennis ball at its own tower from the line marked by The Finance Club. The cups still standing are counted.'],
             ['Judge and qualify', '4 min 30 s', 'Scores computed, cutoff ties settled, top 8 announced, poster bonuses credited.'],
           ]}
         />
         <Note>
-          Tower Score = (Accuracy + Speed + Destruction) ÷ 3, each out of 100. Accuracy = blocks in the right place and
-          colour ÷ blocks in the reference. Speed = 1 − build time ÷ 10 min (an unfinished build scores 0). Destruction =
-          blocks that fall after your shot ÷ blocks in your build. Example: (90 + 40 + 75) ÷ 3 = 68.33. A tie at the
+          Tower Score = (Accuracy + Speed + Destruction) ÷ 3, each out of 100. Accuracy = cups in the correct position ÷
+          cups in the reference. Speed = 1 − build time ÷ 10 min (an unfinished build scores 0). Destruction = cups knocked
+          down by your throw ÷ cups in your tower (more knocked down scores more). Example: (90 + 40 + 75) ÷ 3 = 68.33. A tie at the
           cutoff is settled by: {settings.round2.cutoffTiebreak.toLowerCase()}.
         </Note>
         <p>The 8 highest Tower Scores go to the Vault; everyone else is eliminated.</p>

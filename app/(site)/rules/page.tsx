@@ -71,7 +71,7 @@ export default async function RulesPage() {
       <Section eyebrow="The Fund Ledger" title="Money rules">
         <ul>
           <li>All money is virtual ₹ crore on one Fund Ledger, kept by 2 ledger keepers and mirrored on this website.</li>
-          <li>Bids and payments move in ₹0.5 Cr steps. No agency may spend more than its fund left.</li>
+          <li>Bids and payments move in ₹0.5 Cr steps. In Round 1 an agency may spend more than its fund left: the difference is a loan from The Finance Club, shown as a negative fund, and it lowers the Hero Score (fund left ÷ 2).</li>
           <li>Transfers between agencies are allowed only in Round 3&apos;s Chai Pe Charcha, and must be reported to a ledger keeper.</li>
         </ul>
         <H3>Every money movement in the event</H3>
@@ -82,7 +82,7 @@ export default async function RulesPage() {
             ['Round 1 start', '+₹50 Cr', 'Starting fund for every qualified agency'],
             ['Round 1', '−₹2 Cr', 'Optional Insider Tip: an early, private look at one Breaking News headline'],
             ['Round 1', '−winning bid', 'Each gear card won'],
-            ['Round 1', '−₹8 Cr each', 'Forced Jugaad Kit (Power 2) for every category still missing after Last Call'],
+            ['Round 1', '−₹8 Cr each', 'Forced Jugaad Kit (Power 2) for every category still missing after Last Call, on a loan if needed (nobody is eliminated in Round 1)'],
             ['Round 2', '+₹5 Cr', 'Poster duel winner (or a bye), only if it also reaches the top 8 in the tower game'],
             ['Round 3', '−₹5 Cr', 'Force Field: one per finalist, for the whole round'],
             ['Round 3', '+₹5 Cr', "Mini game winner's cash option, instead of Swap or X-Ray"],

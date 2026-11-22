@@ -19,7 +19,7 @@ export const CHECKLIST: ChecklistSection[] = [
       {
         items: [
           'Merge the latest pull request on GitHub and wait until Vercel shows the new deployment as **Ready**.',
-          'In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (34 files; the last is `20261122003300_fixed_question_order.sql`).',
+          'In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (35 files; the last is `20261122003400_round1_loans.sql`).',
           'If the secret seed has never been run, run `supabase/private/seed_secrets.sql` once.',
           'Command centre: **Database updates** says “Up to date”, and Seed data says **OK** on every row.',
           'Every crew member with a website job signs in once at `/admin/login`; an admin gives each their role in Crew & roles (quiz host, 2 ledger keepers, auctioneer, 2 scorers, social-media lead, anchor, 2 floaters).',
@@ -70,11 +70,11 @@ export const CHECKLIST: ChecklistSection[] = [
           'After freezing, press **Start Round 1 · Power Bazaar →** (quiz console). Power Bazaar console → credit starting funds (+₹50 Cr each, once).',
           'Enter the Breaking News draw (or draw at random) before the first tip.',
           'Insider Tips: press **Open the 60-second window**. The projector counts down; two testers buy a tip on My Agency (₹2 Cr, with a confirm step) and the console marks each purchase NEW. Only that agency’s page shows its tip; after 0:00 the Buy button disappears.',
-          'Marquee: record sales by hand; the projector moves to the next lot. Try sales the site must refuse: below the minimum, above the fund left, not a ₹0.5 Cr step, a second card in the same category.',
+          'Marquee: record sales by hand; the projector moves to the next lot. Try sales the site must refuse: below the minimum, not a ₹0.5 Cr step, a second card in the same category. A sale above the fund left goes through as a loan (negative fund).',
           'Secret Identity Bids: press **Open bidding** for a card. Three testers bid on My Agency within the 25 seconds (two of them the same amount; one tries a bid below the minimum). At 0:00 the projector shows every bid and the highest wins (on a tie, the earlier bid). A tester with a low fund sees the Budget alert.',
           'Undo the last entry, and void a sale with a reason: the card returns to the auction and the money to the fund.',
           'Last Call, then Breaking News: reveal the headlines one at a time, then the Team-Ups.',
-          '**Apply Jugaad Kits & eliminations** (one kit at ₹8 Cr for each missing category; a team that cannot pay for all its kits is eliminated), then **Lock Round 1**. Press **Show all news & Team-Ups on the projector**: every headline and Team-Up, with who holds each card. Testers check gear, Power Level and fund left on My Agency, as at the real ledger check; then **Back to the normal view**.',
+          '**Apply Jugaad Kits** (one kit at ₹8 Cr for each missing category; a team that cannot pay takes a loan from The Finance Club, nobody is eliminated), then **Lock Round 1**. Press **Show all news & Team-Ups on the projector**: every headline and Team-Up, with who holds each card. Testers check gear, Power Level and fund left on My Agency, as at the real ledger check; then **Back to the normal view**.',
         ],
       },
       {

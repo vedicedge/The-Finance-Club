@@ -27,8 +27,8 @@ export const ROUND_RULES: Record<'prelim' | 'round1' | 'round2' | 'round3' | 'ze
       'Insider Tip (optional): ₹2 Cr on My Agency during a 60-second window shows your team one Breaking News headline early: which cards get stronger or weaker.',
       'Marquee Auction: the 8 top cards, live with paddles.',
       'Secret Identity Bids: a blind bid on My Agency, 25 seconds per card. Highest wins; a tie goes to the earlier bid.',
-      'Bids in ₹0.5 Cr steps, never above your fund left. One card per category.',
-      'Missing a category after Last Call: a Jugaad Kit, ₹8 Cr each. Fund left counts half in your Hero Score.',
+      'Bids in ₹0.5 Cr steps. One card per category. Bid beyond your fund and the rest is a loan from The Finance Club.',
+      'Missing a category after Last Call: a Jugaad Kit, ₹8 Cr each. Nobody is eliminated; a loan lowers your Hero Score (fund left ÷ 2).',
     ],
   },
   round2: {
@@ -37,10 +37,10 @@ export const ROUND_RULES: Record<'prelim' | 'round1' | 'round2' | 'round3' | 'ze
     art: 'skyline',
     rules: [
       'Poster duel: draw your hero. Votes on the club’s Instagram stories; the winner gets +₹5 Cr if it also makes the top 8.',
-      '90 seconds to memorise your tower, 10 minutes to rebuild it from memory.',
-      '8 minutes to build a slingshot, then one shot to knock your tower down.',
-      'Tower Score = (Accuracy + Speed + Destruction) ÷ 3. The top 8 go to the Vault.',
-      'Soft foam only. Nobody in the target area.',
+      '45 seconds to memorise the cup tower, 10 minutes to rebuild it from memory.',
+      'Then one tennis ball, thrown at your own tower from the marked line: cups still standing are counted.',
+      'Tower Score = (Accuracy + Speed + Destruction) ÷ 3: more cups knocked down scores more. The top 8 go to the Vault.',
+      'Throw only from the line, only at your own tower. Nobody in the target area.',
     ],
   },
   round3: {

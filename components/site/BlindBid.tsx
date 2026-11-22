@@ -37,6 +37,8 @@ export function BlindBid() {
   const [msg, setMsg] = useState<{ tone: 'ok' | 'err'; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
   const [misses, setMisses] = useState(0);
+  /** A bid above the fund (a loan) is sent only after a second tap on the same amount. */
+  const [loanOk, setLoanOk] = useState<number | null>(null);
   const cardId = s?.live ? s.card?.id ?? null : null;
 
   useEffect(() => {
@@ -164,8 +166,10 @@ export function BlindBid() {
                   if (v === null || v <= 0) setMsg({ tone: 'err', text: 'Type your bid in ₹ Cr, e.g. 8 or 8.5.' });
                   else if (Math.round(v * 2) !== v * 2) setMsg({ tone: 'err', text: 'Bids move in ₹0.5 Cr steps, e.g. 8 or 8.5.' });
                   else if (v < c.minBid) setMsg({ tone: 'err', text: `The minimum bid for this card is ${formatCrore(c.minBid)}.` });
-                  else if (v > s.fund) setMsg({ tone: 'err', text: `You have only ${formatCrore(s.fund)} left.` });
-                  else void send(v);
+                  else if (v > s.fund && loanOk !== v) {
+                    setLoanOk(v);
+                    setMsg({ tone: 'err', text: `That is ${formatCrore(v - Math.max(0, s.fund))} more than you have: it would be a loan from The Finance Club and lower your Hero Score. Tap again to confirm.` });
+                  } else void send(v);
                 }}
               >
                 {warn && (

@@ -35,10 +35,10 @@ describe.skipIf(!hasDb)('recording a sale (ledger rules)', () => {
       select card_id || '|' || category || '|' || phase || '|' || price from sales;`).slice(1)).toEqual(['sold', '43.5', 'H05|HQ|secret|6.5']);
   });
 
-  it('rejects a price below the minimum, off the ₹0.5 step, or above fund left', () => {
+  it('rejects a price below the minimum or off the ₹0.5 step; above the fund left it becomes a loan', () => {
     expect(sqlError(`${setup()} ${sale('H05', 'A01', 4.5)}`)).toMatch(/below_minimum/);
     expect(sqlError(`${setup()} ${sale('H05', 'A01', 5.3)}`)).toMatch(/bad_step/);
-    expect(sqlError(`${setup()} ${sale('H05', 'A01', 50.5)}`)).toMatch(/over_fund/);
+    expect(sql(`${setup()} ${sale('H05', 'A01', 52.5)} ${fund('A01')}`).at(-1)).toEqual('-2.5');
   });
 
   it('rejects a second card in a category the agency holds, and a card already sold', () => {
@@ -153,23 +153,23 @@ describe.skipIf(!hasDb)('closing Round 1', () => {
     ${sale('H08', 'A04', 4)} ${sale('S08', 'A04', 4)}
     ${step('last_call')}`;
 
-  it('gives a Jugaad Kit for every missing category to agencies that can pay, and eliminates the rest', () => {
+  it('gives a Jugaad Kit for every missing category to every agency; nobody is eliminated', () => {
     const out = sql(`${setup()} ${auction}
       select jsonb_path_query_array(r1_apply_jugaad('${KEEPER}'), '$[*].action');
       select id || ':' || status || ':' || coalesce(eliminated_in, '-') from agencies order by id;
       ${fund('A02')} ${fund('A04')}
       select agency_id || ':' || card_id || ':' || category from sales where phase = 'jugaad' order by card_id;
       select agency_id || ':' || power_level from v_power_level where agency_id in ('A02', 'A04') order by agency_id;`);
-    expect(out.slice(-12)).toEqual([
-      '["jugaad_kit", "eliminated", "jugaad_kit", "jugaad_kit"]',
-      'A01:active:-', 'A02:active:-', 'A03:eliminated:round1', 'A04:active:-',
+    expect(out.slice(-13)).toEqual([
+      '["jugaad_kit", "jugaad_kit", "jugaad_kit", "jugaad_kit"]',
+      'A01:active:-', 'A02:active:-', 'A03:active:-', 'A04:active:-', // A03 could not pay: a loan, not elimination
       '27.0', '26.0', // A02 paid ₹8 Cr for one kit, A04 ₹16 Cr for two
-      'A02:JK1:Sidekick', 'A04:JK2:Gadget', 'A04:JK3:Sidekick',
+      'A02:JK1:Sidekick', 'A03:JK2:Sidekick', 'A04:JK3:Gadget', 'A04:JK4:Sidekick',
       'A02:20', 'A04:14',
     ]);
   });
 
-  it('eliminates an agency that cannot pay ₹8 Cr for every kit it needs', () => {
+  it('an agency short of ₹8 Cr per kit still gets its kits, as a loan (negative fund)', () => {
     // A01–A03 hold all four; A04 misses two (₹16 Cr needed) but has only ₹12 Cr left.
     const full = (a: string, n: string) => ['H', 'S', 'G', 'K'].map((c) => sale(`${c}${n}`, a, 5)).join(' ');
     const short = `${full('A01', '05')} ${full('A02', '06')} ${full('A03', '07')}
@@ -179,7 +179,7 @@ describe.skipIf(!hasDb)('closing Round 1', () => {
       select jsonb_path_query_array(r1_apply_jugaad('${KEEPER}'), '$[*] ? (@.agency == "A04").action');
       select status from agencies where id = 'A04';
       select count(*) from sales where agency_id = 'A04' and phase = 'jugaad';`).slice(-4)).toEqual([
-      '12.0', '["eliminated"]', 'eliminated', '0',
+      '12.0', '["jugaad_kit", "jugaad_kit"]', 'active', '2',
     ]);
   });
 

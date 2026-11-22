@@ -283,14 +283,19 @@ function Body({
       <ul className="mt-5 grid gap-3">
         {q.options.map((opt, i) => {
           const chosen = mine === i;
-          const correct = q.revealed && q.correct_index === i;
-          const wrongPick = q.revealed && chosen && !correct;
+          // Answers hidden: a locked answer stays in the category's colour after the close, never red or
+          // green, so nobody reads it as right or wrong.
+          const hidden = Boolean(s.answers_hidden);
+          const correct = !hidden && q.revealed && q.correct_index === i;
+          const wrongPick = !hidden && q.revealed && chosen && !correct;
+          const segLock = hidden && chosen;
           return (
             <li key={i}>
               <button
                 type="button"
                 disabled={!answerable}
                 onClick={() => onAnswer(q, i)}
+                style={segLock ? { borderColor: seg.color, background: `${seg.color}26`, color: '#f4f2e8' } : undefined}
                 className={[
                   'flex min-h-16 w-full items-center gap-4 rounded-[3px] border px-4 py-3 text-left text-lg transition-colors',
                   correct
@@ -308,7 +313,11 @@ function Body({
                   {OPTION_LETTERS[i]}
                 </span>
                 <span className="flex-1">{opt}</span>
-                {chosen && !q.revealed && <span className="text-xs font-semibold tracking-[0.18em] text-glow uppercase">Locked</span>}
+                {chosen && (!q.revealed || hidden) && (
+                  <span className="text-xs font-semibold tracking-[0.18em] uppercase" style={{ color: hidden ? seg.color : undefined }}>
+                    Locked
+                  </span>
+                )}
               </button>
             </li>
           );
