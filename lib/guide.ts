@@ -297,7 +297,7 @@ function round1(s: GuideSnapshot): Guide {
     return { ...base, items: items(labels, 6), now: { key: 'r1-news-step', title: 'Go to Breaking News', body: 'Bidding is over. Reveal the headlines next.', ...AUCTION, buttons: [{ action: 'r1-news', label: 'Go to Breaking News' }] } };
   }
   if (r.missing > 0) {
-    return { ...base, items: items(labels, 7), now: { key: 'r1-jugaad', title: 'Give out Jugaad Kits', body: `${r.missing} team${r.missing === 1 ? ' is' : 's are'} still missing a category. Each missing category costs a Jugaad Kit (Power 2, ₹8 Cr); a team that cannot pay is eliminated.`, ...KEEPER, buttons: [{ action: 'r1-jugaad', label: 'Apply Jugaad Kits & eliminations' }] } };
+    return { ...base, items: items(labels, 7), now: { key: 'r1-jugaad', title: 'Give out Jugaad Kits', body: `${r.missing} team${r.missing === 1 ? ' is' : 's are'} still missing a category. Each missing category costs a Jugaad Kit (Power 2, ₹8 Cr). Nobody is eliminated: a team that cannot pay takes the rest as a loan from The Finance Club.`, ...KEEPER, buttons: [{ action: 'r1-jugaad', label: 'Apply Jugaad Kits' }] } };
   }
   return { ...base, items: items(labels, 7), now: { key: 'r1-lock', title: 'Lock Round 1', body: 'Teams check their four cards, Power Level and fund left on their phones. Then lock: Power Levels become final.', ...KEEPER, buttons: [{ action: 'r1-lock', label: 'Lock Round 1', confirm: 'Teams have checked their gear and funds' }] } };
 }
@@ -316,7 +316,7 @@ function round2(s: GuideSnapshot): Guide {
   }
   const entered = `Votes ${r.duelsDecided} / ${r.duels} duels · Towers ${r.towersEntered} / ${r.towersNeeded}`;
   if (r.duelsDecided < r.duels || r.towersEntered < r.towersNeeded) {
-    return { ...base, items: items(labels, 1), now: { key: 'r2-entry', title: 'Enter the story votes and tower results', body: 'Votes at the cutoff (the last slingshot shot). For each tower: correct blocks, reference blocks, build time (m:ss, or DNF), blocks fallen, blocks in the frozen build.', ...R2, buttons: [], link: { href: '/admin/round2', label: 'Open the Round 2 entry sheet' }, progress: entered } };
+    return { ...base, items: items(labels, 1), now: { key: 'r2-entry', title: 'Enter the story votes and tower results', body: 'Votes at the cutoff (the last team’s throw). For each tower: cups in the correct position, cups in the reference, build time (m:ss, or DNF), cups still standing after the throw, cups in the tower.', ...R2, buttons: [], link: { href: '/admin/round2', label: 'Open the Round 2 entry sheet' }, progress: entered } };
   }
   if (r.cutoffPending) {
     return { ...base, items: items(labels, 1), now: { key: 'r2-cutoff', title: 'Tie at 8th place', body: 'Settle it the way you announced (e.g. rock-paper-scissors), then enter the order.', ...R2, buttons: [], link: { href: '/admin/round2', label: 'Enter the tie-break order' } } };

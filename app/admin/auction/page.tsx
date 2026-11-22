@@ -336,7 +336,7 @@ export default async function AuctionConsole({
               </label>
               <button disabled={!sellable} className="btn btn-primary w-full">Record sale</button>
               <p className="text-xs text-steel">
-                The site rejects a price below the minimum, above the agency&apos;s fund left, off the ₹0.5 Cr step, or in a category the agency already holds.
+                The site rejects a price below the minimum, off the ₹0.5 Cr step, or in a category the agency already holds. A price above the fund left is allowed: the difference becomes a loan from The Finance Club.
               </p>
             </form>
           )}
@@ -484,7 +484,8 @@ export default async function AuctionConsole({
                     <span className="num font-semibold text-glow">{a.id}</span> missing {a.missing.join(', ')} ·{' '}
                     {a.fund < 8 * a.missing.length ? (
                       <span className="text-ember">
-                        will be eliminated (needs ₹{8 * a.missing.length} Cr, has {formatCrore(a.fund)})
+                        gets {a.missing.length === 1 ? 'a Jugaad Kit' : `${a.missing.length} Jugaad Kits`} for ₹{8 * a.missing.length} Cr on a loan
+                        of {formatCrore(8 * a.missing.length - a.fund)} (has {formatCrore(a.fund)})
                       </span>
                     ) : (
                       <span className="text-toxic">
@@ -495,7 +496,7 @@ export default async function AuctionConsole({
                 ))}
               </ul>
               <form action={applyJugaad}>
-                <button className="btn btn-primary">Apply Jugaad Kits &amp; eliminations</button>
+                <button className="btn btn-primary">Apply Jugaad Kits</button>
               </form>
             </>
           ) : (

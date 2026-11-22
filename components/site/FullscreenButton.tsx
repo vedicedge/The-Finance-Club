@@ -10,7 +10,7 @@ type El = HTMLElement & { webkitRequestFullscreen?: () => void };
  * most desktop browsers; iPhones do not allow it for web pages: there, Add to Home Screen opens
  * the site full screen instead).
  */
-export function FullscreenButton({ className = '' }: { className?: string }) {
+export function FullscreenButton({ className = '', label = false }: { className?: string; label?: boolean }) {
   const [supported, setSupported] = useState(false);
   const [on, setOn] = useState(false);
   useEffect(() => {
@@ -38,6 +38,7 @@ export function FullscreenButton({ className = '' }: { className?: string }) {
       <svg viewBox="0 0 16 16" className="size-4" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.5">
         {on ? <path d="M6 1v5H1M10 1v5h5M6 15v-5H1M10 15v-5h5" /> : <path d="M1 6V1h5M15 6V1h-5M1 10v5h5M15 10v5h-5" />}
       </svg>
+      {label && <span className="ml-1.5 text-xs">{on ? 'Exit full screen' : 'Full screen'}</span>}
     </button>
   );
 }

@@ -44,17 +44,19 @@ export async function saveTower(agency: string, formData: FormData) {
   const n = (k: string) => Number(String(formData.get(k) ?? '').trim());
   const build = parseBuildTime(String(formData.get('build_time') ?? ''));
   // On a refusal, send back what was typed so the scorer only fixes the wrong box.
-  const typed = Object.fromEntries(['correct', 'reference', 'build_time', 'fallen', 'frozen'].map((k) => [k, String(formData.get(k) ?? '')]));
+  const typed = Object.fromEntries(['correct', 'reference', 'build_time', 'standing', 'frozen'].map((k) => [k, String(formData.get(k) ?? '')]));
   const refuse = (error: string): never => back({ error, row: agency, ...typed });
-  const vals = { correct: n('correct'), reference: n('reference'), frozen: n('frozen'), fallen: n('fallen') };
-  if (build === null || Object.values(vals).some((v) => !Number.isInteger(v) || v < 0)) {
-    refuse(`${agency}: enter whole block counts and a build time like 6:05 (or DNF).`);
+  // The judges count the cups still standing after the throw; the site counts the cups that fell.
+  const standing = n('standing');
+  const vals = { correct: n('correct'), reference: n('reference'), frozen: n('frozen'), fallen: n('frozen') - standing };
+  if (build === null || [...Object.values(vals), standing].some((v) => !Number.isInteger(v) || v < 0)) {
+    refuse(`${agency}: enter whole cup counts (standing ≤ cups in the tower) and a build time like 6:05 (or DNF).`);
   }
   const { error } = await serviceDb().rpc('r2_save_tower', {
     p_agency: agency, p_correct: vals.correct, p_reference: vals.reference, p_build_time_s: build,
     p_frozen: vals.frozen, p_fallen: vals.fallen, p_actor: me.userId,
   });
-  if (error) refuse(`${agency}: ${dbMessage(error).replace(/new row for relation "tower_results" violates check constraint.*/, 'check the block counts (correct ≤ reference, fallen ≤ frozen).')}`);
+  if (error) refuse(`${agency}: ${dbMessage(error).replace(/new row for relation "tower_results" violates check constraint.*/, 'check the cup counts (correct ≤ reference, standing ≤ cups in the tower).')}`);
   await audit(me, 'r2.tower', { agency, ...vals, build });
   back({ ok: `${agency} saved.` });
 }

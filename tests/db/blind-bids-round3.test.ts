@@ -45,7 +45,7 @@ describe.skipIf(!hasDb)('Secret Identity Bids typed on My Agency', () => {
   it('refuses bids below the minimum, off the step, over the fund, in a held category, or after the window', () => {
     expect(sqlError(`${setup} ${open()} ${bid('t1', 4.5)}`)).toMatch(/below_minimum/);
     expect(sqlError(`${setup} ${open()} ${bid('t1', 6.3)}`)).toMatch(/bad_step/);
-    expect(sqlError(`${setup} ${open()} ${bid('t1', 51)}`)).toMatch(/over_fund/);
+    expect(sql(`${setup} ${open()} ${bid('t1', 51)} select amount from blind_bids;`).at(-1)).toEqual('51.0'); // above the fund: a loan
     expect(sqlError(`${setup} select r1_record_sale('H06', 'A01', 5, '${K}'); ${open()} ${bid('t1', 6)}`)).toMatch(/category_held/);
     expect(sqlError(`${setup} ${open()} ${close} ${bid('t1', 6)}`)).toMatch(/bidding_closed/);
     expect(sqlError(`${setup} ${bid('t1', 6)}`)).toMatch(/bidding_closed/);

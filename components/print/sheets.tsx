@@ -403,7 +403,7 @@ export function Round2Sheets({ base, r2 }: { base: Base; r2: R2 }) {
     <>
       <Sheet title={`${ROUNDS.round2} · Part A poster duels`} {...sheetProps(base)}>
         <Rules>
-          Only story-vote counts at the cutoff (the last team’s slingshot shot) count. More votes wins the duel; a tie is settled by
+          Only story-vote counts at the cutoff (the last team’s throw) count. More votes wins the duel; a tie is settled by
           rock-paper-scissors. The winner, or a bye, gets <strong>₹5 Cr only if it also finishes in the top 8</strong> of the tower
           game. Best Launch Poster: most story votes (recognition only, no cash).
         </Rules>
@@ -455,9 +455,9 @@ export function Round2Sheets({ base, r2 }: { base: Base; r2: R2 }) {
       <Sheet title={`${ROUNDS.round2} · Part B tower scores`} {...sheetProps(base)}>
         <Rules>
           <p className="!mt-0">
-            <strong>A</strong> = 100 × blocks in the correct position and colour ÷ blocks in the reference ·{' '}
-            <strong>S</strong> = 100 × (1 − build time ÷ 10 min); unfinished = 10:00, S = 0 · <strong>D</strong> = 100 × blocks
-            fallen ÷ blocks in the frozen build; 0 if nothing was built · <strong>Tower Score</strong> = (A + S + D) ÷ 3.
+            <strong>A</strong> = 100 × cups in the correct position ÷ cups in the reference ·{' '}
+            <strong>S</strong> = 100 × (1 − build time ÷ 10 min); unfinished = 10:00, S = 0 · <strong>D</strong> = 100 × cups
+            knocked down by the throw ÷ cups in the tower; 0 if nothing was built · <strong>Tower Score</strong> = (A + S + D) ÷ 3.
           </p>
           <p>
             Example: 18 of 20 correct (A = 90), built in 6:00 (S = 40), 15 of 20 fall (D = 75) → (90 + 40 + 75) ÷ 3 = 68.33. Rank on
@@ -484,11 +484,11 @@ export function Round2Sheets({ base, r2 }: { base: Base; r2: R2 }) {
             <tr>
               <th>ID</th>
               <th>Agency</th>
-              <th>Correct</th>
+              <th>Cups correct</th>
               <th>Ref.</th>
               <th>Time m:ss</th>
-              <th>Frozen</th>
-              <th>Fallen</th>
+              <th>Cups in tower</th>
+              <th>Knocked down</th>
               <th>A</th>
               <th>S</th>
               <th>D</th>

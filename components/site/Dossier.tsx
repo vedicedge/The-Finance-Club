@@ -159,7 +159,13 @@ export function Dossier({
         {data && data.ledger.length > 0 ? (
           <section className="panel px-5 py-5">
             <p className="eyebrow">Fund left</p>
-            <p className="num mt-2 text-5xl font-semibold text-glow">{formatCrore(data.fund)}</p>
+            <p className={`num mt-2 text-5xl font-semibold ${data.fund < 0 ? 'text-ember' : 'text-glow'}`}>{formatCrore(data.fund)}</p>
+            {data.fund < 0 && (
+              <p className="mt-2 rounded-sm border border-ember/40 bg-ember/10 px-3 py-2 text-sm text-bone">
+                <span className="font-semibold text-ember">Loan from The Finance Club: {formatCrore(-data.fund)}.</span> You spent more than
+                your fund, so the difference is on loan. It counts against your Hero Score (fund left ÷ 2).
+              </p>
+            )}
             {data.round1Live && agency.status === 'active' && (() => {
               const missing = 4 - new Set(data.gear.map((g) => g.category)).size;
               const warn = budgetWarning(data.fund, missing);
