@@ -164,7 +164,7 @@ export function buildGuide(s: GuideSnapshot): Guide {
 
 function prelim(s: GuideSnapshot): Guide {
   const q = s.quiz;
-  const labels = ['Shuffle the 15 questions', 'Play the 15 questions', 'Publish the board', 'Freeze the top 16', `Start ${ROUNDS.round1}`];
+  const labels = ['Set the question order', 'Play the 15 questions', 'Publish the board', 'Freeze the top 16', `Start ${ROUNDS.round1}`];
   const base = { phaseTitle: `Prelim · ${ROUNDS.prelim}` };
   if (q.kahoot?.on) {
     const kl = ['Run the quiz on Kahoot', 'Upload Kahoot’s results', 'Publish the board', 'Freeze the top 16', `Start ${ROUNDS.round1}`];
@@ -181,7 +181,7 @@ function prelim(s: GuideSnapshot): Guide {
     return { ...kb, items: items(kl, 4), now: { key: 'start-round1', title: `Start ${ROUNDS.round1}`, body: 'The top 16 are frozen. Move the event to Round 1: the projector switches to the auction.', ...ADMIN, buttons: [{ action: 'start-round1', label: `Start ${ROUNDS.round1}` }] } };
   }
   if (!q.shuffled) {
-    return { ...base, items: items(labels, 0), now: { key: 'quiz-shuffle', title: 'Shuffle the 15 questions', body: 'Fixes one random order of the live questions, the same for every phone. Do it once, before question 1.', ...HOST, buttons: [{ action: 'quiz-shuffle', label: 'Shuffle the questions' }] } };
+    return { ...base, items: items(labels, 0), now: { key: 'quiz-shuffle', title: 'Set the question order', body: 'Lines up the 15 live questions in their fixed order: category by category, and M1, M2, M3… within each. No shuffling. Do it once, before question 1.', ...HOST, buttons: [{ action: 'quiz-shuffle', label: 'Set the question order' }] } };
   }
   const played = q.slots.filter((x) => x.openedAt !== null).length;
   const progress = `${q.slots.filter((x) => x.revealed).length} / ${q.slots.length} revealed`;

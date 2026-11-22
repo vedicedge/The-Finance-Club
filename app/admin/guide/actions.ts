@@ -101,7 +101,7 @@ export async function guideDo(action: GuideActionId, arg: string, formData: Form
     case 'start-zero-hour': await toPhase('zero_hour'); ok = 'Zero Hour has started.'; break;
     case 'end-event': await movePhase('ended', 'zero_hour', actor); ok = 'The event is over.'; break;
 
-    case 'quiz-shuffle': await call(db.rpc('quiz_shuffle')); ok = 'Questions shuffled.'; break;
+    case 'quiz-shuffle': await call(db.rpc('quiz_shuffle')); ok = 'Question order set: category by category, M1, M2, M3… within each.'; break;
     case 'quiz-open': await call(db.rpc('quiz_open_question', { p_question: arg })); ok = 'Question opened.'; break;
     case 'quiz-reveal': await call(db.rpc('quiz_reveal_question', { p_question: arg })); ok = 'Answer revealed.'; break;
     case 'quiz-publish':

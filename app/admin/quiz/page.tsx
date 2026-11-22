@@ -272,8 +272,8 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
           <h2 className="eyebrow">Controls</h2>
           {!shuffled ? (
             <form action={shuffleQuiz}>
-              <button className="btn btn-primary w-full">Shuffle the live 15</button>
-              <p className="mt-2 text-xs text-steel">Fixes one random order of the 15 live questions, the same for everyone.</p>
+              <button className="btn btn-primary w-full">Set the order of the live 15</button>
+              <p className="mt-2 text-xs text-steel">Fixed order, no shuffling: category by category, and by question number within each (M1, M2, M3…).</p>
             </form>
           ) : toReveal.length > 0 ? (
             <div className="space-y-2">
@@ -305,7 +305,7 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
           )}
           {shuffled && !started && (
             <form action={shuffleQuiz}>
-              <button className={`${small} btn-ghost`}>Re-shuffle (allowed until question 1 opens)</button>
+              <button className={`${small} btn-ghost`}>Set the order again (after changing questions; until question 1 opens)</button>
             </form>
           )}
           <div>
@@ -353,7 +353,7 @@ export default async function QuizHostPage({ searchParams }: { searchParams: Pro
                         <span className="block max-w-md truncate text-bone/85">{q.prompt}</span>
                       </>
                     ) : (
-                      <span className="text-steel">{shuffled ? '—' : 'Not shuffled yet'}</span>
+                      <span className="text-steel">{shuffled ? '—' : 'Order not set yet'}</span>
                     )}
                     {s.voided.length > 0 && (
                       <span className="block text-xs text-ember">Voided: {s.voided.map((v) => v.id).join(', ')}</span>
