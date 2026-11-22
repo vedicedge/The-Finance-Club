@@ -117,7 +117,7 @@ export const INSTRUCTIONS: string[][] = [
   ['2. A row with an existing ID replaces that question or card. A row with a new ID adds one. Rows you delete here are NOT deleted on the site.'],
   ['3. Upload the file on the website: Settings → Questions & cards → Upload. Nothing changes unless every row is valid.'],
   ['4. Questions can be changed only before the first prelim question opens; cards only before Round 1 starts.'],
-  ['5. After uploading questions, shuffle the live 15 again on the quiz console.'],
+  ['5. After uploading questions, press “Set the order of the live 15” again on the quiz console. Questions play in ID order within each category (M1, M2, M3…), so put them in the order you want by their numbers.'],
   [''],
   ['QUESTIONS sheet'],
   ['ID: the first letter sets the segment. M = Marvel Ya DC? Company Edition (2 options, 10 s), T = Teen Clue, Ek Hero (4 options, 10 s), B = Superhero Share Bazaar (4 options, 20 s, double points), H = Hero Ka Business (4 options, 10 s), S = sudden death (4 options, 20 s, never live).'],

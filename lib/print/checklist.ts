@@ -19,7 +19,7 @@ export const CHECKLIST: ChecklistSection[] = [
       {
         items: [
           'Merge the latest pull request on GitHub and wait until Vercel shows the new deployment as **Ready**.',
-          'In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (33 files; the last is `20261120003200_team_size_setting.sql`).',
+          'In the Supabase SQL editor, run any migration not run yet, in file-name order from `supabase/migrations/` (34 files; the last is `20261122003300_fixed_question_order.sql`).',
           'If the secret seed has never been run, run `supabase/private/seed_secrets.sql` once.',
           'Command centre: **Database updates** says “Up to date”, and Seed data says **OK** on every row.',
           'Every crew member with a website job signs in once at `/admin/login`; an admin gives each their role in Crew & roles (quiz host, 2 ledger keepers, auctioneer, 2 scorers, social-media lead, anchor, 2 floaters).',
@@ -55,7 +55,7 @@ export const CHECKLIST: ChecklistSection[] = [
         title: 'Prelim · Hero Ya Zero?',
         items: [
           'Command centre → phase **Prelim**. The projector shows the prelim rules page with the four colour category cards; phones show the waiting screen.',
-          'Quiz host: shuffle the live 15 (they play category by category), open question 1. A 5-second category intro, then the 3-2-1 read-in, show on the projector and every phone, then the timer runs. Each category has its own colour.',
+          'Quiz host: set the order of the live 15 (fixed: category by category, M1, M2… within each), open question 1. A 5-second category intro, then the 3-2-1 read-in, show on the projector and every phone, then the timer runs. Each category has its own colour.',
           'Testers answer at different speeds; one answers after the timer ends and sees "late" (0 points).',
           'Reveal: only now do phones show right/wrong and points.',
           'Practise: void a question and bring in a spare; reload a phone mid-question; put a phone in airplane mode for 10 s and back.',

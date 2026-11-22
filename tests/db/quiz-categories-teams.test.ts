@@ -53,3 +53,16 @@ describe.skipIf(!hasDb)('team changes at the desk', () => {
     expect(sqlError(`${agency('A01')} ${close} update founders set name = 'Sneaky Edit' where agency_id = 'A01';`)).toMatch(/locked/);
   });
 });
+
+describe.skipIf(!hasDb || !hasSecrets)('fixed question order (no shuffling)', () => {
+  it('plays category by category, by question number within each, the same every time', () => {
+    const order = `${agency('A01')} update agencies set status = 'checked_in'; update event_state set phase = 'prelim';
+      select quiz_shuffle(); select string_agg(id, ',' order by order_no) from questions where order_no is not null;`;
+    const first = sql(order).at(-1)!;
+    expect(sql(order).at(-1)).toEqual(first);
+    const ids = first.split(',');
+    const num = (id: string) => Number(id.slice(1));
+    for (let i = 1; i < ids.length; i++) if (ids[i][0] === ids[i - 1][0]) expect(num(ids[i])).toBeGreaterThan(num(ids[i - 1]));
+    expect(ids.map((id) => id[0]).join('')).toEqual('MMMMTTTTBBBBHHH');
+  });
+});
