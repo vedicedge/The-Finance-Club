@@ -112,7 +112,7 @@ export default async function Round2Console({ searchParams }: { searchParams: Pr
                 <th className="py-2 pr-3 font-medium">Agency</th>
                 <th className="py-2 pr-3 font-medium">Cups correct / in reference</th>
                 <th className="py-2 pr-3 font-medium">Build time</th>
-                <th className="py-2 pr-3 font-medium">Still standing after the throw / cups in the tower</th>
+                <th className="py-2 pr-3 font-medium">Still standing after throw / cups in tower</th>
                 <th className="py-2 pr-3 font-medium" />
                 <th className="num py-2 pr-3 text-right font-medium">A · S · D</th>
                 <th className="num py-2 text-right font-medium">Score</th>
@@ -126,15 +126,26 @@ export default async function Round2Console({ searchParams }: { searchParams: Pr
                 return (
                   <tr key={a.id} className="border-b border-line/60">
                     <td className="py-2 pr-3"><span className="num font-semibold text-glow">{a.id}</span> {a.name}</td>
-                    <td colSpan={4} className="py-2 pr-3">
-                      <form action={saveTower.bind(null, a.id)} className="flex flex-wrap items-center gap-2">
-                        <input name="correct" defaultValue={retry ? sp.correct : t?.correct_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Cups in the correct position" />
+                    {/* One input group under each heading; they all belong to the row's form (form attribute). */}
+                    <td className="py-2 pr-3">
+                      <span className="flex items-center gap-2">
+                        <input form={`tower-${a.id}`} name="correct" defaultValue={retry ? sp.correct : t?.correct_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Cups in the correct position" />
                         <span className="text-steel">/</span>
-                        <input name="reference" defaultValue={retry ? sp.reference : t?.reference_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Cups in the reference" />
-                        <input name="build_time" defaultValue={retry ? sp.build_time : t ? (t.build_time_s >= 600 ? 'DNF' : formatBuildTime(t.build_time_s)) : ''} placeholder="6:05" disabled={!scorer || !live} className={`${num} !w-20`} aria-label="Build time" />
-                        <input name="standing" defaultValue={retry ? sp.standing : t ? t.frozen_blocks - t.blocks_fallen : ''} disabled={!scorer || !live} className={num} aria-label="Cups still standing after the throw" />
+                        <input form={`tower-${a.id}`} name="reference" defaultValue={retry ? sp.reference : t?.reference_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Cups in the reference" />
+                      </span>
+                    </td>
+                    <td className="py-2 pr-3">
+                      <input form={`tower-${a.id}`} name="build_time" defaultValue={retry ? sp.build_time : t ? (t.build_time_s >= 600 ? 'DNF' : formatBuildTime(t.build_time_s)) : ''} placeholder="6:05" disabled={!scorer || !live} className={`${num} !w-20`} aria-label="Build time" />
+                    </td>
+                    <td className="py-2 pr-3">
+                      <span className="flex items-center gap-2">
+                        <input form={`tower-${a.id}`} name="standing" defaultValue={retry ? sp.standing : t ? t.frozen_blocks - t.blocks_fallen : ''} disabled={!scorer || !live} className={num} aria-label="Cups still standing after the throw" />
                         <span className="text-steel">/</span>
-                        <input name="frozen" defaultValue={retry ? sp.frozen : t?.frozen_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Cups in the tower as built" />
+                        <input form={`tower-${a.id}`} name="frozen" defaultValue={retry ? sp.frozen : t?.frozen_blocks ?? ''} disabled={!scorer || !live} className={num} aria-label="Cups in the tower as built" />
+                      </span>
+                    </td>
+                    <td className="py-2 pr-3">
+                      <form id={`tower-${a.id}`} action={saveTower.bind(null, a.id)}>
                         {scorer && live && <button className={`${small} btn-ghost`}>Save</button>}
                       </form>
                     </td>
