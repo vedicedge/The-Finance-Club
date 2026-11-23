@@ -26,7 +26,7 @@ export const ROUND_RULES: Record<'prelim' | 'round1' | 'round2' | 'round3' | 'ze
       '₹50 Cr each. Sign one HQ, one Suit, one Gadget and one Sidekick.',
       'Insider Tip (optional): ₹2 Cr on My Agency during a 60-second window shows your team one Breaking News headline early: which cards get stronger or weaker.',
       'Marquee Auction: the 8 top cards, live with paddles.',
-      'Secret Identity Bids: a blind bid on My Agency, 25 seconds per card. Highest wins; a tie goes to the earlier bid.',
+      'Secret Identity Bids: a blind bid on My Agency, 15 seconds per card. Highest wins; a tie goes to the earlier bid.',
       'Bids in ₹0.5 Cr steps. One card per category. Bid beyond your fund and the rest is a loan from The Finance Club.',
       'Missing a category after Last Call: a Jugaad Kit, ₹8 Cr each. Nobody is eliminated; a loan lowers your Hero Score (fund left ÷ 2).',
     ],

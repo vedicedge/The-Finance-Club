@@ -239,7 +239,7 @@ function round1(s: GuideSnapshot): Guide {
     return { ...base, items: items(labels, 3), now: { key: 'r1-marquee', title: 'Start the Marquee Auction', body: `The tips window is closed (${r.tipsSold} bought). The 8 Marquee lots go next, live with paddles.`, ...AUCTION, buttons: [{ action: 'r1-marquee', label: 'Start the Marquee Auction' }] } };
   }
   if (step === 'secret') {
-    // Secret Identity Bids run on phones: open a 25-second window per card; the highest bid wins.
+    // Secret Identity Bids run on phones: open a 15-second window per card; the highest bid wins.
     const b = r.bid;
     const finish: GuideButton = { action: 'r1-lastcall', label: 'Start Last Call' };
     if (b && !b.settled && s.now < b.closesAt) {
@@ -249,7 +249,7 @@ function round1(s: GuideSnapshot): Guide {
     if (!r.bidNext) {
       return { ...base, items: items(labels, 4), now: { key: 'r1-done-secret', title: 'Secret Identity Bids are finished', body: `${last}Every card has had its bidding window. Unsold cards go to Last Call.`, ...AUCTION, buttons: [finish] } };
     }
-    return { ...base, items: items(labels, 4), now: { key: `r1-bid-${r.bidNext.id}`, title: `Open bidding: ${r.bidNext.id} · ${r.bidNext.name}`, body: `${last}The card goes on the projector and teams have 25 seconds to bid on their phones.`, ...AUCTION, buttons: [{ action: 'r1-bid', label: 'Open 25-second bidding' }, { ...finish, ghost: true, label: 'Finish early: start Last Call' }], progress: `${r.bidLeft} card${r.bidLeft === 1 ? '' : 's'} still to bid on` } };
+    return { ...base, items: items(labels, 4), now: { key: `r1-bid-${r.bidNext.id}`, title: `Open bidding: ${r.bidNext.id} · ${r.bidNext.name}`, body: `${last}The card goes on the projector and teams have 15 seconds to bid on their phones.`, ...AUCTION, buttons: [{ action: 'r1-bid', label: 'Open 15-second bidding' }, { ...finish, ghost: true, label: 'Finish early: start Last Call' }], progress: `${r.bidLeft} card${r.bidLeft === 1 ? '' : 's'} still to bid on` } };
   }
   if (bidding) {
     // (Secret Identity Bids are handled above: they run on phones.)

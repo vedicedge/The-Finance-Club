@@ -25,7 +25,7 @@ type State =
     };
 
 /**
- * Secret Identity Bids on the phone: the card on the projector, a 25-second countdown and the
+ * Secret Identity Bids on the phone: the card on the projector, a 15-second countdown and the
  * team's own blind bid (changeable until 0:00). Refreshes itself every second, catches up at once
  * when the page comes back to the front or the network returns, and says so when the line drops.
  * A bid is sent with a time limit and retried once by itself, so a weak signal never leaves the

@@ -1,8 +1,8 @@
 import 'server-only';
 import { serviceDb } from '@/lib/db/server';
 
-/** Length of each phone bidding window in Secret Identity Bids (organisers' choice: 25 s, raised from 20 after the dry run). */
-export const BID_WINDOW_SECONDS = 25;
+/** Length of each phone bidding window in Secret Identity Bids (organisers' choice on the day: 15 s). */
+export const BID_WINDOW_SECONDS = 15;
 
 export type BidState = {
   cardId: string;
