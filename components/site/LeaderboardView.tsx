@@ -114,15 +114,24 @@ export function LeaderboardView({ initial }: { initial: Leaderboard | null }) {
       )}
 
       {lb.round1 && (
-        <Block eyebrow={`Round 1 · ${ROUNDS.round1}`} title={lb.round1.locked ? 'Power Levels (final)' : 'Power Levels'}>
+        <Block
+          eyebrow={`Round 1 · ${ROUNDS.round1}`}
+          title={lb.round1.showFunds ? (lb.round1.locked ? 'Standings (final)' : 'Standings') : 'Power Levels'}
+        >
+          {lb.round1.showFunds && <p className="mb-2 text-sm text-steel">Ranked by Score = Power + Fund left ÷ 2. A loan counts against you.</p>}
           <ol className="divide-y divide-line/60 border-y border-line/60">
             {lb.round1.rows.map((r) => (
               <Row
                 key={r.id}
+                rank={r.rank ?? undefined}
                 id={r.id}
                 name={r.name}
-                right={`P${r.power}`}
-                note={[r.fund !== null ? `${formatCrore(r.fund)} left` : null, `${r.cards}/4 cards`].filter(Boolean).join(' · ')}
+                right={r.score !== null ? (Math.round(r.score * 100) / 100).toString() : `P${r.power}`}
+                note={[
+                  `P${r.power}`,
+                  r.fund !== null ? (r.fund < 0 ? `loan ${formatCrore(-r.fund)}` : `${formatCrore(r.fund)} left`) : null,
+                  `${r.cards}/4 cards`,
+                ].filter(Boolean).join(' · ')}
                 tag={r.status === 'eliminated' ? `Out · ${r.eliminatedIn?.replace('round', 'Round ')}` : undefined}
                 dim={r.status === 'eliminated'}
               />

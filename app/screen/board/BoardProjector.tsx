@@ -31,7 +31,8 @@ export function BoardProjector() {
   let title: string = EVENT.name;
   // Column labels for the stage shown: [left, right], e.g. ['Rank', 'Points'].
   let labels: [string, string] = ['Rank', ''];
-  let rows: { id: string; name: string; left?: string; right: string; dim?: boolean }[] = [];
+  let rows: { id: string; name: string; left?: string; right: string; dim?: boolean; note?: string }[] = [];
+  let subtitle: string | null = null;
   if (lb?.zeroHour?.final) {
     title = 'Final Hero Scores';
     labels = ['Rank', 'Hero Score'];
@@ -41,12 +42,21 @@ export function BoardProjector() {
     labels = ['Rank', 'Tower Score'];
     rows = lb.round2.rows.map((r) => ({ id: r.id, name: r.name, left: String(r.rank), right: r.score.toFixed(2), dim: !r.qualified }));
   } else if (lb?.round1) {
-    title = `${ROUNDS.round1} · Power Levels`;
     const active = lb.round1.rows.filter((r) => r.status === 'active');
-    labels = ['Power', active.some((r) => r.fund !== null) ? 'Fund left' : 'Cards'];
-    rows = active.map((r) => ({
-      id: r.id, name: r.name, left: String(r.power), right: r.fund !== null ? formatCrore(r.fund) : `${r.cards}/4`,
-    }));
+    if (active.some((r) => r.score !== null)) {
+      // Funds are public: rank by Bazaar Score, with Power and fund (or loan) beside each name.
+      title = `${ROUNDS.round1} · Standings`;
+      subtitle = 'Score = Power + Fund left ÷ 2 · a loan counts against you';
+      labels = ['Rank', 'Score'];
+      rows = active.map((r) => ({
+        id: r.id, name: r.name, left: String(r.rank ?? ''), right: fmt(r.score ?? 0),
+        note: `P${r.power} · ${r.fund !== null && r.fund < 0 ? `loan ${formatCrore(-r.fund)}` : formatCrore(r.fund ?? 0)}`,
+      }));
+    } else {
+      title = `${ROUNDS.round1} · Power Levels`;
+      labels = ['Power', 'Cards'];
+      rows = active.map((r) => ({ id: r.id, name: r.name, left: String(r.power), right: `${r.cards}/4` }));
+    }
   } else if (lb?.prelim) {
     title = `${ROUNDS.prelim} · Final board`;
     labels = ['Rank', 'Points'];
@@ -59,6 +69,7 @@ export function BoardProjector() {
       <div className="flex h-full flex-col px-[5cqw] pt-[7cqh] pb-[5cqh]">
         <p className="text-center text-[1.3cqw] font-semibold tracking-[0.3em] text-steel uppercase">{EVENT.name} · Leaderboard</p>
         <h1 className="display mt-[1.5cqh] text-center text-[4.4cqw]">{title}</h1>
+        {subtitle && <p className="mt-[0.8cqh] text-center text-[1.5cqw] text-steel">{subtitle}</p>}
         {shown.length === 0 ? (
           <p className="mt-[20cqh] text-center text-[2.4cqw] text-steel">The board lights up after the prelim.</p>
         ) : (
@@ -77,7 +88,10 @@ export function BoardProjector() {
               <li key={r.id} className={`flex items-center gap-[1.4cqw] border-b border-line py-[1.3cqh] text-[2cqw] ${r.dim ? 'opacity-45' : ''}`}>
                 <span className="num w-[5cqw] text-steel">{r.left}</span>
                 <span className="num w-[5cqw] font-semibold text-glow">{r.id}</span>
-                <span className="min-w-0 flex-1 truncate">{r.name}</span>
+                <span className="min-w-0 flex-1 truncate">
+                  {r.name}
+                  {r.note && <span className={`num ml-[1cqw] text-[1.35cqw] ${r.note.includes('loan') ? 'text-ember' : 'text-steel'}`}>{r.note}</span>}
+                </span>
                 <span className="num w-[10cqw] text-right font-semibold">{r.right}</span>
               </li>
             )}
