@@ -50,10 +50,9 @@ async function loadRound1Board(showFunds: boolean, locked: boolean) {
   ]);
   const p = new Map((power.data ?? []).map((x) => [x.agency_id as string, x]));
   const f = new Map((funds.data ?? []).map((x) => [x.agency_id as string, Number(x.fund_left)]));
-  return {
-    locked,
-    showFunds,
-    rows: (agencies.data ?? [])
+  // Once funds are public, teams are ranked by Bazaar Score = Power + fund left ÷ 2 (the Hero Score
+  // with a ×1 multiplier), so a team that piles up loans does not top the board on Power alone.
+  const rows = (agencies.data ?? [])
       .filter((a) => a.status === 'active' || a.status === 'eliminated')
       .map((a) => ({
         id: a.id as string,
@@ -64,8 +63,19 @@ async function loadRound1Board(showFunds: boolean, locked: boolean) {
         cards: (p.get(a.id)?.cards as number) ?? 0,
         fund: showFunds ? f.get(a.id) ?? 0 : null,
       }))
-      .sort((a, b) => Number(b.status === 'active') - Number(a.status === 'active') || b.power - a.power || a.id.localeCompare(b.id)),
-  };
+      .map((r) => ({ ...r, score: r.fund !== null ? r.power + r.fund / 2 : null }))
+      .sort((a, b) =>
+        Number(b.status === 'active') - Number(a.status === 'active') ||
+        (b.score ?? b.power) - (a.score ?? a.power) || b.power - a.power || a.id.localeCompare(b.id));
+  // Equal scores share a rank (1, 2, 2, 4 …), active teams only.
+  let rank = 0;
+  const ranked = rows.map((r, i) => {
+    if (r.status !== 'active') return { ...r, rank: null as number | null };
+    const prev = rows[i - 1];
+    rank = prev && prev.status === 'active' && (prev.score ?? prev.power) === (r.score ?? r.power) ? rank : i + 1;
+    return { ...r, rank: rank as number | null };
+  });
+  return { locked, showFunds, rows: ranked };
 }
 
 async function loadRound2Board() {
