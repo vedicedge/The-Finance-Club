@@ -36,7 +36,6 @@ export const ROUND_RULES: Record<'prelim' | 'round1' | 'round2' | 'round3' | 'ze
     title: ROUNDS.round2,
     art: 'skyline',
     rules: [
-      'Poster duel: draw your hero. Votes on the club’s Instagram stories; the winner gets +₹5 Cr if it also makes the top 8.',
       '45 seconds to memorise the cup tower, 10 minutes to rebuild it from memory.',
       'Then one tennis ball, thrown at your own tower from the marked line: cups still standing are counted.',
       'Tower Score = (Accuracy + Speed + Destruction) ÷ 3: more cups knocked down scores more. The top 8 go to the Vault.',

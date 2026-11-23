@@ -27,14 +27,14 @@ describe.skipIf(!hasDb)('Round 2', () => {
       select winner = agency_b from poster_duels;`)).toEqual(['1', 't']);
   });
 
-  it('publishing needs every tower result and every duel decided', () => {
-    expect(sqlError(`${r2(2)} select r2_draw_pairings(); ${tower('A01', 18)}
+  it('publishing needs every tower result, and no poster duels (all ties since 23 Nov)', () => {
+    expect(sqlError(`${r2(2)} ${tower('A01', 18)}
       select r2_publish(array['A01','A02'], '${K}');`)).toMatch(/tower_missing/);
-    expect(sqlError(`${r2(2)} select r2_draw_pairings(); ${tower('A01', 18)} ${tower('A02', 10)}
-      select r2_publish(array['A01','A02'], '${K}');`)).toMatch(/duel_undecided/);
+    expect(sql(`${r2(2)} ${tower('A01', 18)} ${tower('A02', 10)}
+      select r2_publish(array['A01','A02'], '${K}'); select count(*) from agencies where status = 'active';`).at(-1)).toEqual('2');
   });
 
-  it('publishing keeps the top 8, eliminates the rest, and pays +₹5 Cr only to qualified duel winners', () => {
+  it('publishing keeps the top 8, eliminates the rest, and pays no poster bonus even if duels were drawn', () => {
     // 10 agencies; A01–A08 qualify. Duel winners are forced by votes: the "a" side wins.
     const out = sql(`${r2(10)} select r2_draw_pairings();
       update poster_duels set votes_a = 10, votes_b = case when agency_b is null then null else 5 end;
@@ -42,9 +42,8 @@ describe.skipIf(!hasDb)('Round 2', () => {
       select r2_publish(array[${ids(8)}], '${K}');
       select count(*) from agencies where status = 'active';
       select count(*) from agencies where status = 'eliminated' and eliminated_in = 'round2';
-      select bool_and(d.winner = any (array[${ids(8)}])) = bool_and(exists (select 1 from ledger_entries e where e.reason = 'poster_bonus' and e.agency_id = d.winner))
-        from poster_duels d;
-      select count(*) = (select count(*) from poster_duels where winner = any (array[${ids(8)}])) from ledger_entries where reason = 'poster_bonus';`);
+      select 't';
+      select (count(*) = 0)::text::char from ledger_entries where reason = 'poster_bonus';`);
     expect(out.slice(-4)).toEqual(['8', '2', 't', 't']);
   });
 });

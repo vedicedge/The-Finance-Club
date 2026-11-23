@@ -115,24 +115,14 @@ export default async function RoundsPage() {
       </Section>
 
       <Section id="round-2" index="03" scene="skyline" eyebrow="Round 2 · 35 min · on the floor" title={ROUNDS.round2} meta="→ top 8">
-        <H3>Part A — Signal Before the Storm (posters, 5 min)</H3>
-        <ul>
-          <li>Draw a poster for your hero: your agency ID, the hero built in Round 1, its identity and its doomsday mission. Original artwork only.</li>
-          <li>Agencies are paired at random for poster duels (an odd number gives one agency a bye).</li>
-          <li>Each duel is voted on the club&apos;s Instagram story. Votes count until the last team&apos;s throw.</li>
-          <li>
-            The duel winner (or a bye) earns <strong>+₹5 Cr</strong>, credited only if it also finishes in the top 8 of the
-            tower game. Posters never decide who is eliminated.
-          </li>
-        </ul>
-        <H3>Part B — Skyline: Build. Break. (cup tower)</H3>
+        <H3>Skyline: Build. Break. (cup tower)</H3>
         <Table
           head={['Step', 'Time', 'What happens']}
           rows={[
             ['Reference viewing', '45 s', 'Each team sees a reference photo of a cup tower; then it is hidden.'],
             ['Tower building', '10 min', 'Rebuild it from memory with cups. Build time is recorded; cups in the correct position are counted against the reference.'],
                         ['Tennis-ball throw', '1 throw', 'Each team throws one tennis ball at its own tower from the line marked by The Finance Club. The cups still standing are counted.'],
-            ['Judge and qualify', '4 min 30 s', 'Scores computed, cutoff ties settled, top 8 announced, poster bonuses credited.'],
+            ['Judge and qualify', '4 min 30 s', 'Scores computed, cutoff ties settled, top 8 announced.'],
           ]}
         />
         <Note>
@@ -186,7 +176,6 @@ export default async function RoundsPage() {
           rows={[
             ["Mahanagar's Hero Agency of the Year", 'Highest Hero Score', prize(settings.prizes.winner)],
             ['Overall Runner-up', 'Second-highest Hero Score', prize(settings.prizes.runnerUp)],
-            ['Best Launch Poster', 'Most story votes at the Round 2 cutoff', 'Recognition'],
           ]}
         />
       </Section>

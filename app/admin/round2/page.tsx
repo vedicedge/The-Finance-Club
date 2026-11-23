@@ -43,61 +43,7 @@ export default async function Round2Console({ searchParams }: { searchParams: Pr
         <p className="mt-6 rounded-sm border border-toxic/40 bg-toxic/10 px-4 py-3 text-sm text-toxic">Round 2 is published. Results are final.</p>
       )}
 
-      {/* ---------------------------------------------------------------- Part A */}
-      <section className="panel mt-8 px-5 py-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="eyebrow">Part A · poster duels (Instagram story votes)</h2>
-          {social && live && (
-            <form action={drawPairings}>
-              <button disabled={votesIn} className={`${small} ${r2.duels.length ? 'btn-ghost' : 'btn-primary'}`}>
-                {r2.duels.length ? 'Redraw pairings' : 'Draw pairings'}
-              </button>
-            </form>
-          )}
-        </div>
-        {r2.duels.length === 0 ? (
-          <p className="mt-3 text-sm text-steel">No pairings yet. The social-media lead draws them after Round 1.</p>
-        ) : (
-          <ul className="mt-3 divide-y divide-line/60">
-            {r2.duels.map((d) => {
-              // After a refused save, show what was typed rather than the stored values.
-              const again = sp.error && sp.duel === String(d.id);
-              const va = again ? sp.votes_a : d.votes_a ?? '';
-              const vb = again ? sp.votes_b : d.votes_b ?? '';
-              return (
-                <li key={d.id} className="py-2.5">
-                  <form action={saveVotes.bind(null, d.id)} className="flex flex-wrap items-center gap-3 text-sm">
-                    <span className="min-w-48"><span className="num font-semibold text-glow">{d.agency_a}</span> {r2.names.get(d.agency_a)}</span>
-                    <input name="votes_a" type="number" min={0} defaultValue={va} disabled={!social || !live} className={num} aria-label={`Votes for ${d.agency_a}`} />
-                    {d.agency_b ? (
-                      <>
-                        <span className="text-steel">vs</span>
-                        <input name="votes_b" type="number" min={0} defaultValue={vb} disabled={!social || !live} className={num} aria-label={`Votes for ${d.agency_b}`} />
-                        <span className="min-w-48"><span className="num font-semibold text-glow">{d.agency_b}</span> {r2.names.get(d.agency_b)}</span>
-                        {/* Always offered: a tie can only be saved together with its rock-paper-scissors winner. */}
-                        <select name="tiebreak" defaultValue={d.tiebreak_winner ?? ''} disabled={!social || !live} aria-label="Rock-paper-scissors winner, if tied" className="rounded-sm border border-line-strong bg-vault-2 px-2 py-1">
-                          <option value="">If tied: RPS winner…</option>
-                          <option value={d.agency_a}>{d.agency_a}</option>
-                          <option value={d.agency_b}>{d.agency_b}</option>
-                        </select>
-                      </>
-                    ) : (
-                      <span className="text-steel">bye (wins the duel)</span>
-                    )}
-                    {social && live && <button className={`${small} btn-ghost`}>Save</button>}
-                    {d.winner && <span className="text-xs text-toxic">Winner {d.winner}</span>}
-                  </form>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-        {best.length > 0 && (
-          <p className="mt-3 text-sm text-steel">
-            Best Launch Poster so far: <span className="text-bone">{best.map((b) => name(b.id)).join(', ')}</span> ({best[0].votes} votes)
-          </p>
-        )}
-      </section>
+      {/* Part A (poster duels) dropped on 23 Nov: every duel is a tie, no bonus. */}
 
       {/* ---------------------------------------------------------------- Part B */}
       <section className="panel mt-6 px-5 py-5">
@@ -198,7 +144,7 @@ export default async function Round2Console({ searchParams }: { searchParams: Pr
             <form action={publishRound2} className="panel space-y-3 px-5 py-5">
               <h2 className="eyebrow">Publish Round 2</h2>
               <p className="text-sm text-steel">
-                Top 8 stay in the game; everyone else is eliminated in Round 2. +₹5 Cr goes to each duel winner or bye that made the top 8.
+                Top 8 stay in the game; everyone else is eliminated in Round 2. No poster bonus this year.
               </p>
               <label className="flex items-center gap-2 text-sm text-steel">
                 <input type="checkbox" name="confirm" className="accent-glow" /> All towers and votes are final

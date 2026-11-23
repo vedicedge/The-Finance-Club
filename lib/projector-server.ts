@@ -19,7 +19,8 @@ export async function loadRoundProgress(phase: string): Promise<RoundProgress> {
     out.kahoot = !k.error && Boolean(k.data?.prelim_kahoot);
   }
   if (phase === 'round2') {
-    const d = await db.from('poster_duels').select('id', { count: 'exact', head: true });
+    // No poster duels: the rules page stays up until the first tower result is saved.
+    const d = await db.from('tower_results').select('agency_id', { count: 'exact', head: true });
     out.duelsDrawn = (d.count ?? 0) > 0;
   }
   if (phase === 'round3') {

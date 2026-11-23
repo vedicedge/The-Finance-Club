@@ -305,23 +305,21 @@ function round1(s: GuideSnapshot): Guide {
 // ---------------------------------------------------------------- Round 2
 
 function round2(s: GuideSnapshot): Guide {
+  // Poster duels are all ties (organisers, 23 Nov): no pairings, no votes, no poster bonus.
   const r = s.r2;
-  const labels = ['Draw the poster duels', 'Enter votes and tower results', 'Publish the top 8', `Start ${ROUNDS.round3}`];
+  const labels = ['Enter tower results', 'Publish the top 8', `Start ${ROUNDS.round3}`];
   const base = { phaseTitle: `Round 2 · ${ROUNDS.round2}` };
   if (r.published) {
-    return { ...base, items: items(labels, 3), now: { key: 'start-round3', title: `Start ${ROUNDS.round3}`, body: 'The top 8 are through. Move the event to Round 3.', ...ADMIN, buttons: [{ action: 'start-round3', label: `Start ${ROUNDS.round3}` }] } };
+    return { ...base, items: items(labels, 2), now: { key: 'start-round3', title: `Start ${ROUNDS.round3}`, body: 'The top 8 are through. Move the event to Round 3.', ...ADMIN, buttons: [{ action: 'start-round3', label: `Start ${ROUNDS.round3}` }] } };
   }
-  if (r.duels === 0) {
-    return { ...base, items: items(labels, 0), now: { key: 'r2-draw', title: 'Draw the poster duel pairings', body: 'Random pairs (one bye if the number is odd). Post each pair on Instagram.', area: 'round2', roleLabel: 'Social-media lead', buttons: [{ action: 'r2-draw', label: 'Draw the pairings' }] } };
-  }
-  const entered = `Votes ${r.duelsDecided} / ${r.duels} duels · Towers ${r.towersEntered} / ${r.towersNeeded}`;
-  if (r.duelsDecided < r.duels || r.towersEntered < r.towersNeeded) {
-    return { ...base, items: items(labels, 1), now: { key: 'r2-entry', title: 'Enter the story votes and tower results', body: 'Votes at the cutoff (the last team’s throw). For each tower: cups in the correct position, cups in the reference, build time (m:ss, or DNF), cups still standing after the throw, cups in the tower.', ...R2, buttons: [], link: { href: '/admin/round2', label: 'Open the Round 2 entry sheet' }, progress: entered } };
+  const entered = `Towers ${r.towersEntered} / ${r.towersNeeded}`;
+  if (r.towersEntered < r.towersNeeded) {
+    return { ...base, items: items(labels, 0), now: { key: 'r2-entry', title: 'Enter the tower results', body: 'For each tower: cups in the correct position, cups in the reference, build time (m:ss, or DNF), cups still standing after the throw, cups in the tower.', ...R2, buttons: [], link: { href: '/admin/round2', label: 'Open the Round 2 entry sheet' }, progress: entered } };
   }
   if (r.cutoffPending) {
-    return { ...base, items: items(labels, 1), now: { key: 'r2-cutoff', title: 'Tie at 8th place', body: 'Settle it the way you announced (e.g. rock-paper-scissors), then enter the order.', ...R2, buttons: [], link: { href: '/admin/round2', label: 'Enter the tie-break order' } } };
+    return { ...base, items: items(labels, 0), now: { key: 'r2-cutoff', title: 'Tie at 8th place', body: 'Settle it the way you announced (e.g. rock-paper-scissors), then enter the order.', ...R2, buttons: [], link: { href: '/admin/round2', label: 'Enter the tie-break order' } } };
   }
-  return { ...base, items: items(labels, 2), now: { key: 'r2-publish', title: 'Publish Round 2', body: 'The top 8 go to the Vault, the rest are eliminated, and duel winners in the top 8 get +₹5 Cr.', area: 'round2', roleLabel: 'Scorer', buttons: [{ action: 'r2-publish', label: 'Publish the results', confirm: 'All votes and towers are final' }], progress: entered } };
+  return { ...base, items: items(labels, 1), now: { key: 'r2-publish', title: 'Publish Round 2', body: 'The top 8 go to the Vault and the rest are eliminated.', area: 'round2', roleLabel: 'Scorer', buttons: [{ action: 'r2-publish', label: 'Publish the results', confirm: 'All towers are final' }], progress: entered } };
 }
 
 // ---------------------------------------------------------------- Round 3

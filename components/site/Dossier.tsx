@@ -344,7 +344,7 @@ export function Dossier({
             )}
           </section>
         ) : (
-          <Sealed eyebrow={`Round 2 · ${ROUNDS.round2}`} title="Poster duel and Tower Score" unlocks="Round 2 results are published" />
+          <Sealed eyebrow={`Round 2 · ${ROUNDS.round2}`} title="Tower Score" unlocks="Round 2 results are published" />
         )}
 
         {/* The Force Field window opens before the envelopes are recorded on the site, so it does not wait for one. */}

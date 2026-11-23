@@ -54,7 +54,7 @@ export default async function RulesPage() {
             <strong>Battle Outcome</strong> = the multiplier inside the Mission File envelope you hold when the envelopes open.
           </li>
           <li>
-            <strong>Fund left</strong> = Round 1 leftover + poster bonus + mission cash + net Chai Pe Charcha deals − Force
+            <strong>Fund left</strong> = Round 1 leftover + mission cash + net Chai Pe Charcha deals − Force
             Fields − fines.
           </li>
         </ul>
@@ -83,7 +83,6 @@ export default async function RulesPage() {
             ['Round 1', '−₹2 Cr', 'Optional Insider Tip: an early, private look at one Breaking News headline'],
             ['Round 1', '−winning bid', 'Each gear card won'],
             ['Round 1', '−₹8 Cr each', 'Forced Jugaad Kit (Power 2) for every category still missing after Last Call, on a loan if needed (nobody is eliminated in Round 1)'],
-            ['Round 2', '+₹5 Cr', 'Poster duel winner (or a bye), only if it also reaches the top 8 in the tower game'],
             ['Round 3', '−₹5 Cr', 'Force Field: one per finalist, for the whole round'],
             ['Round 3', '+₹5 Cr', "Mini game winner's cash option, instead of Swap or X-Ray"],
             ['Round 3', '± any', 'Chai Pe Charcha deals between agencies, reported to the ledger'],

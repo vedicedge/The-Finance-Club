@@ -92,12 +92,11 @@ describe('Simple mode: the next step', () => {
     expect(actions(r({ bidNext: null }))).toEqual(['r1-lastcall']);
   });
 
-  it('Round 2: draw, enter, cutoff, publish, start Round 3', () => {
+  it('Round 2 (no poster duels): enter towers, cutoff, publish, start Round 3', () => {
     const r = (r2: Partial<GuideSnapshot['r2']>) => snap({ phase: 'round2', r2: { ...snap().r2, ...r2 } });
-    expect(actions(r({}))).toEqual(['r2-draw']);
-    expect(now(r({ duels: 8, duelsDecided: 5, towersEntered: 15 })).link?.href).toBe('/admin/round2');
-    expect(now(r({ duels: 8, duelsDecided: 8, towersEntered: 15, cutoffPending: true })).key).toBe('r2-cutoff');
-    expect(actions(r({ duels: 8, duelsDecided: 8, towersEntered: 15 }))).toEqual(['r2-publish']);
+    expect(now(r({ towersNeeded: 16, towersEntered: 5 })).link?.href).toBe('/admin/round2');
+    expect(now(r({ towersNeeded: 16, towersEntered: 16, cutoffPending: true })).key).toBe('r2-cutoff');
+    expect(actions(r({ towersNeeded: 16, towersEntered: 16 }))).toEqual(['r2-publish']);
     expect(actions(r({ published: true }))).toEqual(['start-round3']);
   });
 
