@@ -15,7 +15,7 @@ import { WindowClock } from '@/components/site/WindowClock';
  */
 
 /** Before the prelim: Professor Kalyug, the countdown and where captains sign in. */
-export function WelcomeScreen({ startsAt, serverNow, agencies }: { startsAt: string; serverNow: string; agencies: number }) {
+export function WelcomeScreen({ startsAt, serverNow }: { startsAt: string; serverNow: string; agencies?: number }) {
   // The site's address, read in the browser (after hydration, so server and browser agree).
   const [host, setHost] = useState('');
   useEffect(() => setHost(window.location.host), []);
@@ -39,11 +39,6 @@ export function WelcomeScreen({ startsAt, serverNow, agencies }: { startsAt: str
         <p className="mt-[5cqh] text-[1.8cqw] text-bone">
           Captains: sign in at <span className="num font-semibold text-glow">{host}/login</span>
         </p>
-        {agencies > 0 && (
-          <p className="mt-[1cqh] text-[1.4cqw] text-steel">
-            <span className="num font-semibold text-bone">{agencies}</span> hero agencies registered
-          </p>
-        )}
       </div>
     </Stage>
   );
